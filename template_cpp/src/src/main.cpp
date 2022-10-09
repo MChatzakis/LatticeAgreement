@@ -1,16 +1,20 @@
 #include <chrono>
 #include <iostream>
 #include <thread>
+#include <vector>
 
 #include "parser.hpp"
 #include "hello.h"
 #include <signal.h>
 
-// sockets
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
+#include "structures.hpp"
+#include "logger.hpp"
+
+std::vector<Node> nodes;
+std::vector<Message> messageQueue;
+
+Logger LOGGER;
+Process PROCESS;
 
 static void stop(int)
 {
@@ -46,8 +50,7 @@ int main(int argc, char **argv)
   std::cout << std::endl;
 
   std::cout << "My PID: " << getpid() << "\n";
-  std::cout << "From a new terminal type `kill -SIGINT " << getpid() << "` or `kill -SIGTERM "
-            << getpid() << "` to stop processing packets\n\n";
+  std::cout << "From a new terminal type `kill -SIGINT " << getpid() << "` or `kill -SIGTERM " << getpid() << "` to stop processing packets\n\n";
 
   std::cout << "My ID: " << parser.id() << "\n\n";
 
@@ -62,6 +65,8 @@ int main(int argc, char **argv)
     std::cout << "Human-readbale Port: " << host.portReadable() << "\n";
     std::cout << "Machine-readbale Port: " << host.port << "\n";
     std::cout << "\n";
+
+    nodes.push_back(Node(host.id, host.port));
   }
   std::cout << "\n";
 
@@ -75,21 +80,8 @@ int main(int argc, char **argv)
 
   std::cout << "Doing some initialization...\n\n";
 
-  //! todo things -> initialize a socket
-  int proc_sock_df; // socket desc of the current process
-  if ((proc_sock_df = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
-  {
-    perror("Could not create the socket.");
-    exit(EXIT_FAILURE);
-  }
-
-  struct sockaddr_in process_addr;
-  memset(&process_addr, 0, sizeof(process_addr)); 
-
-  servaddr.sin_family    = AF_INET; // IPv4 
-  servaddr.sin_addr.s_addr = INADDR_ANY; 
-  servaddr.sin_port = htons(PORT); 
-
+  PROCESS = Process(parser.id(), nodes[parser.id()].getPort(), getpid());
+  LOGGER = Logger(parser.outputPath());
 
   std::cout << "Broadcasting and delivering messages...\n\n";
 

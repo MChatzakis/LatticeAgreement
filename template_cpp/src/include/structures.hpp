@@ -4,6 +4,8 @@
 #include <iostream>
 #include <string>
 
+#include "network.hpp"
+
 /**
  * @brief To be used for the current process (keeps all the data)
  * TODO: Must be a singleton
@@ -16,12 +18,15 @@ private:
     int pid;
 
     int servSocket;
+    struct sockaddr_in servAddr;
 
 public:
     Process() = default;
 
     Process(int _id, int _port, int _pid) : id{_id}, port{_port}, pid{_pid}
     {
+        setServerAddr(&servAddr, port);
+        bindUDPSocket(servSocket, &servAddr); //Bind allows these process to identidy received messages on port
     }
 
     void setID(int);
@@ -46,11 +51,15 @@ private:
     int id;
     int port;
 
+    struct sockaddr_in servAddr;
+
 public:
     Node() = default;
 
     Node(int _id, int _port) : id{_id}, port{_port}
     {
+        setServerAddr(&servAddr, port);
+        //bindUDPSocket !!you cannot bind here!
     }
 
     void setID(int);
@@ -99,6 +108,8 @@ enum msg_type
     broadcast,
     deliver
 };
+
+std::string msg_type_names[] = {"b", "b", "d"};
 
 class Event
 {
