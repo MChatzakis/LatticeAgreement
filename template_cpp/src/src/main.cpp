@@ -6,7 +6,7 @@
 #include "hello.h"
 #include <signal.h>
 
-//sockets
+// sockets
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -28,7 +28,7 @@ static void stop(int)
   exit(0);
 }
 
-//https://www.geeksforgeeks.org/udp-server-client-implementation-c/ 
+// https://www.geeksforgeeks.org/udp-server-client-implementation-c/
 
 int main(int argc, char **argv)
 {
@@ -75,9 +75,21 @@ int main(int argc, char **argv)
 
   std::cout << "Doing some initialization...\n\n";
 
-  //!todo things -> initialize a socket
-  //int proc_sock_df; // socket desc of the current process
-  //struct sockaddr_in proc_address;  
+  //! todo things -> initialize a socket
+  int proc_sock_df; // socket desc of the current process
+  if ((proc_sock_df = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+  {
+    perror("Could not create the socket.");
+    exit(EXIT_FAILURE);
+  }
+
+  struct sockaddr_in process_addr;
+  memset(&process_addr, 0, sizeof(process_addr)); 
+
+  servaddr.sin_family    = AF_INET; // IPv4 
+  servaddr.sin_addr.s_addr = INADDR_ANY; 
+  servaddr.sin_port = htons(PORT); 
+
 
   std::cout << "Broadcasting and delivering messages...\n\n";
 
