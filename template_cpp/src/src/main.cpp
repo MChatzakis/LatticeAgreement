@@ -33,6 +33,7 @@ static void stop(int)
 }
 
 // https://www.geeksforgeeks.org/udp-server-client-implementation-c/
+// https://kjaer.io/distributed-algorithms/
 
 int main(int argc, char **argv)
 {

@@ -19,7 +19,19 @@ public:
     {
     }
 
+    Logger(int _process_id, std::string _outputFilename) : outputFilename{_outputFilename}, process_id{_process_id}
+    {
+    }
+
+    void setOutputFilename(std::string);
+    std::string getOutputFilename();
+
+    std::vector<Event> getSubmittedEvents();
+    void setSubmittedEvents(std::vector<Event>);
+
     void flushContentToFile();
+    void addSubmittedEvent(Event e);
+
     std::string toString();
 
 };

@@ -145,9 +145,12 @@ int Event::getTo()
     return this->to;
 }
 
+std::string Event::toOutputForm()
+{
+    return msg_type_names[type] + " " + std::to_string(to);
+}
+
 std::string Event::toString()
 {
-    std::string s;
-    s = "Message [from,to,type]=[" + std::to_string(from) + "," + std::to_string(to) + "," + msg_type_names[type] + "]";
-    return s;
+    return "Message [from,to,type]=[" + std::to_string(from) + "," + std::to_string(to) + "," + msg_type_names[type] + "]";
 }

@@ -134,6 +134,7 @@ public:
     void setTo(int);
     int getTo();
 
+    std::string toOutputForm();
     std::string toString();
 };
 

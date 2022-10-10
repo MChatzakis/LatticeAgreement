@@ -33,12 +33,13 @@ int bindUDPSocket(int sockfd, struct sockaddr_in *servaddr)
     }
 }
 
-void setServerAddr(struct sockaddr_in *servaddr, int port){
-    memset(servaddr, 0, sizeof(*servaddr)); 
-        
-    servaddr->sin_family = AF_INET; 
-    servaddr->sin_port = htons(port); 
-    servaddr->sin_addr.s_addr = INADDR_ANY; 
+void setServerAddr(struct sockaddr_in *servaddr, int port)
+{
+    memset(servaddr, 0, sizeof(*servaddr));
+
+    servaddr->sin_family = AF_INET;
+    servaddr->sin_port = htons(port);
+    servaddr->sin_addr.s_addr = INADDR_ANY;
 }
 
 int sendUDPData();
