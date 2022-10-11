@@ -53,4 +53,8 @@ public class Host {
         return port;
     }
 
+    public String toString(){
+        return "Host[ID,IP,port]=["+id+","+ip+","+port+"]";
+    }
+
 }

@@ -1,11 +1,21 @@
 package cs451;
 
+import cs451.commonUtils.CommonUtils;
+import cs451.commonUtils.Logger;
+import cs451.structures.Message;
+import cs451.structures.NodeProcess;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.Queue;
 
 public class Main {
+    static Logger LOGGER;
+
 
     private static void handleSignal() {
         //immediately stop network packet processing
@@ -13,6 +23,11 @@ public class Main {
 
         //write/flush output file if necessary
         System.out.println("Writing output.");
+        try {
+            LOGGER.flush2file();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void initSignalHandlers() {
@@ -24,7 +39,7 @@ public class Main {
         });
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
         Parser parser = new Parser(args);
         parser.parse();
 
@@ -54,7 +69,15 @@ public class Main {
         System.out.println("===============");
         System.out.println(parser.config() + "\n");
 
-        System.out.println("Doing some initialization\n");
+        System.out.println("Initializing...\n");
+
+        LOGGER = new Logger(parser.output());
+
+        NodeProcess process = new NodeProcess(parser.myId(), (int) pid, new ArrayList<>(parser.hosts()));
+        Queue<Message> messageQueue = CommonUtils.generateMessageQueue(parser.config(), parser.myId());
+
+        System.out.println("Process: " + process);
+        System.out.println("MessageQueue (size= "+messageQueue.size()+"): " + messageQueue);
 
         System.out.println("Broadcasting and delivering messages...\n");
 

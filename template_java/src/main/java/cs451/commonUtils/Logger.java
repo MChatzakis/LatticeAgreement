@@ -30,7 +30,7 @@ public class Logger {
         submittedEvents.add(e);
     }
 
-    void flush2file() throws IOException {
+    public void flush2file() throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename));
 
         for(Event e: submittedEvents){

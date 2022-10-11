@@ -1,8 +1,9 @@
 package cs451.structures;
 
-public class Message {
-    private String data;
+import java.io.Serializable;
 
+public class Message implements Serializable {
+    private String data;
     private int from;
     private int to;
     private int id;
@@ -44,5 +45,9 @@ public class Message {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String toString(){
+        return "Msg[id,from,to,data]=["+id+","+from+","+to+","+data+"]";
     }
 }
