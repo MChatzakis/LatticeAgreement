@@ -76,8 +76,8 @@ public class Main {
         NodeProcess process = new NodeProcess(parser.myId(), (int) pid, new ArrayList<>(parser.hosts()));
         Queue<Message> messageQueue = CommonUtils.generateMessageQueue(parser.config(), parser.myId());
 
-        System.out.println("Process: " + process);
-        System.out.println("MessageQueue (size= "+messageQueue.size()+"): " + messageQueue);
+        System.out.println(process);
+        System.out.println("MessageQueue (size= "+messageQueue.size()+"): \n" + messageQueue);
 
         System.out.println("Broadcasting and delivering messages...\n");
 

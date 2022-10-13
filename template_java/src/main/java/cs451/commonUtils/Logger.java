@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class Logger {
     private String outputFilename;
 
-    private ArrayList<Event>submittedEvents;
+    private ArrayList<String>submittedEvents;
 
     public Logger(String outputFilename){
         this.outputFilename = outputFilename;
@@ -26,15 +26,15 @@ public class Logger {
         this.outputFilename = outputFilename;
     }
 
-    public void addEvent(Event e){
+    public void addEvent(String e){
         submittedEvents.add(e);
     }
 
     public void flush2file() throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename));
 
-        for(Event e: submittedEvents){
-            writer.write(e.toString() + "\n");
+        for(String e: submittedEvents){
+            writer.write(e + "\n");
         }
 
         writer.close();

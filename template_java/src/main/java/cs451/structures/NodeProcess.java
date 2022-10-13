@@ -34,7 +34,7 @@ public class NodeProcess {
         for(Host h : hosts){
             s+= ">>>> " + h.toString() + "\n";
         }
-
+        s+= "-----\n";
         return s;
     }
 
