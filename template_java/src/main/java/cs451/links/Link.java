@@ -11,4 +11,6 @@ public abstract class Link implements Deliverer {
     protected Deliverer deliverer;
 
     public abstract void send(Message message, Host host);
+
+    public abstract void startReceiving();
 }

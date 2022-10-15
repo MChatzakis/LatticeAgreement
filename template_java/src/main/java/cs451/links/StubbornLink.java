@@ -19,11 +19,12 @@ public class StubbornLink extends Link{
     private Timer retransmissionTimer;
     private Set<MSPair> sent;
 
-    public StubbornLink(Deliverer deliverer){
+    public StubbornLink(Deliverer deliverer, int port) throws SocketException {
         this.deliverer = deliverer;
         this.retransmissionTimer = new Timer("RetransmissionTimer");
 
         this.sent = new HashSet<>();
+        this.fllink = new FairLossLink(this,port);
 
         setTimer();
     }
@@ -42,6 +43,11 @@ public class StubbornLink extends Link{
     public void send(Message message, Host host){
         sent.add(new MSPair(message, host));
         fllink.send(message, host);
+    }
+
+    @Override
+    public void startReceiving() {
+        fllink.startReceiving();
     }
 
     @Override

@@ -14,11 +14,9 @@ public class FairLossLink extends Link{
     UDPReceiver receiver;
     UDPSender sender;
 
-    public FairLossLink(int port, Deliverer deliverer) throws SocketException {
+    public FairLossLink(Deliverer deliverer, int port) throws SocketException {
         this.deliverer = deliverer;
         this.receiver = new UDPReceiver(port, this);
-
-        runReceiverThread();
     }
 
     private void runReceiverThread(){
@@ -29,6 +27,11 @@ public class FairLossLink extends Link{
     @Override
     public void send(Message message, Host host){
         sender.send(message, host.getIp(), host.getPort());
+    }
+
+    @Override
+    public void startReceiving() {
+        runReceiverThread();
     }
 
     @Override

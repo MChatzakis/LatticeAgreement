@@ -69,13 +69,21 @@ public class Main {
 
         LOGGER = new Logger(parser.output());
 
-        Process process = new Process(parser.myId(), (int) pid, new ArrayList<>(parser.hosts()));
+        Process process = new Process(parser.myId(), (int) pid, new ArrayList<>(parser.hosts()), LOGGER);
         Queue<Message> messageQueue = CommonUtils.generateMessageQueue(parser.config(), parser.myId());
 
-        System.out.println(process);
-        System.out.println("MessageQueue (size= "+messageQueue.size()+"): \n" + messageQueue);
+        //System.out.println(process);
+        //System.out.println("MessageQueue (size= "+messageQueue.size()+"): \n" + messageQueue);
 
         System.out.println("Broadcasting and delivering messages...\n");
+
+        process.startReceiving();
+
+        while(!messageQueue.isEmpty()){
+            Message msg2sent = messageQueue.remove();
+            Host host2sent = CommonUtils.getHost(msg2sent.getTo(), process.getHosts());
+            process.send(msg2sent, host2sent);
+        }
 
         // After a process finishes broadcasting,
         // it waits forever for the delivery of messages.

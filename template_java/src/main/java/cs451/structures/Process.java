@@ -12,16 +12,31 @@ public class Process implements Deliverer{
     private int id;
     private int pid;
     private Host selfHost;
+
+    public ArrayList<Host> getHosts() {
+        return hosts;
+    }
+
+    public void setHosts(ArrayList<Host> hosts) {
+        this.hosts = hosts;
+    }
+
     private ArrayList<Host>hosts;
     private Logger logger;
     private PerfectLink perfectLink;
 
-    public Process(int id, int pid, ArrayList<Host>hosts){
+    public Process(int id, int pid, ArrayList<Host>hosts, Logger logger) throws SocketException {
         this.id = id;
         this.pid = pid;
         this.hosts = hosts;
+        this.logger = logger;
 
         this.selfHost = CommonUtils.getHost(id, hosts);
+        this.perfectLink = new PerfectLink(this, selfHost.getPort());
+    }
+
+    public void startReceiving(){
+        perfectLink.startReceiving();
     }
 
     @Override

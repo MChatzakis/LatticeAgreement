@@ -13,15 +13,22 @@ public class PerfectLink extends Link{
     private Set<Message> deliveredMessages;
 
     private StubbornLink slink;
-    private Deliverer deliverer;
 
-    public PerfectLink() {
-        deliveredMessages = new HashSet<>();
+    public PerfectLink(Deliverer deliverer, int port) throws SocketException {
+        this.deliverer = deliverer;
+
+        this.slink = new StubbornLink(this, port);
+        this.deliveredMessages = new HashSet<>();
     }
 
     @Override
     public void send(Message message, Host host){
         slink.send(message, host);
+    }
+
+    @Override
+    public void startReceiving() {
+        slink.startReceiving();
     }
 
     @Override
