@@ -11,7 +11,6 @@ import java.util.Queue;
 public class CommonUtils {
 
     public static Host getHost(int host_id, ArrayList<Host>hosts){
-        //not guaranteed that host_id is host[host_id]
         for(Host h : hosts){
             if (h.getId() == host_id){
                 return h;

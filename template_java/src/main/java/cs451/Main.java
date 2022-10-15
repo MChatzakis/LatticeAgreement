@@ -3,13 +3,9 @@ package cs451;
 import cs451.commonUtils.CommonUtils;
 import cs451.commonUtils.Logger;
 import cs451.structures.Message;
-import cs451.structures.NodeProcess;
+import cs451.structures.Process;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.Socket;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Queue;
 
@@ -73,7 +69,7 @@ public class Main {
 
         LOGGER = new Logger(parser.output());
 
-        NodeProcess process = new NodeProcess(parser.myId(), (int) pid, new ArrayList<>(parser.hosts()));
+        Process process = new Process(parser.myId(), (int) pid, new ArrayList<>(parser.hosts()));
         Queue<Message> messageQueue = CommonUtils.generateMessageQueue(parser.config(), parser.myId());
 
         System.out.println(process);

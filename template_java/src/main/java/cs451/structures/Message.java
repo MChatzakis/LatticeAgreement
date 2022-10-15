@@ -47,6 +47,21 @@ public class Message implements Serializable {
         this.id = id;
     }
 
+    public boolean equals(Object obj)
+    {
+        if (obj == null)
+            return false;
+        if (obj == this)
+            return true;
+
+        Message otherMsg = (Message) obj;
+        return (this.from == otherMsg.from &&
+                this.to == otherMsg.to &&
+                this.id == otherMsg.id &&
+                this.data.equals(otherMsg.data)
+        );
+    }
+
     public String toString(){
         return "Msg[id,from,to,data]=["+id+","+from+","+to+","+data+"]";
     }

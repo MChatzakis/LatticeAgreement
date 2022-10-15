@@ -17,4 +17,8 @@ public class Constants {
 
     // indexes for config
     public static final int CONFIG_VALUE = 6;
+
+    //packets
+    public static final int MAX_PACKET_SIZE = 65535; //!need to recheck that
+
 }

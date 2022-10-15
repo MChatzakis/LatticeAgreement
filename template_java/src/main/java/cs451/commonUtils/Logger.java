@@ -1,7 +1,5 @@
 package cs451.commonUtils;
 
-import cs451.structures.Event;
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,12 +7,10 @@ import java.util.ArrayList;
 
 public class Logger {
     private String outputFilename;
-
     private ArrayList<String>submittedEvents;
 
     public Logger(String outputFilename){
         this.outputFilename = outputFilename;
-
         submittedEvents = new ArrayList<>();
     }
 
