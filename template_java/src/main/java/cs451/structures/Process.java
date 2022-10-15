@@ -31,7 +31,7 @@ public class Process implements Deliverer{
     }
 
     public void send(Message message, Host toHost) throws SocketException {
-        perfectLink.send(message, toHost.getIp(), toHost.getPort());
+        perfectLink.send(message, toHost);
     }
 
     public String toString(){

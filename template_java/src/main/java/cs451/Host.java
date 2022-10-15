@@ -1,5 +1,7 @@
 package cs451;
 
+import cs451.commonUtils.MSPair;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -55,6 +57,18 @@ public class Host {
 
     public String toString(){
         return "Host[ID,IP,port]=["+id+","+ip+","+port+"]";
+    }
+
+    public boolean equals(Object obj)
+    {
+        if (obj == null)
+            return false;
+        if (obj == this)
+            return true;
+
+        Host otherHost = (Host) obj;
+        return (this.id == otherHost.id);
+
     }
 
 }

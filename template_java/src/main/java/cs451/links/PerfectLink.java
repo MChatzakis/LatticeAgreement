@@ -1,5 +1,6 @@
 package cs451.links;
 
+import cs451.Host;
 import cs451.commonUtils.Logger;
 import cs451.structures.Deliverer;
 import cs451.structures.Message;
@@ -19,8 +20,8 @@ public class PerfectLink extends Link{
     }
 
     @Override
-    public void send(Message message, String toIP, int toPort){
-        slink.send(message, toIP, toPort);
+    public void send(Message message, Host host){
+        slink.send(message, host);
     }
 
     @Override

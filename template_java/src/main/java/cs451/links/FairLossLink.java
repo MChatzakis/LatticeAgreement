@@ -1,23 +1,34 @@
 package cs451.links;
 
-import cs451.commonUtils.CommonUtils;
-import cs451.commonUtils.Logger;
+import cs451.Host;
+import cs451.network.UDPReceiver;
 import cs451.network.UDPSender;
 import cs451.structures.Deliverer;
 import cs451.structures.Message;
 
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
+
 import java.net.SocketException;
 
 public class FairLossLink extends Link{
 
-    Deliverer deliverer;
-    //UDPSender
-    //UDPReceiver
-    @Override
-    public void send(Message message, String toIP, int toPort){
+    UDPReceiver receiver;
+    UDPSender sender;
 
+    public FairLossLink(int port, Deliverer deliverer) throws SocketException {
+        this.deliverer = deliverer;
+        this.receiver = new UDPReceiver(port, this);
+
+        runReceiverThread();
+    }
+
+    private void runReceiverThread(){
+        Thread receiverThread = new Thread(receiver, "ReceiverThread");
+        receiverThread.start();
+    }
+
+    @Override
+    public void send(Message message, Host host){
+        sender.send(message, host.getIp(), host.getPort());
     }
 
     @Override
