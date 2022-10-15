@@ -1,7 +1,6 @@
 package cs451.links;
 
 import cs451.Host;
-import cs451.commonUtils.Logger;
 import cs451.structures.Deliverer;
 import cs451.structures.Message;
 
@@ -11,7 +10,6 @@ import java.util.Set;
 
 public class PerfectLink extends Link{
     private Set<Message> deliveredMessages;
-
     private StubbornLink slink;
 
     public PerfectLink(Deliverer deliverer, int port) throws SocketException {
