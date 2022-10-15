@@ -26,11 +26,11 @@ public class Process implements Deliverer{
 
     @Override
     public void deliver(Message message) {
-
         logger.addEvent("");
     }
 
     public void send(Message message, Host toHost) throws SocketException {
+        logger.addEvent("");
         perfectLink.send(message, toHost);
     }
 
