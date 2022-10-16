@@ -10,8 +10,8 @@ import java.net.SocketException;
 
 public class UDPSender extends UDPInstance {
 
-    public UDPSender(int port) throws SocketException {
-        super(port);
+    public UDPSender() throws SocketException {
+        super();
     }
 
     public void send(Message message, String toIP, int toPort) {

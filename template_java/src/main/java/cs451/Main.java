@@ -12,7 +12,6 @@ import java.util.Queue;
 public class Main {
     static Logger LOGGER;
 
-
     private static void handleSignal() {
         //immediately stop network packet processing
         System.out.println("Immediately stopping network packet processing.");
@@ -41,12 +40,11 @@ public class Main {
 
         initSignalHandlers();
 
-        // example
         long pid = ProcessHandle.current().pid();
-        System.out.println("My PID: " + pid + "\n");
+        //System.out.println("My PID: " + pid + "\n");
         System.out.println("From a new terminal type `kill -SIGINT " + pid + "` or `kill -SIGTERM " + pid + "` to stop processing packets\n");
 
-        System.out.println("My ID: " + parser.myId() + "\n");
+        /*System.out.println("My ID: " + parser.myId() + "\n");
         System.out.println("List of resolved hosts is:");
         System.out.println("==========================");
         for (Host host: parser.hosts()) {
@@ -63,7 +61,7 @@ public class Main {
 
         System.out.println("Path to config:");
         System.out.println("===============");
-        System.out.println(parser.config() + "\n");
+        System.out.println(parser.config() + "\n");*/
 
         System.out.println("Initializing...\n");
 
@@ -72,8 +70,8 @@ public class Main {
         Process process = new Process(parser.myId(), (int) pid, new ArrayList<>(parser.hosts()), LOGGER);
         Queue<Message> messageQueue = CommonUtils.generateMessageQueue(parser.config(), parser.myId());
 
-        //System.out.println(process);
-        //System.out.println("MessageQueue (size= "+messageQueue.size()+"): \n" + messageQueue);
+        System.out.println(process);
+        System.out.println("MessageQueue (size= "+messageQueue.size()+"): \n" + messageQueue);
 
         System.out.println("Broadcasting and delivering messages...\n");
 
@@ -82,11 +80,11 @@ public class Main {
         while(!messageQueue.isEmpty()){
             Message msg2sent = messageQueue.remove();
             Host host2sent = CommonUtils.getHost(msg2sent.getTo(), process.getHosts());
+
             process.send(msg2sent, host2sent);
         }
 
-        // After a process finishes broadcasting,
-        // it waits forever for the delivery of messages.
+        // After a process finishes broadcasting it waits forever for the delivery of messages.
         while (true) {
             // Sleep for 1 hour
             Thread.sleep(60 * 60 * 1000);

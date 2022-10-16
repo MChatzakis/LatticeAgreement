@@ -10,6 +10,10 @@ public abstract class UDPInstance{
         this.socket = new DatagramSocket(port);
     }
 
+    public UDPInstance() throws SocketException {
+        this.socket = new DatagramSocket();
+    }
+
     public void closeSocket(){
         socket.close();
     }

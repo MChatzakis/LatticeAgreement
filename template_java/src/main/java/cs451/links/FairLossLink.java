@@ -17,6 +17,7 @@ public class FairLossLink extends Link{
     public FairLossLink(Deliverer deliverer, int port) throws SocketException {
         this.deliverer = deliverer;
         this.receiver = new UDPReceiver(port, this);
+        this.sender = new UDPSender();
     }
 
     private void runReceiverThread(){
