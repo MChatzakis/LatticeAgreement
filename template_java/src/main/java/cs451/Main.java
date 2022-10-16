@@ -81,6 +81,10 @@ public class Main {
             Message msg2sent = messageQueue.remove();
             Host host2sent = CommonUtils.getHost(msg2sent.getTo(), process.getHosts());
 
+            if(host2sent.getId() == process.getId()){
+                break;
+            }
+
             process.send(msg2sent, host2sent);
         }
 

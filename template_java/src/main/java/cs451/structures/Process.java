@@ -9,6 +9,8 @@ import java.net.SocketException;
 import java.util.ArrayList;
 
 public class Process implements Deliverer{
+
+
     private int id;
     private int pid;
     private Host selfHost;
@@ -47,6 +49,14 @@ public class Process implements Deliverer{
     public void send(Message message, Host toHost) throws SocketException {
         logger.addEvent("b " + message.getId());
         perfectLink.send(message, toHost);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String toString(){
