@@ -1,5 +1,6 @@
 package cs451.structures;
 
+import cs451.Constants;
 import cs451.Host;
 import cs451.commonUtils.CommonUtils;
 import cs451.commonUtils.Logger;
@@ -43,11 +44,19 @@ public class Process implements Deliverer{
 
     @Override
     public void deliver(Message message) {
+        if(Constants.PROCESS_MESSAGING_VERBOSE){
+            System.out.println("[Process]: Delivery " + message);
+        }
         logger.addEvent("d " + message.getFrom() + " " + message.getId());
     }
 
     public void send(Message message, Host toHost) throws SocketException {
         logger.addEvent("b " + message.getId());
+
+        if(Constants.PROCESS_MESSAGING_VERBOSE) {
+            System.out.println("[Process]: Sent " + message);
+        }
+
         perfectLink.send(message, toHost);
     }
 

@@ -55,11 +55,19 @@ public class Message implements Serializable {
             return true;
 
         Message otherMsg = (Message) obj;
-        return (this.from == otherMsg.from &&
+
+        boolean result = (this.from == otherMsg.from &&
                 this.to == otherMsg.to &&
                 this.id == otherMsg.id &&
                 this.data.equals(otherMsg.data)
         );
+
+        //System.out.println("Comparing " + this + " with " + otherMsg + " => result="+result);
+        return result;
+    }
+    @Override
+    public int hashCode(){
+        return this.id * this.to * this.from; //ti kanw?
     }
 
     public String toString(){

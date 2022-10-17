@@ -1,5 +1,6 @@
 package cs451.links;
 
+import cs451.Constants;
 import cs451.Host;
 import cs451.structures.Deliverer;
 import cs451.structures.Message;
@@ -7,6 +8,7 @@ import cs451.structures.Message;
 import java.net.SocketException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PerfectLink extends Link{
     private Set<Message> deliveredMessages;
@@ -16,11 +18,15 @@ public class PerfectLink extends Link{
         this.deliverer = deliverer;
 
         this.slink = new StubbornLink(this, port);
-        this.deliveredMessages = new HashSet<>();
+        this.deliveredMessages = ConcurrentHashMap.newKeySet(); //Thread Safe! //new HashSet<>();
     }
 
     @Override
     public void send(Message message, Host host){
+        if(Constants.PL_MESSAGING_VERBOSE){
+            System.out.println("[Perfect Link]: Sent " + message);
+        }
+
         slink.send(message, host);
     }
 
@@ -31,9 +37,22 @@ public class PerfectLink extends Link{
 
     @Override
     public void deliver(Message message) {
+        if(Constants.PL_MESSAGING_VERBOSE) {
+            System.out.println("[Perfect Link]: Got a message for delivery. Set size="+deliveredMessages.size());
+            System.out.println("[Perfect Link]: Current set " + deliveredMessages);
+        }
+
         if(!deliveredMessages.contains(message)){
+
+            if(Constants.PL_MESSAGING_VERBOSE) {
+                System.out.println("[Perfect Link]: Delivery " + message);
+            }
+
             deliveredMessages.add(message);
             deliverer.deliver(message);
+        }
+        else{
+            System.out.println("[Perfect Link]: The previous message is a duplicate, ignored");
         }
     }
 }

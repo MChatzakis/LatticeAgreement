@@ -1,5 +1,6 @@
 package cs451.network;
 
+import cs451.Constants;
 import cs451.commonUtils.CommonUtils;
 import cs451.structures.Message;
 
@@ -18,6 +19,11 @@ public class UDPSender extends UDPInstance {
         try {
             byte [] data2sent = CommonUtils.getBytesOfObject(message);
             DatagramPacket packet2send = new DatagramPacket(data2sent, data2sent.length, InetAddress.getByName(toIP), toPort);
+
+            if(Constants.UDP_MESSAGING_VERBOSE){
+                System.out.println("[UDPSender]: Sent " + message);
+            }
+
             socket.send(packet2send);
         } catch (IOException e) {
             e.printStackTrace();

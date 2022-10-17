@@ -1,5 +1,6 @@
 package cs451.network;
 
+import cs451.Constants;
 import cs451.commonUtils.CommonUtils;
 import cs451.links.Link;
 import cs451.structures.Deliverer;
@@ -29,6 +30,11 @@ public class UDPReceiver extends UDPInstance implements Runnable{
             try {
                 socket.receive(packet2get);
                 Message msgReceived = (Message) CommonUtils.getObjectFromBytes(receive);
+
+                if(Constants.UDP_MESSAGING_VERBOSE){
+                    System.out.println("[UDPReceiver]: Delivery " + msgReceived);
+                }
+
                 deliverer.deliver(msgReceived);
             } catch (Exception e) {
                 e.printStackTrace();
