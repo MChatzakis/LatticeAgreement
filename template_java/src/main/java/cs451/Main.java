@@ -41,27 +41,7 @@ public class Main {
         initSignalHandlers();
 
         long pid = ProcessHandle.current().pid();
-        //System.out.println("My PID: " + pid + "\n");
         System.out.println("From a new terminal type `kill -SIGINT " + pid + "` or `kill -SIGTERM " + pid + "` to stop processing packets\n");
-
-        /*System.out.println("My ID: " + parser.myId() + "\n");
-        System.out.println("List of resolved hosts is:");
-        System.out.println("==========================");
-        for (Host host: parser.hosts()) {
-            System.out.println(host.getId());
-            System.out.println("Human-readable IP: " + host.getIp());
-            System.out.println("Human-readable Port: " + host.getPort());
-            System.out.println();
-        }
-        System.out.println();
-
-        System.out.println("Path to output:");
-        System.out.println("===============");
-        System.out.println(parser.output() + "\n");
-
-        System.out.println("Path to config:");
-        System.out.println("===============");
-        System.out.println(parser.config() + "\n");*/
 
         System.out.println("Initializing...\n");
 
@@ -82,7 +62,7 @@ public class Main {
             Host host2sent = CommonUtils.getHost(msg2sent.getTo(), process.getHosts());
 
             if(host2sent.getId() == process.getId()){
-                break;
+                break; //break or continue?
             }
 
             process.send(msg2sent, host2sent);

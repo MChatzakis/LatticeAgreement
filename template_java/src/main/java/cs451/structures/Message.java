@@ -111,6 +111,6 @@ public class Message implements Serializable, Cloneable {
     }
 
     public String toString(){
-        return "Msg[id,from,to,data]=["+id+","+from+","+to+","+data+"]";
+        return "Msg[id="+id+",from="+from+",to"+to+",data"+data+"]";
     }
 }
