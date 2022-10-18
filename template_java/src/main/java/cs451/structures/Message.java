@@ -2,12 +2,14 @@ package cs451.structures;
 
 import java.io.Serializable;
 
+/**
+ * This class represents a message of the distributed system
+ */
 public class Message implements Serializable, Cloneable {
     private String data;
     private int from;
     private int to;
     private int id;
-
     private boolean isACK;
 
     public Message(int from, int to, String data, int id){
@@ -68,8 +70,7 @@ public class Message implements Serializable, Cloneable {
         isACK = ACK;
     }
 
-    public boolean equals(Object obj)
-    {
+    public boolean equals(Object obj) {
         if (obj == null)
             return false;
         if (obj == this)
@@ -113,4 +114,5 @@ public class Message implements Serializable, Cloneable {
     public String toString(){
         return "Msg[id="+id+",from="+from+",to="+to+",isACK="+isACK+",data="+data+"]";
     }
+
 }

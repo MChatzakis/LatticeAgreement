@@ -9,21 +9,13 @@ import cs451.links.PerfectLink;
 import java.net.SocketException;
 import java.util.ArrayList;
 
+/**
+ * This class represents a process of the distributed system.
+ */
 public class Process implements Deliverer{
-
-
     private int id;
     private int pid;
     private Host selfHost;
-
-    public ArrayList<Host> getHosts() {
-        return hosts;
-    }
-
-    public void setHosts(ArrayList<Host> hosts) {
-        this.hosts = hosts;
-    }
-
     private ArrayList<Host>hosts;
     private Logger logger;
     private PerfectLink perfectLink;
@@ -35,6 +27,7 @@ public class Process implements Deliverer{
         this.logger = logger;
 
         this.selfHost = CommonUtils.getHost(id, hosts);
+
         this.perfectLink = new PerfectLink(this, selfHost.getPort(), hosts);
     }
 
@@ -68,6 +61,14 @@ public class Process implements Deliverer{
         this.id = id;
     }
 
+    public ArrayList<Host> getHosts() {
+        return hosts;
+    }
+
+    public void setHosts(ArrayList<Host> hosts) {
+        this.hosts = hosts;
+    }
+
     public String toString(){
         String s;
 
@@ -82,4 +83,12 @@ public class Process implements Deliverer{
         s+= "-----\n";
         return s;
     }
+
+    public void freeResources(){
+        perfectLink.freeResources();
+        //maybe make the logger to send here stuff
+    }
+
+
+
 }

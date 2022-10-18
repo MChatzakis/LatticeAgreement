@@ -18,6 +18,10 @@ public abstract class UDPInstance{
         socket.close();
     }
 
+    public void freeResources(){
+        closeSocket();
+    }
+
 
 
 

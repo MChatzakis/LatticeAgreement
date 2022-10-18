@@ -57,4 +57,9 @@ public class PerfectLink extends Link{
             }
         }
     }
+
+    public void freeResources(){
+        slink.freeResources();
+    }
+
 }

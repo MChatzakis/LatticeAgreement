@@ -119,4 +119,8 @@ public class StubbornLink extends Link{
             e.printStackTrace();
         }
     }
+
+    public void freeResources(){
+        fllink.freeResources();
+    }
 }

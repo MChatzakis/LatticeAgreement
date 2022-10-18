@@ -7,13 +7,13 @@ import cs451.network.UDPSender;
 import cs451.structures.Deliverer;
 import cs451.structures.Message;
 
-
 import java.net.SocketException;
 
 public class FairLossLink extends Link{
 
-    UDPReceiver receiver;
-    UDPSender sender;
+    private UDPReceiver receiver;
+    private UDPSender sender;
+    private Thread receiverThread;
 
     public FairLossLink(Deliverer deliverer, int port) throws SocketException {
         this.deliverer = deliverer;
@@ -22,8 +22,12 @@ public class FairLossLink extends Link{
     }
 
     private void runReceiverThread(){
-        Thread receiverThread = new Thread(receiver, "ReceiverThread");
+        receiverThread = new Thread(receiver, "ReceiverThread");
         receiverThread.start();
+    }
+
+    private void stopReceiverThread(){
+        receiverThread.stop(); //need to check that again
     }
 
     @Override
@@ -47,5 +51,11 @@ public class FairLossLink extends Link{
         deliverer.deliver(message);
     }
 
+    public void freeResources(){
+        stopReceiverThread();
+
+        sender.freeResources();
+        receiver.freeResources();
+    }
 
 }
