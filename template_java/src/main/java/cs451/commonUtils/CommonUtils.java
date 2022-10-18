@@ -41,6 +41,12 @@ public class CommonUtils {
         return messageQueue;
     }
 
+    /**
+     * Credits to stackOverflow :)
+     * @param obj
+     * @return
+     * @throws IOException
+     */
     public static byte[] getBytesOfObject(Object obj) throws IOException {
         ByteArrayOutputStream boas = new ByteArrayOutputStream();
         try (ObjectOutputStream ois = new ObjectOutputStream(boas)) {
@@ -49,6 +55,13 @@ public class CommonUtils {
         }
     }
 
+    /**
+     * Credits to stackOverflow :)
+     * @param data
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     public static Object getObjectFromBytes(byte[] data) throws IOException, ClassNotFoundException {
         ByteArrayInputStream in = new ByteArrayInputStream(data);
         ObjectInputStream is = new ObjectInputStream(in);
