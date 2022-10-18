@@ -76,8 +76,9 @@ public class StubbornLink extends Link{
     public void retransmit(){
         for(MSPair p : sent){
             if(Constants.SBL_MESSAGING_VERBOSE){
-                System.out.println("[Stubborn Link]: Re-Sent " + p.getMessage());
+                System.out.println("[Stubborn Link]: Retransmission " + p.getMessage());
             }
+
             fllink.send(p.getMessage(), p.getHost());
         }
     }
@@ -89,6 +90,10 @@ public class StubbornLink extends Link{
             int destinationID = message.getFrom(); //Crucial!
             Host h = CommonUtils.getHost(destinationID, hosts);
 
+            if(Constants.SBL_MESSAGING_VERBOSE){
+                System.out.println("[Stubborn Link]: Sending ACK: " + ackMsg + " to host " + h.getId());
+            }
+
             fllink.send(message, h);
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
@@ -98,7 +103,18 @@ public class StubbornLink extends Link{
     private void receiveACK(Message message){
         try {
             Message originalMessage = message.generateOriginalMessage();
+            
+            if(Constants.SBL_MESSAGING_VERBOSE){
+                System.out.print("[Stubborn Link]: Received ACK: " + message);
+                System.out.println("[Stubborn Link]: Set Size Before: " + sent.size());
+            }
+
             sent.remove(originalMessage);
+
+            if(Constants.SBL_MESSAGING_VERBOSE){
+                System.out.println("[Stubborn Link]: Set Size After: " + sent.size());
+            }
+
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
