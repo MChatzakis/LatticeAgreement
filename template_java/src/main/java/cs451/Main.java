@@ -59,6 +59,7 @@ public class Main {
 
         while(!messageQueue.isEmpty()){
             Message msg2sent = messageQueue.remove();
+
             Host host2sent = CommonUtils.getHost(msg2sent.getTo(), process.getHosts());
 
             if(host2sent.getId() == process.getId()){
@@ -70,7 +71,6 @@ public class Main {
 
         // After a process finishes broadcasting it waits forever for the delivery of messages.
         while (true) {
-            // Sleep for 1 hour
             Thread.sleep(60 * 60 * 1000);
         }
     }

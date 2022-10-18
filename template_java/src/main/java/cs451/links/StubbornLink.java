@@ -63,11 +63,9 @@ public class StubbornLink extends Link{
             receiveACK(message);
         }
         else{
-
             if(Constants.SBL_MESSAGING_VERBOSE){
                 System.out.println("[Stubborn Link]: Delivery " + message);
             }
-
             deliverer.deliver(message);
 
             sendACK(message);

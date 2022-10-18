@@ -70,5 +70,9 @@ public class Host {
         return (this.id == otherHost.id);
 
     }
+    @Override
+    public int hashCode(){
+        return this.getId() * this.getPort() * this.getIp().hashCode();
+    }
 
 }

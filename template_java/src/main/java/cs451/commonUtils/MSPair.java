@@ -36,9 +36,16 @@ public class MSPair {
             return true;
 
         MSPair otherPair = (MSPair) obj;
-        return (this.message.equals(otherPair.message) &&
+        return (
+                this.message.equals(otherPair.message) &&
                 this.host.equals(otherPair.host)
                 );
     }
+
+    @Override
+    public int hashCode(){
+        return this.message.hashCode() * this.host.hashCode();
+    }
+
 
 }

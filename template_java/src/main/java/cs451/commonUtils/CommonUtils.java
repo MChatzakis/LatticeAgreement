@@ -26,7 +26,7 @@ public class CommonUtils {
         BufferedReader br = new BufferedReader(new FileReader(new File(configFile)));
 
         String st;
-        int id=0;
+        int id=1;
         while ((st = br.readLine()) != null) {
             String [] contents = st.split(" ");
 

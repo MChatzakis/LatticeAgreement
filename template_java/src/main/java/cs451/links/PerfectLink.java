@@ -7,7 +7,6 @@ import cs451.structures.Message;
 
 import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,7 +18,7 @@ public class PerfectLink extends Link{
         this.deliverer = deliverer;
 
         this.slink = new StubbornLink(this, port, hosts);
-        this.deliveredMessages = ConcurrentHashMap.newKeySet(); //Thread Safe! //new HashSet<>();
+        this.deliveredMessages = ConcurrentHashMap.newKeySet();
     }
 
     @Override
@@ -38,13 +37,13 @@ public class PerfectLink extends Link{
 
     @Override
     public void deliver(Message message) {
+
         if(Constants.PL_MESSAGING_VERBOSE) {
             System.out.println("[Perfect Link]: Got a message for delivery. Set size="+deliveredMessages.size());
             System.out.println("[Perfect Link]: Current set " + deliveredMessages);
         }
 
         if(!deliveredMessages.contains(message)){
-
             if(Constants.PL_MESSAGING_VERBOSE) {
                 System.out.println("[Perfect Link]: Delivery " + message);
             }
@@ -53,7 +52,9 @@ public class PerfectLink extends Link{
             deliverer.deliver(message);
         }
         else{
-            System.out.println("[Perfect Link]: The previous message is a duplicate, ignored");
+            if(Constants.PL_MESSAGING_VERBOSE) {
+                System.out.println("[Perfect Link]: The previous message is a duplicate, ignored");
+            }
         }
     }
 }
