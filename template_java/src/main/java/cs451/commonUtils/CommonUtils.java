@@ -34,7 +34,7 @@ public class CommonUtils {
             int to = Integer.parseInt(contents[1]);
 
             for(int i=0; i<repetitions; i++){
-                messageQueue.add(new Message(processID, to, "data", id++));
+                messageQueue.add(new Message(processID, to, "Bonjour", id++));
             }
 
         }

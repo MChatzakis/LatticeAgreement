@@ -35,7 +35,7 @@ public class Process implements Deliverer{
         this.logger = logger;
 
         this.selfHost = CommonUtils.getHost(id, hosts);
-        this.perfectLink = new PerfectLink(this, selfHost.getPort());
+        this.perfectLink = new PerfectLink(this, selfHost.getPort(), hosts);
     }
 
     public void startReceiving(){

@@ -6,6 +6,7 @@ import cs451.structures.Deliverer;
 import cs451.structures.Message;
 
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,10 +15,10 @@ public class PerfectLink extends Link{
     private Set<Message> deliveredMessages;
     private StubbornLink slink;
 
-    public PerfectLink(Deliverer deliverer, int port) throws SocketException {
+    public PerfectLink(Deliverer deliverer, int port, ArrayList<Host> hosts) throws SocketException {
         this.deliverer = deliverer;
 
-        this.slink = new StubbornLink(this, port);
+        this.slink = new StubbornLink(this, port, hosts);
         this.deliveredMessages = ConcurrentHashMap.newKeySet(); //Thread Safe! //new HashSet<>();
     }
 
