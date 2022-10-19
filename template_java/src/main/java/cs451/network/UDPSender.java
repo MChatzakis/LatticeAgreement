@@ -21,7 +21,9 @@ public class UDPSender extends UDPInstance {
     public void send(Message message, String toIP, int toPort) {
         try {
             byte [] data2sent = CommonUtils.getBytesOfObject(message);
-            DatagramPacket packet2send = new DatagramPacket(data2sent, data2sent.length, InetAddress.getByName(toIP), toPort);
+            byte [] compressedData2sent = CommonUtils.compressByteArray(data2sent);
+
+            DatagramPacket packet2send = new DatagramPacket(compressedData2sent, compressedData2sent.length, InetAddress.getByName(toIP), toPort);
 
             if(Constants.UDP_MESSAGING_VERBOSE){
                 System.out.println("[UDPSender]: Sent " + message);

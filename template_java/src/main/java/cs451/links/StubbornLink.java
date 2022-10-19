@@ -90,14 +90,14 @@ public class StubbornLink extends Link{
         try {
             Message ackMsg = message.generateAckMessage();
 
-            int destinationID = message.getFrom(); //Crucial!
+            int destinationID = message.getFrom();
             Host h = CommonUtils.getHost(destinationID, hosts);
 
             if(Constants.SBL_MESSAGING_VERBOSE){
                 System.out.println("[Stubborn Link]: Sending ACK: " + ackMsg + " to host " + h.getId());
             }
 
-            fllink.send(message, h);
+            fllink.send(ackMsg, h);
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
@@ -106,13 +106,16 @@ public class StubbornLink extends Link{
     private void receiveACK(Message message){
         try {
             Message originalMessage = message.generateOriginalMessage();
-            
+            Host destHost = CommonUtils.getHost(originalMessage.getTo(), hosts);
+
+            MSPair originalMSpair = new MSPair(originalMessage, destHost);
+
             if(Constants.SBL_MESSAGING_VERBOSE){
                 System.out.print("[Stubborn Link]: Received ACK: " + message);
                 System.out.println("[Stubborn Link]: Set Size Before: " + sent.size());
             }
 
-            sent.remove(originalMessage);
+            sent.remove(originalMSpair);
 
             if(Constants.SBL_MESSAGING_VERBOSE){
                 System.out.println("[Stubborn Link]: Set Size After: " + sent.size());

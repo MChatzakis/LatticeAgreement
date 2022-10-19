@@ -1,0 +1,6 @@
+From a new terminal type `kill -SIGINT 93313` or `kill -SIGTERM 93313` to stop processing packets
+
+Initializing...
+
+Immediately stopping network packet processing.
+Writing output.

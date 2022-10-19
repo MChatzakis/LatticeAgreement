@@ -81,7 +81,8 @@ public class Message implements Serializable, Cloneable {
         boolean result = (this.from == otherMsg.from &&
                 this.to == otherMsg.to &&
                 this.id == otherMsg.id &&
-                this.data.equals(otherMsg.data)
+                this.data.equals(otherMsg.data) &&
+                this.isACK == otherMsg.isACK
         );
 
         //System.out.println("Comparing " + this + " with " + otherMsg + " => result="+result);

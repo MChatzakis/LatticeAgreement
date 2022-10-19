@@ -7,6 +7,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterInputStream;
 
 /**
  * Common utilities holder
@@ -70,4 +72,46 @@ public class CommonUtils {
         ObjectInputStream is = new ObjectInputStream(in);
         return is.readObject();
     }
+
+
+    /**
+     * Credits to stackOverflow :)
+     * @param bytes
+     * @return
+     * @throws IOException
+     */
+    public static byte[] compressByteArray(byte[] bytes) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(byteArrayOutputStream);
+
+        deflaterOutputStream.write(bytes);
+        deflaterOutputStream.close();
+
+        byte[] compressedBytes = byteArrayOutputStream.toByteArray();
+        byteArrayOutputStream.close();
+
+        return compressedBytes;
+    }
+
+    /**
+     * Credits to stackOverflow :)
+     * @param bytes
+     * @return
+     * @throws IOException
+     */
+    public static byte[] decompressByteArray(byte[] bytes) throws IOException {
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+        InflaterInputStream inflaterInputStream = new InflaterInputStream(byteArrayInputStream);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        int read;
+        while ((read = inflaterInputStream.read()) != -1) {
+            byteArrayOutputStream.write(read);
+        }
+        inflaterInputStream.close();
+        byteArrayInputStream.close();
+        byteArrayOutputStream.close();
+        return byteArrayOutputStream.toByteArray();
+    }
+
+
 }

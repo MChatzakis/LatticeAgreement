@@ -33,7 +33,9 @@ public class UDPReceiver extends UDPInstance implements Runnable{
             packet2get = new DatagramPacket(receive, receive.length);
             try {
                 socket.receive(packet2get);
-                Message msgReceived = (Message) CommonUtils.getObjectFromBytes(receive);
+
+                byte [] decompressedBytes = CommonUtils.decompressByteArray(receive);
+                Message msgReceived = (Message) CommonUtils.getObjectFromBytes(decompressedBytes);
 
                 if(Constants.UDP_MESSAGING_VERBOSE){
                     System.out.println("[UDPReceiver]: Delivery " + msgReceived);
