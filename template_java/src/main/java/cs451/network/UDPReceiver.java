@@ -25,7 +25,7 @@ public class UDPReceiver extends UDPInstance implements Runnable{
 
     @Override
     public void run() {
-        System.out.println(">>UDP Receiver routine started..");
+        //System.out.println(">>UDP Receiver routine started..");
 
         byte[] receive = new byte[MAX_PACKET_SIZE];
         DatagramPacket packet2get;
