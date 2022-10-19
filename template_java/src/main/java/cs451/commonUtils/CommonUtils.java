@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
+/**
+ * Common utilities holder
+ */
 public class CommonUtils {
 
     public static Host getHost(int host_id, ArrayList<Host>hosts){

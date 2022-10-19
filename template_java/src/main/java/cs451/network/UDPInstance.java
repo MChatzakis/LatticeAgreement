@@ -3,6 +3,9 @@ package cs451.network;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
+/**
+ * UDP instance is a holder of UDP utilities.
+ */
 public abstract class UDPInstance{
     protected DatagramSocket socket;
 

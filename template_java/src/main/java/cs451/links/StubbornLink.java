@@ -13,6 +13,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static cs451.Constants.RETRANSMISSION_DELAY;
 
+/**
+ * Stubborn Link implementation
+ */
 public class StubbornLink extends Link{
 
     private FairLossLink fllink;

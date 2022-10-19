@@ -9,6 +9,9 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
+/**
+ * UDPSender contains a UDPSending method
+ */
 public class UDPSender extends UDPInstance {
 
     public UDPSender() throws SocketException {

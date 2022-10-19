@@ -5,6 +5,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Logger class saves the send and delivery events of a process
+ */
 public class Logger {
     private String outputFilename;
     private ArrayList<String>submittedEvents;

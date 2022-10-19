@@ -11,6 +11,10 @@ import java.net.SocketException;
 
 import static cs451.Constants.MAX_PACKET_SIZE;
 
+/**
+ * UDPReceiver is contains a UDPReceiver routine, that should be called as
+ * a thread runnable.
+ */
 public class UDPReceiver extends UDPInstance implements Runnable{
     private Deliverer deliverer;
 

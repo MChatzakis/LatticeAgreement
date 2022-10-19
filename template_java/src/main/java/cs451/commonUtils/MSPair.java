@@ -3,6 +3,9 @@ package cs451.commonUtils;
 import cs451.Host;
 import cs451.structures.Message;
 
+/**
+ * Utility class holding a pair (Message,Host)
+ */
 public class MSPair {
     private Message message;
     private Host host;

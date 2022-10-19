@@ -9,6 +9,9 @@ import cs451.structures.Message;
 
 import java.net.SocketException;
 
+/**
+ * FairLossLink implementation
+ */
 public class FairLossLink extends Link{
 
     private UDPReceiver receiver;

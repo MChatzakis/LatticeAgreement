@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Perfect Link implementation
+ */
 public class PerfectLink extends Link{
     private Set<Message> deliveredMessages;
     private StubbornLink slink;
