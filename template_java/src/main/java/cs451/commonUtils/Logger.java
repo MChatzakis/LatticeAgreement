@@ -3,18 +3,22 @@ package cs451.commonUtils;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Logger class saves the send and delivery events of a process
  */
 public class Logger {
     private String outputFilename;
-    private ArrayList<String>submittedEvents;
+    private List<String> submittedEvents; //synchronized
 
     public Logger(String outputFilename){
         this.outputFilename = outputFilename;
-        submittedEvents = new ArrayList<>();
+
+        submittedEvents = Collections.synchronizedList(new ArrayList<>());
     }
 
     public String getOutputFilename() {

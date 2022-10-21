@@ -25,14 +25,14 @@ public class Constants {
     public static final long RETRANSMISSION_DELAY = 1000L;
 
     //DEBUG
-    public static final boolean UDP_MESSAGING_VERBOSE = false;
-    public static final boolean FLL_MESSAGING_VERBOSE = false;
-    public static final boolean SBL_MESSAGING_VERBOSE = false;
+    public static final boolean UDP_MESSAGING_VERBOSE = true;
+    public static final boolean FLL_MESSAGING_VERBOSE = true;
+    public static final boolean SBL_MESSAGING_VERBOSE = true;
     public static final boolean PL_MESSAGING_VERBOSE = false;
     public static final boolean PROCESS_MESSAGING_VERBOSE = false;
 
     //Optimizations
-    public static final boolean ENABLE_SBL_ACK_MECHANISM = true;
+    public static final boolean ENABLE_SBL_ACK_MECHANISM = false; //not in use
 
 
 

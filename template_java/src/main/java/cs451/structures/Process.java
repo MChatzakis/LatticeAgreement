@@ -19,6 +19,7 @@ public class Process implements Deliverer{
     private ArrayList<Host>hosts;
     private Logger logger;
     private PerfectLink perfectLink;
+    private long totalDelivered;
 
     public Process(int id, int pid, ArrayList<Host>hosts, Logger logger) throws SocketException {
         this.id = id;
@@ -29,6 +30,8 @@ public class Process implements Deliverer{
         this.selfHost = CommonUtils.getHost(id, hosts);
 
         this.perfectLink = new PerfectLink(this, selfHost.getPort(), hosts);
+
+        this.totalDelivered = 0;
     }
 
     public void startReceiving(){
@@ -41,16 +44,21 @@ public class Process implements Deliverer{
             System.out.println("[Process]: Delivery " + message);
         }
         logger.addEvent("d " + message.getFrom() + " " + message.getId());
+
+        totalDelivered++;
+
+        Host senderHost = CommonUtils.getHost(message.getFrom(), hosts);
+        senderHost.increaseDeliveredMessages();
     }
 
     public void send(Message message, Host toHost) throws SocketException {
+        perfectLink.send(message, toHost);
+
         logger.addEvent("b " + message.getId());
 
         if(Constants.PROCESS_MESSAGING_VERBOSE) {
             System.out.println("[Process]: Sent " + message);
         }
-
-        perfectLink.send(message, toHost);
     }
 
     public int getId() {
@@ -89,6 +97,18 @@ public class Process implements Deliverer{
         //maybe make the logger to send here stuff
     }
 
+    public long getTotalDelivered() {
+        return totalDelivered;
+    }
 
+    public void setTotalDelivered(long totalDelivered) {
+        this.totalDelivered = totalDelivered;
+    }
+
+    public void printHostSendingInfo(){
+        for(Host h : hosts){
+            System.out.println("Host " + h.getId() + ": " +h.getDeliveredMessages());
+        }
+    }
 
 }

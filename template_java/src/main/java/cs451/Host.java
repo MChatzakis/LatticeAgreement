@@ -13,6 +13,8 @@ public class Host {
     private String ip;
     private int port = -1;
 
+    private long deliveredMessages = 0; //to see how many messages each host has sent to a process
+
     public boolean populate(String idString, String ipString, String portString) {
         try {
             id = Integer.parseInt(idString);
@@ -73,6 +75,18 @@ public class Host {
     @Override
     public int hashCode(){
         return this.getId() * this.getPort() * this.getIp().hashCode();
+    }
+
+    public long getDeliveredMessages() {
+        return deliveredMessages;
+    }
+
+    public void setDeliveredMessages(long deliveredMessages) {
+        this.deliveredMessages = deliveredMessages;
+    }
+
+    public void increaseDeliveredMessages(){
+        deliveredMessages++;
     }
 
 }

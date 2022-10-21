@@ -11,6 +11,7 @@ import java.util.Queue;
 
 public class Main {
     static Logger LOGGER;
+    static Process PROCESS;
 
     private static void handleSignal() {
         //immediately stop network packet processing
@@ -19,7 +20,13 @@ public class Main {
         //write/flush output file if necessary
         System.out.println("Writing output.");
         try {
+            System.out.println("Total delivered messages:" + PROCESS.getTotalDelivered());
+
             LOGGER.flush2file();
+
+            PROCESS.printHostSendingInfo();
+            //PROCESS.freeResources();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -46,27 +53,26 @@ public class Main {
         System.out.println("Initializing...\n");
 
         LOGGER = new Logger(parser.output());
+        PROCESS = new Process(parser.myId(), (int) pid, new ArrayList<>(parser.hosts()), LOGGER);
 
-        Process process = new Process(parser.myId(), (int) pid, new ArrayList<>(parser.hosts()), LOGGER);
         Queue<Message> messageQueue = CommonUtils.generateMessageQueue(parser.config(), parser.myId());
 
-        System.out.println(process);
+        System.out.println(PROCESS);
         System.out.println("MessageQueue (size= "+messageQueue.size()+"): \n" + messageQueue);
 
         System.out.println("Broadcasting and delivering messages...\n");
 
-        process.startReceiving();
+        PROCESS.startReceiving();
 
         while(!messageQueue.isEmpty()){
             Message msg2sent = messageQueue.remove();
+            Host host2sent = CommonUtils.getHost(msg2sent.getTo(), PROCESS.getHosts());
 
-            Host host2sent = CommonUtils.getHost(msg2sent.getTo(), process.getHosts());
-
-            if(host2sent.getId() == process.getId()){
-                break; //break or continue?
+            if(host2sent.getId() == PROCESS.getId()){
+                break;
             }
 
-            process.send(msg2sent, host2sent);
+            PROCESS.send(msg2sent, host2sent);
         }
 
         // After a process finishes broadcasting it waits forever for the delivery of messages.
