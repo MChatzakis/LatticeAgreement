@@ -67,7 +67,7 @@ public class Main {
         PROCESS.startReceiving();
 
         sendAllMessages(parser.config());
-        System.out.println("Process " + PROCESS.getId() + " send all the messages.");
+        //System.out.println("Process " + PROCESS.getId() + " send all the messages.");
 
         // After a process finishes broadcasting it waits forever for the delivery of messages.
         while (true) {
