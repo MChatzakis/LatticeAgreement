@@ -1,0 +1,16 @@
+From a new terminal type `kill -SIGINT 52972` or `kill -SIGTERM 52972` to stop processing packets
+
+Initializing...
+
+-----
+Process Info:
+id:1
+pid:52972
+Self-Host:Host[ID,IP,port]=[1,127.0.0.1,11001]
+List of Known Hosts:2
+>>>> Host[ID,IP,port]=[1,127.0.0.1,11001]
+>>>> Host[ID,IP,port]=[2,127.0.0.1,11002]
+-----
+
+Broadcasting and delivering messages...
+

@@ -20,6 +20,7 @@ public class Process implements Deliverer{
     private Logger logger;
     private PerfectLink perfectLink;
     private long totalDelivered;
+    private long totalSent;
 
     public Process(int id, int pid, ArrayList<Host>hosts, Logger logger) throws SocketException {
         this.id = id;
@@ -32,6 +33,7 @@ public class Process implements Deliverer{
         this.perfectLink = new PerfectLink(this, selfHost.getPort(), hosts);
 
         this.totalDelivered = 0;
+        this.totalSent = 0;
     }
 
     public void startReceiving(){
@@ -55,6 +57,7 @@ public class Process implements Deliverer{
         perfectLink.send(message, toHost);
 
         logger.addEvent("b " + message.getId());
+        totalSent++;
 
         if(Constants.PROCESS_MESSAGING_VERBOSE) {
             System.out.println("[Process]: Sent " + message);
@@ -109,6 +112,14 @@ public class Process implements Deliverer{
         for(Host h : hosts){
             System.out.println("Host " + h.getId() + ": " +h.getDeliveredMessages());
         }
+    }
+
+    public long getTotalSent() {
+        return totalSent;
+    }
+
+    public void setTotalSent(long totalSent) {
+        this.totalSent = totalSent;
     }
 
 }
