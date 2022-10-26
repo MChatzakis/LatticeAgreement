@@ -15,3 +15,7 @@ List of Known Hosts:2
 Broadcasting and delivering messages...
 
 Process 1 send all the messages.
+Immediately stopping network packet processing.
+Writing output.
+Total delivered messages:10000000
+Total sent messages:0
