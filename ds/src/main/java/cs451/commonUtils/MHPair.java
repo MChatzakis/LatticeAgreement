@@ -6,7 +6,7 @@ import cs451.structures.Message;
 /**
  * Utility class holding a pair (Message,Host)
  */
-public class MSPair {
+public class MHPair {
     private Message message;
     private Host host;
 
@@ -26,7 +26,7 @@ public class MSPair {
         this.host = host;
     }
 
-    public MSPair(Message message, Host host) {
+    public MHPair(Message message, Host host) {
         this.message = message;
         this.host = host;
     }
@@ -38,7 +38,7 @@ public class MSPair {
         if (obj == this)
             return true;
 
-        MSPair otherPair = (MSPair) obj;
+        MHPair otherPair = (MHPair) obj;
         return (
                 this.message.equals(otherPair.message) &&
                 this.host.equals(otherPair.host)

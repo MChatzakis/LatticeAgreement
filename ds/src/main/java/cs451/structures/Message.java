@@ -12,10 +12,16 @@ public class Message implements Serializable, Cloneable {
     private int id;
     private boolean isACK;
 
+    private int originalFrom; //original sender id
+
     public Message(int from, int to, String data, int id){
         this.from = from;
+        this.originalFrom = from;
+
         this.to = to;
+
         this.data = data;
+
         this.id = id;
 
         this.isACK = false;
@@ -26,8 +32,17 @@ public class Message implements Serializable, Cloneable {
         this.to = to;
         this.data = data;
         this.id = id;
-
         this.isACK = isACK;
+    }
+
+    public Message(int from, int originalFrom, int to, String data, int id){
+        this.from = from;
+        this.originalFrom = originalFrom;
+        this.to = to;
+        this.data = data;
+        this.id = id;
+
+        this.isACK = false;
     }
 
     public String getData() {

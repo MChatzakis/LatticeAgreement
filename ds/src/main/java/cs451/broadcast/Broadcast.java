@@ -9,7 +9,8 @@ import java.util.List;
 public abstract class Broadcast implements Deliverer {
 
     protected Deliverer deliverer; //Used to push a delivery to another layer
-    protected List<Host>processes;
+
+    protected List<Host>processes; //Hosts and Processes mean the same
 
     public Broadcast(Deliverer deliverer, List<Host>processes){
         this.deliverer = deliverer;
@@ -17,4 +18,20 @@ public abstract class Broadcast implements Deliverer {
     }
 
     public abstract void broadcast(Message message);
+
+    public Deliverer getDeliverer() {
+        return deliverer;
+    }
+
+    public void setDeliverer(Deliverer deliverer) {
+        this.deliverer = deliverer;
+    }
+
+    public List<Host> getProcesses() {
+        return processes;
+    }
+
+    public void setProcesses(List<Host> processes) {
+        this.processes = processes;
+    }
 }

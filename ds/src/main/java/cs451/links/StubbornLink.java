@@ -3,7 +3,7 @@ package cs451.links;
 import cs451.Constants;
 import cs451.Host;
 import cs451.commonUtils.CommonUtils;
-import cs451.commonUtils.MSPair;
+import cs451.commonUtils.MHPair;
 import cs451.structures.Deliverer;
 import cs451.structures.Message;
 
@@ -20,7 +20,7 @@ public class StubbornLink extends Link{
 
     private FairLossLink fllink;
     private Timer retransmissionTimer;
-    private Set<MSPair> sent;
+    private Set<MHPair> sent;
 
     private ArrayList<Host> hosts; //This was added later here to support acknowledge mechanism.
 
@@ -51,7 +51,7 @@ public class StubbornLink extends Link{
             System.out.println("[Stubborn Link]: Sent " + message);
         }
 
-        sent.add(new MSPair(message, host));
+        sent.add(new MHPair(message, host));
         fllink.send(message, host);
     }
 
@@ -77,7 +77,7 @@ public class StubbornLink extends Link{
     }
 
     public void retransmit(){
-        for(MSPair p : sent){
+        for(MHPair p : sent){
             if(Constants.SBL_MESSAGING_VERBOSE){
                 System.out.println("[Stubborn Link]: Retransmission " + p.getMessage());
             }
@@ -108,7 +108,7 @@ public class StubbornLink extends Link{
             Message originalMessage = message.generateOriginalMessage();
             Host destHost = CommonUtils.getHost(originalMessage.getTo(), hosts);
 
-            MSPair originalMSpair = new MSPair(originalMessage, destHost);
+            MHPair originalMSpair = new MHPair(originalMessage, destHost);
 
             if(Constants.SBL_MESSAGING_VERBOSE){
                 System.out.print("[Stubborn Link]: Received ACK: " + message);

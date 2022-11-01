@@ -5,16 +5,16 @@ import cs451.links.PerfectLink;
 import cs451.structures.Deliverer;
 import cs451.structures.Message;
 
+import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BestEffortBroadcast extends Broadcast{
-
     PerfectLink perfectLink;
 
-    public BestEffortBroadcast(Deliverer deliverer, List<Host> processes) {
+    public BestEffortBroadcast(Deliverer deliverer, List<Host> processes, int port) throws SocketException {
         super(deliverer, processes);
-
-        perfectLink = null;//new PerfectLink();
+        perfectLink = new PerfectLink(this, port, new ArrayList<>(processes));
     }
 
     @Override
@@ -26,8 +26,6 @@ public class BestEffortBroadcast extends Broadcast{
 
     @Override
     public void deliver(Message message) {
-        //this is called uppon pll delivery
-
         deliverer.deliver(message);
     }
 
