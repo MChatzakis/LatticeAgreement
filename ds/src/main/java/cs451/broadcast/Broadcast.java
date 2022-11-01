@@ -11,10 +11,12 @@ public abstract class Broadcast implements Deliverer {
     protected Deliverer deliverer; //Used to push a delivery to another layer
 
     protected List<Host>processes; //Hosts and Processes mean the same
+    protected Host self;
 
-    public Broadcast(Deliverer deliverer, List<Host>processes){
+    public Broadcast(Deliverer deliverer, List<Host>processes, Host self){
         this.deliverer = deliverer;
         this.processes = processes;
+        this.self = self;
     }
 
     public abstract void broadcast(Message message);

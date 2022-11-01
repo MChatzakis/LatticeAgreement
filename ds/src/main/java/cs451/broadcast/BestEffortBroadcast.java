@@ -12,9 +12,9 @@ import java.util.List;
 public class BestEffortBroadcast extends Broadcast{
     PerfectLink perfectLink;
 
-    public BestEffortBroadcast(Deliverer deliverer, List<Host> processes, int port) throws SocketException {
-        super(deliverer, processes);
-        perfectLink = new PerfectLink(this, port, new ArrayList<>(processes));
+    public BestEffortBroadcast(Deliverer deliverer, List<Host> processes, Host self) throws SocketException {
+        super(deliverer, processes, self);
+        perfectLink = new PerfectLink(this, self.getPort(), new ArrayList<>(processes));
     }
 
     @Override

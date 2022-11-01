@@ -93,7 +93,9 @@ public class Message implements Serializable, Cloneable {
 
         Message otherMsg = (Message) obj;
 
-        boolean result = (this.from == otherMsg.from &&
+        boolean result = (
+                //this.from == otherMsg.from &&
+                this.originalFrom == otherMsg.originalFrom &&
                 this.to == otherMsg.to &&
                 this.id == otherMsg.id &&
                 this.data.equals(otherMsg.data) &&
@@ -129,6 +131,14 @@ public class Message implements Serializable, Cloneable {
 
     public String toString(){
         return "Msg[id="+id+",from="+from+",to="+to+",isACK="+isACK+",data="+data+"]";
+    }
+
+    public int getOriginalFrom() {
+        return originalFrom;
+    }
+
+    public void setOriginalFrom(int originalFrom) {
+        this.originalFrom = originalFrom;
     }
 
 }

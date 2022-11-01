@@ -6,6 +6,7 @@ import cs451.structures.Message;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
@@ -15,7 +16,7 @@ import java.util.zip.InflaterInputStream;
  */
 public class CommonUtils {
 
-    public static Host getHost(int host_id, ArrayList<Host>hosts){
+    public static Host getHost(int host_id, List<Host> hosts){
         for(Host h : hosts){
             if (h.getId() == host_id){
                 return h;
