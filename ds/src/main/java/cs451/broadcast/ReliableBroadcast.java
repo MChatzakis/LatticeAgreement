@@ -18,7 +18,7 @@ public class ReliableBroadcast extends Broadcast{
     public ReliableBroadcast(Deliverer deliverer, List<Host> processes, Host self) throws SocketException {
         super(deliverer, processes, self);
 
-        this.beb = new BestEffortBroadcast(deliverer, processes, self);
+        this.beb = new BestEffortBroadcast(this, processes, self);
         this.delivered = new HashSet<>();
     }
 

@@ -9,7 +9,7 @@ public class Message implements Serializable, Cloneable {
     private String data;
     private int from;
     private int to;
-    private int id;
+    private int id; //can I use that as lsn?
     private boolean isACK;
 
     private int originalFrom; //original sender id
