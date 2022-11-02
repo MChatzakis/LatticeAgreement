@@ -65,8 +65,4 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
     public void freeResources() {
 
     }
-
-    public void crashEvent(Host p){
-        correct.remove(p);
-    }
 }
