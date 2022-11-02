@@ -59,10 +59,24 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
             m.setFrom(self.getId());
             beb.broadcast(m);
         }
+
+        //upon exists....
+        for(MHPair mhpair : pending){
+            Message mes = mhpair.getMessage();
+            if(!delivered.contains(mes) && canDeliver(mes)){
+                deliverer.deliver(mes);
+            }
+        }
+
+    }
+
+    public boolean canDeliver(Message m){
+        int N = processes.size();
+        return (ack.get(m).size() > N/2);
     }
 
     @Override
     public void freeResources() {
-
+        beb.freeResources();
     }
 }

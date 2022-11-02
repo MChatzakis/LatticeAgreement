@@ -20,6 +20,7 @@ public class BestEffortBroadcast extends Broadcast{
     @Override
     public void broadcast(Message message) {
         for(Host process:processes){
+            message.setFrom(self.getId());
             perfectLink.send(message, process);
         }
     }
