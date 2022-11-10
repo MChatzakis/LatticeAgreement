@@ -13,7 +13,6 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
 
     private BestEffortBroadcast beb;
     private Map<Message, Set<Host>> ack;
-    private Set<Host> correct;
     private Set<MHPair> pending;
     private Set<Message> delivered;
 
@@ -27,12 +26,14 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
         pending = new HashSet<>();
         delivered = new HashSet<>();
 
-        correct = new HashSet<>(processes);
     }
 
     @Override
     public void broadcast(Message message) {
+        message.setOriginalFrom(self.getId());
+
         pending.add(new MHPair(message, self));
+
         beb.broadcast(message);
     }
 
@@ -48,7 +49,6 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
         else{
             Set set = new HashSet<Host>();
             set.add(p);
-
             ack.put(m, set);
         }
 
@@ -65,6 +65,7 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
             Message mes = mhpair.getMessage();
             if(!delivered.contains(mes) && canDeliver(mes)){
                 deliverer.deliver(mes);
+                delivered.add(mes);
             }
         }
 

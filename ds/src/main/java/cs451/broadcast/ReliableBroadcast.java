@@ -30,14 +30,10 @@ public class ReliableBroadcast extends Broadcast{
 
     @Override
     public void deliver(Message message) {
-        Host from = CommonUtils.getHost(message.getFrom(), processes); //p
-        Host originalFrom = CommonUtils.getHost(message.getOriginalFrom(), processes); //s
-
         if(!delivered.contains(message)){
             delivered.add(message);
             deliverer.deliver(message);
-
-            beb.broadcast(message);
+            beb.broadcast(message); //relay
         }
     }
 

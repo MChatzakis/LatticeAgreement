@@ -12,6 +12,10 @@ public class Message implements Serializable, Cloneable {
     private int id; //can I use that as lsn?
     private boolean isACK;
 
+
+
+    private int lsn=0;
+
     private int originalFrom; //original sender id
 
     public Message(int from, int to, String data, int id){
@@ -139,6 +143,14 @@ public class Message implements Serializable, Cloneable {
 
     public void setOriginalFrom(int originalFrom) {
         this.originalFrom = originalFrom;
+    }
+
+    public int getLsn() {
+        return lsn;
+    }
+
+    public void setLsn(int lsn) {
+        this.lsn = lsn;
     }
 
 }
