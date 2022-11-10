@@ -42,7 +42,7 @@ public class Process implements Deliverer{
     }
 
     @Override
-    public void deliver(Message message) {
+    public void deliver(Message message){
         if(Constants.PROCESS_MESSAGING_VERBOSE){
             System.out.println("[Process]: Delivery " + message);
         }
@@ -54,7 +54,7 @@ public class Process implements Deliverer{
         senderHost.increaseDeliveredMessages();
     }
 
-    public void send(Message message, Host toHost) throws SocketException {
+    public void send(Message message, Host toHost) throws IOException {
         perfectLink.send(message, toHost);
 
         logger.addEvent("b " + message.getId());

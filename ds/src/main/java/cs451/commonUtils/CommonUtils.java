@@ -115,4 +115,9 @@ public class CommonUtils {
     }
 
 
+    public static void createEmptyFile(String filename) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+        writer.close();
+    }
+
 }

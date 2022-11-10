@@ -56,6 +56,8 @@ public class Main {
 
         System.out.println("Initializing...\n");
 
+        CommonUtils.createEmptyFile(parser.output());
+
         PROCESS = new Process(parser.myId(), (int) pid, new ArrayList<>(parser.hosts()), /*LOGGER*/new Logger(parser.output()));
         System.out.println(PROCESS);
 

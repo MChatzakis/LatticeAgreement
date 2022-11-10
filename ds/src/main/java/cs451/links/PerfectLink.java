@@ -5,6 +5,7 @@ import cs451.Host;
 import cs451.structures.Deliverer;
 import cs451.structures.Message;
 
+import java.io.IOException;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Set;

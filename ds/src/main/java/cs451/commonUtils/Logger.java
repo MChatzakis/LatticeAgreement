@@ -12,6 +12,7 @@ import java.util.List;
  * Logger class saves the send and delivery events of a process
  */
 public class Logger {
+    private static int FLUSH_LIMIT=10000;
     private String outputFilename;
     private List<String> submittedEvents; //synchronized
 
@@ -29,17 +30,27 @@ public class Logger {
         this.outputFilename = outputFilename;
     }
 
-    public void addEvent(String e){
+    public /*synchronized*/ void addEvent(String e){
         submittedEvents.add(e);
+
+        if(submittedEvents.size() >= FLUSH_LIMIT){
+            try {
+                flush2file();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
     }
 
     public void flush2file() throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename, true));
 
         for(String e: submittedEvents){
             writer.write(e + "\n");
         }
 
         writer.close();
+
+        submittedEvents.clear();
     }
 }

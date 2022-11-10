@@ -1,5 +1,7 @@
 package cs451.structures;
 
+import java.io.IOException;
+
 /**
  * A deliverer instance should specify the action that an Object should do when it delivers a message.
  * Its use is to support the "pushing" of delivery in the above layers
