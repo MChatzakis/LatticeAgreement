@@ -6,6 +6,7 @@ import cs451.commonUtils.CommonUtils;
 import cs451.commonUtils.Logger;
 import cs451.links.PerfectLink;
 
+import java.io.IOException;
 import java.net.SocketException;
 import java.util.ArrayList;
 
@@ -97,7 +98,10 @@ public class Process implements Deliverer{
 
     public void freeResources(){
         perfectLink.freeResources();
-        //maybe make the logger to send here stuff
+    }
+
+    public void logData() throws IOException {
+        logger.flush2file();
     }
 
     public long getTotalDelivered() {

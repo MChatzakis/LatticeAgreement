@@ -13,11 +13,9 @@ import java.util.ArrayList;
 import java.util.Queue;
 
 public class Main {
-    static Logger LOGGER;
     static Process PROCESS;
 
     private static void handleSignal() {
-        //immediately stop network packet processing
         System.out.println("Immediately stopping network packet processing.");
 
         //write/flush output file if necessary
@@ -28,7 +26,8 @@ public class Main {
             System.out.println("Total delivered messages:" + PROCESS.getTotalDelivered());
             System.out.println("Total sent messages:" + PROCESS.getTotalSent());
 
-            LOGGER.flush2file();
+            PROCESS.freeResources();
+            PROCESS.logData();
 
             //enable that to free the resources (sockets etc. at the end)
             //PROCESS.freeResources();
@@ -57,9 +56,7 @@ public class Main {
 
         System.out.println("Initializing...\n");
 
-        LOGGER = new Logger(parser.output());
-
-        PROCESS = new Process(parser.myId(), (int) pid, new ArrayList<>(parser.hosts()), LOGGER);
+        PROCESS = new Process(parser.myId(), (int) pid, new ArrayList<>(parser.hosts()), /*LOGGER*/new Logger(parser.output()));
         System.out.println(PROCESS);
 
         System.out.println("Broadcasting and delivering messages...\n");
@@ -67,7 +64,7 @@ public class Main {
         PROCESS.startReceiving();
 
         sendAllMessages(parser.config());
-        //System.out.println("Process " + PROCESS.getId() + " send all the messages.");
+        System.out.println("Process " + PROCESS.getId() + " send all the messages.");
 
         // After a process finishes broadcasting it waits forever for the delivery of messages.
         while (true) {
@@ -87,7 +84,6 @@ public class Main {
 
             if(to == PROCESS.getId()){
                 return;
-                //continue?
             }
 
             for(int i=0; i<repetitions; i++){
