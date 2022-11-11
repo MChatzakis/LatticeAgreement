@@ -90,7 +90,8 @@ public class StubbornLink extends Link{
         try {
             Message ackMsg = message.generateAckMessage();
 
-            int destinationID = message.getFrom();
+            int destinationID = message.getOriginalFrom();
+            //System.out.println("FROM ACKKK "+destinationID);
             Host h = CommonUtils.getHost(destinationID, hosts);
 
             if(Constants.SBL_MESSAGING_VERBOSE){

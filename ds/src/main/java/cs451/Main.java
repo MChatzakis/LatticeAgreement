@@ -22,11 +22,11 @@ public class Main {
         System.out.println("Writing output.");
         try {
             //Enable the following to activate debug statistics messages.
-            //PROCESS.printHostSendingInfo();
+            PROCESS.printHostSendingInfo();
             System.out.println("Total delivered messages:" + PROCESS.getTotalDelivered());
             System.out.println("Total sent messages:" + PROCESS.getTotalSent());
 
-            PROCESS.freeResources();
+            //PROCESS.freeResources();
             PROCESS.logData();
 
             //enable that to free the resources (sockets etc. at the end)

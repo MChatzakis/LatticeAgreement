@@ -55,8 +55,7 @@ public class FairLossLink extends Link{
     }
 
     public void freeResources(){
-        stopReceiverThread();
-
+        //stopReceiverThread();
         //sender.freeResources();
         //receiver.freeResources();
     }

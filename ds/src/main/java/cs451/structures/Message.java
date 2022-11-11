@@ -33,6 +33,7 @@ public class Message implements Serializable, Cloneable {
 
     public Message(int from, int to, String data, int id, boolean isACK){
         this.from = from;
+        this.originalFrom = from;
         this.to = to;
         this.data = data;
         this.id = id;
@@ -134,7 +135,7 @@ public class Message implements Serializable, Cloneable {
     }
 
     public String toString(){
-        return "Msg[id="+id+",from="+from+",to="+to+",isACK="+isACK+",data="+data+"]";
+        return "Msg[id="+id+",orFrom="+originalFrom+"from="+from+",to="+to+",isACK="+isACK+",data="+data+"]";
     }
 
     public int getOriginalFrom() {
