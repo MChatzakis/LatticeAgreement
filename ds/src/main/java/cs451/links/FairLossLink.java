@@ -30,7 +30,7 @@ public class FairLossLink extends Link{
     }
 
     private void stopReceiverThread(){
-        receiverThread.stop(); //need to check that again
+        receiverThread.interrupt(); //need to check that again
     }
 
     @Override
@@ -57,8 +57,8 @@ public class FairLossLink extends Link{
     public void freeResources(){
         stopReceiverThread();
 
-        sender.freeResources();
-        receiver.freeResources();
+        //sender.freeResources();
+        //receiver.freeResources();
     }
 
 }
