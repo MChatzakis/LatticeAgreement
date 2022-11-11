@@ -44,11 +44,6 @@ public class UDPReceiver extends UDPInstance implements Runnable{
                 deliverer.deliver(msgReceived);
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally{
-                /*if(socket != null){
-                    socket.close();
-                }*/
-
             }
         }
 

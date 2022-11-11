@@ -50,8 +50,8 @@ public class Process implements Deliverer{
 
         totalDelivered++;
 
-        //Host senderHost = CommonUtils.getHost(message.getOriginalFrom(), hosts);
-        //senderHost.increaseDeliveredMessages();
+        Host senderHost = CommonUtils.getHost(message.getOriginalFrom(), hosts);
+        senderHost.increaseDeliveredMessages();
     }
 
     public void send(Message message, Host toHost) throws IOException {

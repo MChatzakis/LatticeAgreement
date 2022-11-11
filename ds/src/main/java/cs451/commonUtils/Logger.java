@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Logger class saves the send and delivery events of a process
@@ -14,12 +15,12 @@ import java.util.List;
 public class Logger {
     private static int FLUSH_LIMIT=10000;
     private String outputFilename;
-    private List<String> submittedEvents; //synchronized
+    private ConcurrentLinkedQueue<String> submittedEvents; //synchronized
 
     public Logger(String outputFilename){
         this.outputFilename = outputFilename;
 
-        submittedEvents = Collections.synchronizedList(new ArrayList<>());
+        submittedEvents = new ConcurrentLinkedQueue<>();
     }
 
     public String getOutputFilename() {
