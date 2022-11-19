@@ -2,6 +2,8 @@ package cs451.structures;
 
 import cs451.Constants;
 import cs451.Host;
+import cs451.broadcast.BestEffortBroadcast;
+import cs451.broadcast.Broadcast;
 import cs451.commonUtils.CommonUtils;
 import cs451.commonUtils.Logger;
 import cs451.links.PerfectLink;
@@ -19,7 +21,8 @@ public class Process implements Deliverer{
     private Host selfHost;
     private ArrayList<Host>hosts;
     private Logger logger;
-    private PerfectLink perfectLink;
+    //private PerfectLink perfectLink;
+    private Broadcast broadcast;
     private long totalDelivered;
     private long totalSent;
 
@@ -31,14 +34,16 @@ public class Process implements Deliverer{
 
         this.selfHost = CommonUtils.getHost(id, hosts);
 
-        this.perfectLink = new PerfectLink(this, selfHost.getPort(), hosts);
+        //this.perfectLink = new PerfectLink(this, selfHost.getPort(), hosts);
+        this.broadcast = new BestEffortBroadcast(this, hosts, selfHost);
 
         this.totalDelivered = 0;
         this.totalSent = 0;
     }
 
     public void startReceiving(){
-        perfectLink.startReceiving();
+        //perfectLink.startReceiving();
+        broadcast.startReceiving();
     }
 
     @Override
@@ -55,13 +60,24 @@ public class Process implements Deliverer{
     }
 
     public void send(Message message, Host toHost) throws IOException {
-        perfectLink.send(message, toHost);
+        //perfectLink.send(message, toHost);
 
         logger.addEvent("b " + message.getId());
         totalSent++;
 
         if(Constants.PROCESS_MESSAGING_VERBOSE) {
             System.out.println("[Process]: Sent " + message);
+        }
+    }
+
+    public void broadcast(Message message){
+        broadcast.broadcast(message);
+
+        logger.addEvent("b " + message.getId());
+        totalSent++;
+
+        if(Constants.PROCESS_BROADCASTING_VERBOSE) {
+            System.out.println("[Process]: Broadcast " + message);
         }
     }
 
@@ -97,7 +113,8 @@ public class Process implements Deliverer{
     }
 
     public void freeResources(){
-        perfectLink.freeResources();
+        //perfectLink.freeResources();
+        broadcast.freeResources();
     }
 
     public void logData() throws IOException {

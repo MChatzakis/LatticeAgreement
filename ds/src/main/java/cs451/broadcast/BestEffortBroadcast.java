@@ -21,9 +21,14 @@ public class BestEffortBroadcast extends Broadcast{
     public void broadcast(Message message) {
         for(Host process:processes){
             message.setFrom(self.getId());
-
+            message.setTo(process.getId()); //!check again
             perfectLink.send(message, process);
         }
+    }
+
+    @Override
+    public void startReceiving() {
+        perfectLink.startReceiving();
     }
 
     @Override

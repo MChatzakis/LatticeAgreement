@@ -29,6 +29,11 @@ public class ReliableBroadcast extends Broadcast{
     }
 
     @Override
+    public void startReceiving() {
+        beb.startReceiving();
+    }
+
+    @Override
     public void deliver(Message message) {
         if(!delivered.contains(message)){
             delivered.add(message);

@@ -65,8 +65,9 @@ public class Main {
 
         PROCESS.startReceiving();
 
-        sendAllMessages(parser.config());
-        System.out.println("Process " + PROCESS.getId() + " send all the messages.");
+        //sendAllMessages(parser.config());
+        broadcastAllMessages(parser.config());
+        System.out.println("Process " + PROCESS.getId() + " broadcast all messages.");
 
         // After a process finishes broadcasting it waits forever for the delivery of messages.
         while (true) {
@@ -93,6 +94,24 @@ public class Main {
                 Host host2sent = CommonUtils.getHost(to, PROCESS.getHosts());
 
                 PROCESS.send(msg2sent, host2sent);
+            }
+
+        }
+    }
+
+    public static void broadcastAllMessages(String configFile) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(new File(configFile)));
+        String st;
+        int id=1;
+        while ((st = br.readLine()) != null) {
+            String [] contents = st.split(" ");
+
+            int repetitions = Integer.parseInt(contents[0]);
+
+            for(int i=0; i<repetitions; i++){
+                // This message has not initial "to" field, because the corresponding field will be set inside PROCESS
+                Message msg2sent = new Message(PROCESS.getId(), -1, "b", id++);
+                PROCESS.broadcast(msg2sent);
             }
 
         }

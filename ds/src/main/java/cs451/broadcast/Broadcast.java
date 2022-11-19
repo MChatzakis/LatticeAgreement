@@ -20,6 +20,8 @@ public abstract class Broadcast implements Deliverer {
 
     public abstract void broadcast(Message message);
 
+    public abstract void startReceiving();
+
     public Deliverer getDeliverer() {
         return deliverer;
     }
