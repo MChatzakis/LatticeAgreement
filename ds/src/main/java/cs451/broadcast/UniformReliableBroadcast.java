@@ -38,6 +38,11 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
     }
 
     @Override
+    public void startReceiving() {
+        beb.startReceiving();
+    }
+
+    @Override
     public void deliver(Message m) {
         Host p = CommonUtils.getHost(m.getFrom(), processes);
         Host s =  CommonUtils.getHost(m.getOriginalFrom(), processes);

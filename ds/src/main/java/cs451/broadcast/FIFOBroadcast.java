@@ -69,4 +69,9 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
 
         rb.broadcast(message);
     }
+
+    @Override
+    public void startReceiving() {
+        rb.startReceiving();
+    }
 }
