@@ -19,12 +19,12 @@ public class ReliableBroadcast extends Broadcast{
         super(deliverer, processes, self);
 
         this.beb = new BestEffortBroadcast(this, processes, self);
-        this.delivered = new HashSet<>();
+        this.delivered = new HashSet<>(); //do concurrent
     }
 
     @Override
     public void broadcast(Message message) {
-        message.setOriginalFrom(self.getId()); //self
+        //message.setOriginalFrom(self.getId()); //self
         beb.broadcast(message);
     }
 
@@ -38,6 +38,7 @@ public class ReliableBroadcast extends Broadcast{
         if(!delivered.contains(message)){
             delivered.add(message);
             deliverer.deliver(message);
+
             beb.broadcast(message); //relay
         }
     }

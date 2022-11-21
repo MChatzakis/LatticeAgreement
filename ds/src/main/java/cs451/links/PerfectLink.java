@@ -49,13 +49,18 @@ public class PerfectLink extends Link{
         }
 
         if(!deliveredMessages.contains(message)){
+
+
+            deliveredMessages.add(message);
+
             if(Constants.PL_MESSAGING_VERBOSE) {
                 System.out.println("[Perfect Link]: 3. Delivery " + message);
+                System.out.println("[Perfect Link]: 4. Current set " + deliveredMessages);
+
                 System.out.println();
 
             }
 
-            deliveredMessages.add(message);
             deliverer.deliver(message);
         }
         else{

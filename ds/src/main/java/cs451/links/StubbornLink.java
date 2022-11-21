@@ -65,17 +65,17 @@ public class StubbornLink extends Link{
 
     @Override
     public void deliver(Message message) {
-        //if(message.isACK()){
-        //    receiveACK(message);
-        //}
-        //else{
+        if(message.isACK()){
+            receiveACK(message);
+        }
+        else{
             if(Constants.SBL_MESSAGING_VERBOSE){
                 System.out.println("[Stubborn Link]: Delivery " + message);
             }
             deliverer.deliver(message);
 
-        //    sendACK(message);
-        //}
+            sendACK(message);
+        }
 
     }
 
@@ -114,6 +114,7 @@ public class StubbornLink extends Link{
     private void receiveACK(Message message){
         try {
             Message originalMessage = message.generateOriginalMessage();
+            //System.out.println("get to = " + originalMessage.getTo());
             Host destHost = CommonUtils.getHost(originalMessage.getTo(), hosts);
 
             MHPair originalMSpair = new MHPair(originalMessage, destHost);

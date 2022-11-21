@@ -101,7 +101,7 @@ public class Message implements Serializable, Cloneable {
         boolean result = (
                 this.from == otherMsg.from &&
                 this.originalFrom == otherMsg.originalFrom &&
-                this.to == otherMsg.to &&
+                /*this.to == otherMsg.to &&*/
                 this.id == otherMsg.id &&
                 this.data.equals(otherMsg.data) &&
                 this.isACK == otherMsg.isACK
@@ -112,7 +112,7 @@ public class Message implements Serializable, Cloneable {
     }
     @Override
     public int hashCode(){
-        return this.id /* this.to */* this.from; //ti kanw?
+        return this.id /* this.to */* this.originalFrom; //ti kanw?
     }
 
     @Override
