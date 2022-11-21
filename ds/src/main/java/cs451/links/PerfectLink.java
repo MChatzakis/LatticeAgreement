@@ -43,13 +43,16 @@ public class PerfectLink extends Link{
     public void deliver(Message message) {
 
         if(Constants.PL_MESSAGING_VERBOSE) {
-            System.out.println("[Perfect Link]: Got a message for delivery. Set size="+deliveredMessages.size());
-            System.out.println("[Perfect Link]: Current set " + deliveredMessages);
+            System.out.println("[Perfect Link]: 1. Got a message for delivery. "+ message +" Set size="+deliveredMessages.size());
+            System.out.println("[Perfect Link]: 2. Current set " + deliveredMessages);
+
         }
 
         if(!deliveredMessages.contains(message)){
             if(Constants.PL_MESSAGING_VERBOSE) {
-                System.out.println("[Perfect Link]: Delivery " + message);
+                System.out.println("[Perfect Link]: 3. Delivery " + message);
+                System.out.println();
+
             }
 
             deliveredMessages.add(message);
@@ -57,7 +60,8 @@ public class PerfectLink extends Link{
         }
         else{
             if(Constants.PL_MESSAGING_VERBOSE) {
-                System.out.println("[Perfect Link]: The previous message is a duplicate, ignored");
+                System.out.println("[Perfect Link]: 3. The previous message is a duplicate, ignored");
+                System.out.println();
             }
         }
     }

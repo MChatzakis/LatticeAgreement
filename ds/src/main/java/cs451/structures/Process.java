@@ -21,7 +21,7 @@ public class Process implements Deliverer{
     private Host selfHost;
     private ArrayList<Host>hosts;
     private Logger logger;
-    //private PerfectLink perfectLink;
+    private PerfectLink perfectLink;
     private Broadcast broadcast;
     private long totalDelivered;
     private long totalSent;
@@ -42,13 +42,13 @@ public class Process implements Deliverer{
     }
 
     public void startReceiving(){
-        //perfectLink.startReceiving();
         broadcast.startReceiving();
+        //perfectLink.startReceiving();
     }
 
     @Override
     public void deliver(Message message){
-        if(Constants.PROCESS_MESSAGING_VERBOSE){
+        if(Constants.PROCESS_MESSAGING_VERBOSE || Constants.PROCESS_BROADCASTING_VERBOSE){
             System.out.println("[Process]: Delivery " + message);
         }
         logger.addEvent("d " + message.getFrom() + " " + message.getId());
@@ -60,7 +60,7 @@ public class Process implements Deliverer{
     }
 
     public void send(Message message, Host toHost) throws IOException {
-        //perfectLink.send(message, toHost);
+        perfectLink.send(message, toHost);
 
         logger.addEvent("b " + message.getId());
         totalSent++;

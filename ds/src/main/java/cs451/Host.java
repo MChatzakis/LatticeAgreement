@@ -56,7 +56,7 @@ public class Host {
     }
 
     public String toString(){
-        return "Host[ID,IP,port]=["+id+","+ip+","+port+"]";
+        return "Host("+id+","+port+")";
     }
 
     public boolean equals(Object obj)

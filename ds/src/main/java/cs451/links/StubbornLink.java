@@ -22,7 +22,7 @@ public class StubbornLink extends Link{
     private Timer retransmissionTimer;
     private Set<MHPair> sent;
 
-    private ArrayList<Host> hosts; //This was added later here to support acknowledge mechanism.
+    private ArrayList<Host> hosts;
 
     public StubbornLink(Deliverer deliverer, int port, ArrayList<Host> hosts) throws SocketException {
         this.deliverer = deliverer;
@@ -47,11 +47,14 @@ public class StubbornLink extends Link{
 
     @Override
     public void send(Message message, Host host){
-        if(Constants.SBL_MESSAGING_VERBOSE){
-            System.out.println("[Stubborn Link]: Sent " + message);
-        }
 
         sent.add(new MHPair(message, host));
+
+        if(Constants.SBL_MESSAGING_VERBOSE){
+            System.out.println("[Stubborn Link]: Sent " + message + " to host " + host.getId() + " sent set = " + Arrays.toString(sent.toArray()));
+        }
+
+
         fllink.send(message, host);
     }
 
@@ -62,24 +65,29 @@ public class StubbornLink extends Link{
 
     @Override
     public void deliver(Message message) {
-        if(message.isACK()){
-            receiveACK(message);
-        }
-        else{
+        //if(message.isACK()){
+        //    receiveACK(message);
+        //}
+        //else{
             if(Constants.SBL_MESSAGING_VERBOSE){
                 System.out.println("[Stubborn Link]: Delivery " + message);
             }
             deliverer.deliver(message);
 
-            sendACK(message);
-        }
+        //    sendACK(message);
+        //}
 
     }
 
     public void retransmit(){
+
+        if(Constants.SBL_MESSAGING_VERBOSE){
+            System.out.println("[Stubborn Link]: 1. >>>> Retransmission sent set: " + Arrays.toString(sent.toArray()) );
+        }
+
         for(MHPair p : sent){
             if(Constants.SBL_MESSAGING_VERBOSE){
-                System.out.println("[Stubborn Link]: Retransmission " + p.getMessage());
+                System.out.println("[Stubborn Link]: 2. >>>> Retransmission " + p.getMessage() + " to host " + p.getHost());
             }
 
             fllink.send(p.getMessage(), p.getHost());
@@ -91,7 +99,6 @@ public class StubbornLink extends Link{
             Message ackMsg = message.generateAckMessage();
 
             int destinationID = message.getOriginalFrom();
-            //System.out.println("FROM ACKKK "+destinationID);
             Host h = CommonUtils.getHost(destinationID, hosts);
 
             if(Constants.SBL_MESSAGING_VERBOSE){

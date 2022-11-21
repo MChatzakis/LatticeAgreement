@@ -99,7 +99,7 @@ public class Message implements Serializable, Cloneable {
         Message otherMsg = (Message) obj;
 
         boolean result = (
-                //this.from == otherMsg.from &&
+                this.from == otherMsg.from &&
                 this.originalFrom == otherMsg.originalFrom &&
                 this.to == otherMsg.to &&
                 this.id == otherMsg.id &&
@@ -112,7 +112,7 @@ public class Message implements Serializable, Cloneable {
     }
     @Override
     public int hashCode(){
-        return this.id * this.to * this.from; //ti kanw?
+        return this.id /* this.to */* this.from; //ti kanw?
     }
 
     @Override
@@ -135,7 +135,7 @@ public class Message implements Serializable, Cloneable {
     }
 
     public String toString(){
-        return "Msg[id="+id+",orFrom="+originalFrom+"from="+from+",to="+to+",isACK="+isACK+",data="+data+"]";
+        return "(id="+id+",or="+originalFrom+",from="+from+",to="+to+",ACK="+isACK+")";
     }
 
     public int getOriginalFrom() {

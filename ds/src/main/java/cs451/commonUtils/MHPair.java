@@ -51,4 +51,8 @@ public class MHPair {
     }
 
 
+    public String toString(){
+        return host.toString() + " " + message.toString();
+    }
+
 }

@@ -67,7 +67,7 @@ public class Main {
 
         //sendAllMessages(parser.config());
         broadcastAllMessages(parser.config());
-        System.out.println("Process " + PROCESS.getId() + " broadcast all messages.");
+        //System.out.println("Process " + PROCESS.getId() + " broadcast all messages.");
 
         // After a process finishes broadcasting it waits forever for the delivery of messages.
         while (true) {
@@ -109,8 +109,8 @@ public class Main {
             int repetitions = Integer.parseInt(contents[0]);
 
             for(int i=0; i<repetitions; i++){
-                // This message has not initial "to" field, because the corresponding field will be set inside PROCESS
-                Message msg2sent = new Message(PROCESS.getId(), -1, "b", id++);
+                int to = -1;
+                Message msg2sent = new Message(PROCESS.getId(), to, "b", id++);
                 PROCESS.broadcast(msg2sent);
             }
 
