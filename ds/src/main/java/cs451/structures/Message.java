@@ -96,7 +96,7 @@ public class Message implements Serializable, Cloneable {
     }
 
     public String toString(){
-        return "(id="+id+",or="+originalFrom+",relayFrom="+ relayFrom +",to="+to+",ACK="+isACK+")";
+        return "(id="+id+",or="+originalFrom+",relayFrom="+ relayFrom +",to="+to+",ACK="+isACK+",lsn="+lsn+")";
     }
 
     public int getOriginalFrom() {

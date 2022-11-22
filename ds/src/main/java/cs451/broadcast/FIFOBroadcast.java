@@ -7,10 +7,7 @@ import cs451.structures.Deliverer;
 import cs451.structures.Message;
 
 import java.net.SocketException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FIFOBroadcast extends Broadcast implements Deliverer {
@@ -37,7 +34,10 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
     public void deliver(Message message) {
         pending.add(message);
 
-        for(Message m : pending){
+        Iterator<Message> pendingIterator = pending.iterator();
+        while(pendingIterator.hasNext()){
+            Message m = pendingIterator.next();
+
             int originalSenderHostId = m.getOriginalFrom();
             int snp = m.getLsn();
             int nextNum = next.get(originalSenderHostId);
@@ -45,7 +45,9 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
             if(nextNum == snp){
                 next.put(originalSenderHostId, nextNum+1);
                 pending.remove(m);
-                deliverer.deliver(message);
+                deliverer.deliver(m);
+
+                pendingIterator = pending.iterator(); //start over
             }
         }
     }

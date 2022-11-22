@@ -43,7 +43,7 @@ public class Process implements Deliverer{
 
         this.selfHost = CommonUtils.getHost(id, hosts);
 
-        this.broadcast = new UniformReliableBroadcast(this, hosts, selfHost);
+        this.broadcast = new FIFOBroadcast(this, hosts, selfHost);
 
         this.totalDelivered = 0;
         this.totalSent = 0;

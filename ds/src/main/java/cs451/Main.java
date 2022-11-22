@@ -29,7 +29,7 @@ public class Main {
         System.out.println("\n=== Statistics ===");
 
         //Enable the following to activate debug statistics messages.
-        //PROCESS.printHostSendingInfo();
+        PROCESS.printHostSendingInfo();
 
         System.out.println("Delivered messages: " + PROCESS.getTotalDelivered());
         System.out.println("Broadcasted messages: " + PROCESS.getTotalBroadcasted());
