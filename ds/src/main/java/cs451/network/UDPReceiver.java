@@ -2,9 +2,8 @@ package cs451.network;
 
 import cs451.Constants;
 import cs451.commonUtils.CommonUtils;
-import cs451.links.Link;
 import cs451.structures.Deliverer;
-import cs451.structures.Message;
+import cs451.broadcast.messaging.Message;
 
 import java.net.DatagramPacket;
 import java.net.SocketException;

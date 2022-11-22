@@ -5,7 +5,7 @@ import cs451.Host;
 import cs451.commonUtils.CommonUtils;
 import cs451.commonUtils.MHPair;
 import cs451.structures.Deliverer;
-import cs451.structures.Message;
+import cs451.broadcast.messaging.Message;
 
 import java.net.SocketException;
 import java.util.*;

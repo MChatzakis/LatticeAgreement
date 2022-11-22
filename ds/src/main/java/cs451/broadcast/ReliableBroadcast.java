@@ -2,10 +2,9 @@ package cs451.broadcast;
 
 import cs451.Host;
 import cs451.structures.Deliverer;
-import cs451.structures.Message;
+import cs451.broadcast.messaging.Message;
 
 import java.net.SocketException;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;

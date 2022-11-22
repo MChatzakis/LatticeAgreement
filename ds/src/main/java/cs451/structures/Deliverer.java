@@ -1,6 +1,6 @@
 package cs451.structures;
 
-import java.io.IOException;
+import cs451.broadcast.messaging.Message;
 
 /**
  * A deliverer instance should specify the action that an Object should do when it delivers a message.

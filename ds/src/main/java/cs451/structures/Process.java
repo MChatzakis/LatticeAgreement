@@ -2,10 +2,10 @@ package cs451.structures;
 
 import cs451.Constants;
 import cs451.Host;
-import cs451.broadcast.BestEffortBroadcast;
 import cs451.broadcast.Broadcast;
 import cs451.broadcast.FIFOBroadcast;
-import cs451.broadcast.UniformReliableBroadcast;
+import cs451.broadcast.messaging.Message;
+import cs451.broadcast.messaging.MessageBatch;
 import cs451.commonUtils.CommonUtils;
 import cs451.commonUtils.Logger;
 import cs451.links.PerfectLink;
@@ -179,5 +179,8 @@ public class Process implements Deliverer{
         this.performanceLog = performanceLog;
     }
 
+    public void broadcastBatch(MessageBatch batch){
+
+    }
 
 }

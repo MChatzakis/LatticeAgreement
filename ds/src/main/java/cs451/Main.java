@@ -2,7 +2,7 @@ package cs451;
 
 import cs451.commonUtils.CommonUtils;
 import cs451.commonUtils.Logger;
-import cs451.structures.Message;
+import cs451.broadcast.messaging.Message;
 import cs451.structures.Process;
 
 import java.io.BufferedReader;
@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Queue;
 
 public class Main {
     static Process PROCESS;
@@ -110,8 +109,8 @@ public class Main {
         while ((st = br.readLine()) != null) {
             String [] contents = st.split(" ");
 
-            int repetitions = Integer.parseInt(contents[0]);
-
+            int repetitions = Integer.parseInt(contents[0]); //how many messages to broadcast.
+            int numberOfMessages = Integer.parseInt(contents[0]);
             for(int i=0; i<repetitions; i++){
                 int to = -1;
                 Message msg2sent = new Message(PROCESS.getId(), to, id++);

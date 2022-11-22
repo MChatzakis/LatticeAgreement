@@ -2,7 +2,7 @@ package cs451.broadcast;
 
 import cs451.Host;
 import cs451.structures.Deliverer;
-import cs451.structures.Message;
+import cs451.broadcast.messaging.Message;
 
 import java.util.List;
 

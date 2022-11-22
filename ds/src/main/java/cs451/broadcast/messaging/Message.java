@@ -1,4 +1,4 @@
-package cs451.structures;
+package cs451.broadcast.messaging;
 
 import java.io.Serializable;
 

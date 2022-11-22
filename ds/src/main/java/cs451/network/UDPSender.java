@@ -2,7 +2,7 @@ package cs451.network;
 
 import cs451.Constants;
 import cs451.commonUtils.CommonUtils;
-import cs451.structures.Message;
+import cs451.broadcast.messaging.Message;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
