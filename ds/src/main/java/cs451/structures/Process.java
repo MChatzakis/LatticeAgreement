@@ -2,6 +2,7 @@ package cs451.structures;
 
 import cs451.Constants;
 import cs451.Host;
+import cs451.broadcast.BestEffortBroadcast;
 import cs451.broadcast.Broadcast;
 import cs451.broadcast.FIFOBroadcast;
 import cs451.broadcast.UniformReliableBroadcast;
@@ -26,6 +27,13 @@ public class Process implements Deliverer{
     private Broadcast broadcast;
     private long totalDelivered;
     private long totalSent;
+    private long totalBroadcasted;
+
+    private long deliveryCountTimeStart;
+    private long DELIVERY_MESSAGE_COUNT = 1000;
+
+
+    private String performanceLog;
 
     public Process(int id, int pid, ArrayList<Host>hosts, Logger logger) throws SocketException {
         this.id = id;
@@ -35,14 +43,15 @@ public class Process implements Deliverer{
 
         this.selfHost = CommonUtils.getHost(id, hosts);
 
-        //this.perfectLink = new PerfectLink(this, selfHost.getPort(), hosts);
-        this.broadcast = new FIFOBroadcast(this, hosts, selfHost);
+        this.broadcast = new UniformReliableBroadcast(this, hosts, selfHost);
 
         this.totalDelivered = 0;
         this.totalSent = 0;
+        this.performanceLog = "Not enough messages to count.";
     }
 
     public void startReceiving(){
+        deliveryCountTimeStart = System.nanoTime();
         broadcast.startReceiving();
         //perfectLink.startReceiving();
     }
@@ -58,6 +67,15 @@ public class Process implements Deliverer{
 
         Host senderHost = CommonUtils.getHost(message.getOriginalFrom(), hosts);
         senderHost.increaseDeliveredMessages();
+
+        if(totalDelivered % 10 == 0){
+            long end = System.nanoTime();
+            long elapsedTime = end - deliveryCountTimeStart;
+
+            double elapsedTimeSeconds = (double) elapsedTime / 1000000000;
+
+            this.performanceLog = "Performance: " + totalDelivered + " messages in " + elapsedTimeSeconds + " seconds";
+        }
     }
 
     public void send(Message message, Host toHost) throws IOException {
@@ -75,11 +93,12 @@ public class Process implements Deliverer{
         broadcast.broadcast(message);
 
         logger.addEvent("b " + message.getId());
-        totalSent++;
+        totalBroadcasted++;
 
         if(Constants.PROCESS_BROADCASTING_VERBOSE) {
             System.out.println("[Process]: Broadcast " + message);
         }
+
     }
 
     public int getId() {
@@ -143,5 +162,22 @@ public class Process implements Deliverer{
     public void setTotalSent(long totalSent) {
         this.totalSent = totalSent;
     }
+
+    public long getTotalBroadcasted() {
+        return totalBroadcasted;
+    }
+
+    public void setTotalBroadcasted(long totalBroadcasted) {
+        this.totalBroadcasted = totalBroadcasted;
+    }
+
+    public String getPerformanceLog() {
+        return performanceLog;
+    }
+
+    public void setPerformanceLog(String performanceLog) {
+        this.performanceLog = performanceLog;
+    }
+
 
 }

@@ -15,6 +15,18 @@ import java.util.zip.InflaterInputStream;
  * Common utilities holder
  */
 public class CommonUtils {
+    private static final long MEGABYTE = 1024L * 1024L;
+
+    public static long bytesToMegabytes(long bytes) {
+        return bytes / MEGABYTE;
+    }
+
+    public static void calculateMemoryUsed(){
+        Runtime runtime = Runtime.getRuntime();
+        runtime.gc();
+        long memory = runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Used memory: " + bytesToMegabytes(memory) + "MB");
+    }
 
     public static Host getHost(int host_id, List<Host> hosts){
         for(Host h : hosts){
@@ -40,7 +52,7 @@ public class CommonUtils {
             int to = Integer.parseInt(contents[1]);
 
             for(int i=0; i<repetitions; i++){
-                messageQueue.add(new Message(processID, to, "Bonjour", id++));
+                messageQueue.add(new Message(processID, to, id++));
             }
 
         }

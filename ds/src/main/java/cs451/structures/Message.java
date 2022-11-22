@@ -7,30 +7,20 @@ import java.io.Serializable;
  */
 public class Message implements Serializable, Cloneable {
     private int id;
-    private String data;
     private int relayFrom;
     private int originalFrom;
     private int to;
     private boolean isACK;
     private int lsn;
 
-    public Message(int from, int to, String data, int id){
+    public Message(int from, int to, /*String data,*/ int id){
         this.relayFrom = from;
         this.originalFrom = from;
         this.to = to;
-        this.data = data;
         this.id = id;
 
         this.isACK = false;
         this.lsn = 0;
-    }
-
-    public String getData() {
-        return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
     }
 
     public int getRelayFrom() {
@@ -77,9 +67,7 @@ public class Message implements Serializable, Cloneable {
         boolean result = (
                 this.relayFrom == otherMsg.relayFrom &&
                 this.originalFrom == otherMsg.originalFrom &&
-                /*this.to == otherMsg.to &&*/
                 this.id == otherMsg.id &&
-                this.data.equals(otherMsg.data) &&
                 this.isACK == otherMsg.isACK
         );
 
@@ -87,7 +75,7 @@ public class Message implements Serializable, Cloneable {
     }
     @Override
     public int hashCode(){
-        return this.id * this.relayFrom * this.originalFrom * new Boolean(this.isACK).hashCode() * this.data.hashCode();
+        return this.id * this.relayFrom * this.originalFrom * new Boolean(this.isACK).hashCode() /** this.data.hashCode()*/;
     }
 
     @Override

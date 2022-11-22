@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Logger class saves the send and delivery events of a process
  */
 public class Logger {
-    private static int FLUSH_LIMIT=10000;
+    private static int FLUSH_LIMIT=1000;
     private String outputFilename;
     private ConcurrentLinkedQueue<String> submittedEvents; //synchronized
 
@@ -31,7 +31,7 @@ public class Logger {
         this.outputFilename = outputFilename;
     }
 
-    public /*synchronized*/ void addEvent(String e){
+    public synchronized void addEvent(String e){
         submittedEvents.add(e);
 
         if(submittedEvents.size() >= FLUSH_LIMIT){
@@ -43,7 +43,7 @@ public class Logger {
         }
     }
 
-    public void flush2file() throws IOException {
+    public synchronized void flush2file() throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilename, true));
 
         for(String e: submittedEvents){
@@ -53,5 +53,6 @@ public class Logger {
         writer.close();
 
         submittedEvents.clear();
+        System.gc();
     }
 }

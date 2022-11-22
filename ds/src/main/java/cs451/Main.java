@@ -21,19 +21,24 @@ public class Main {
         //write/flush output file if necessary
         System.out.println("Writing output.");
         try {
-            //Enable the following to activate debug statistics messages.
-            PROCESS.printHostSendingInfo();
-            System.out.println("Total delivered messages:" + PROCESS.getTotalDelivered());
-            System.out.println("Total sent messages:" + PROCESS.getTotalSent());
-
-            //PROCESS.freeResources();
-            PROCESS.logData();
-
-            //enable that to free the resources (sockets etc. at the end)
-            //PROCESS.freeResources();
+            PROCESS.logData(); //flashing to file
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        System.out.println("\n=== Statistics ===");
+
+        //Enable the following to activate debug statistics messages.
+        //PROCESS.printHostSendingInfo();
+
+        System.out.println("Delivered messages: " + PROCESS.getTotalDelivered());
+        System.out.println("Broadcasted messages: " + PROCESS.getTotalBroadcasted());
+        System.out.println("Sent messages: " + PROCESS.getTotalSent());
+
+        System.out.println(PROCESS.getPerformanceLog());
+        CommonUtils.calculateMemoryUsed();
+
+        //PROCESS.freeResources();
     }
 
     private static void initSignalHandlers() {
@@ -67,7 +72,6 @@ public class Main {
 
         //sendAllMessages(parser.config());
         broadcastAllMessages(parser.config());
-        //System.out.println("Process " + PROCESS.getId() + " broadcast all messages.");
 
         // After a process finishes broadcasting it waits forever for the delivery of messages.
         while (true) {
@@ -90,7 +94,7 @@ public class Main {
             }
 
             for(int i=0; i<repetitions; i++){
-                Message msg2sent = new Message(PROCESS.getId(), to, "Bonjour", id++);
+                Message msg2sent = new Message(PROCESS.getId(), to, id++);
                 Host host2sent = CommonUtils.getHost(to, PROCESS.getHosts());
 
                 PROCESS.send(msg2sent, host2sent);
@@ -110,7 +114,7 @@ public class Main {
 
             for(int i=0; i<repetitions; i++){
                 int to = -1;
-                Message msg2sent = new Message(PROCESS.getId(), to, "b", id++);
+                Message msg2sent = new Message(PROCESS.getId(), to, id++);
                 PROCESS.broadcast(msg2sent);
             }
 

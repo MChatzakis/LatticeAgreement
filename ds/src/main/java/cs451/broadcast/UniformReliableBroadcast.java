@@ -23,9 +23,7 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
 
     public UniformReliableBroadcast(Deliverer deliverer, List<Host> processes, Host self) throws SocketException {
         super(deliverer, processes, self);
-
         this.beb = new BestEffortBroadcast(this, processes, self);
-
         this.ack = new ConcurrentHashMap<>();
         this.pending = new ConcurrentHashMap<>();
         this.delivered = ConcurrentHashMap.newKeySet();
@@ -45,10 +43,7 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
     @Override
     public void deliver(Message m) {
         Host p = CommonUtils.getHost(m.getRelayFrom(), processes);
-        //Host s =  CommonUtils.getHost(m.getOriginalFrom(), processes);
-
         IntPair messageIDs = new IntPair(m.getId(), m.getOriginalFrom());
-
         //System.out.println("{URB} : >>>>>> 1. Got a message and will start 'deliver' routine " + m);
 
         if(ack.containsKey(messageIDs)){
@@ -62,8 +57,6 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
         }
 
         //System.out.println("{URB} : >>>>>> 2. Processed the ack structure. Current ack: " + ack);
-
-        //MHPair sm = new MHPair(m, s);
         IntPair sm = new IntPair(m.getId(), m.getOriginalFrom());
         if(!pending.containsKey(sm)){
             pending.put(sm, m);
@@ -77,10 +70,8 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
 
             //System.out.println("{URB} :     >>>>>> 2.1. : Message did not belong to 'pending'. Added and relaying.");
             //System.out.println("{URB} :     >>>>>> 2.2. : Pending set: " + pending);
-
             relayMessage.setRelayFrom(self.getId());
             beb.broadcast(relayMessage);
-
             //System.out.println("{URB} :     >>>>>> 2.3. : Broadcasted relay as: " + relayMessage);
         }
 
@@ -89,16 +80,18 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
             //System.out.println("{URB} :     >>>>>> 3.1. : Current pending variable: " + messageData);
             Message mes = pending.get(messageData);
             if(!delivered.contains(messageData) && canDeliver(messageData)){
-
                 //System.out.println("\"{URB} :     >>>>>> 3.2. : Message not inside 'contains' variable and canDeliver. Delivering " + mes);
-
                 deliverer.deliver(mes);
                 delivered.add(messageData);
+                //can I remove from here? !!!! check again
+                pending.remove(messageData);
+                //delete also from acks
+                ack.remove(messageData);
+                System.gc();
             }
         }
-
+        //maybe iterate over ack?
         //System.out.println("{URB} : >>>>>> 4. 'Delivered' : " + delivered);
-
     }
 
     public boolean canDeliver(IntPair p){
