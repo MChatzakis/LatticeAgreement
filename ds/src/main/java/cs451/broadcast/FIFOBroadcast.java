@@ -13,26 +13,23 @@ import java.util.Map;
 import java.util.Set;
 
 public class FIFOBroadcast extends Broadcast implements Deliverer {
-
-    private ReliableBroadcast rb;
+    //private ReliableBroadcast rb;
+    private UniformReliableBroadcast urb;
     private Set<MHPair> pending;
-    private Map<Host, Integer> next;
+    private Map<Integer, Integer> next;
     private int lsn;
     public FIFOBroadcast(Deliverer deliverer, List<Host> processes, Host self) throws SocketException {
         super(deliverer, processes, self);
 
-        this.rb = new ReliableBroadcast(this, processes, self);
+        this.urb = new UniformReliableBroadcast(this, processes, self);
         this.lsn = 0;
+
         this.next = new HashMap<>();
-
-        initNext();
-    }
-
-    private void initNext(){
         for(Host h : processes){
-            next.put(h, 1);
+            next.put(h.getId(), 1);
         }
     }
+
 
     @Override
     public void deliver(Message message) {
@@ -48,7 +45,7 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
             int nextNum = next.get(ss);
 
             if(nextNum == snp){
-                next.put(ss, nextNum+1);
+                next.put(ss.getId(), nextNum+1);
                 pending.remove(mh);
                 deliverer.deliver(message);
             }
@@ -65,7 +62,7 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
         lsn++;
 
         message.setLsn(lsn);
-        message.setOriginalFrom(self.getId());
+        //message.setOriginalFrom(self.getId());
 
         rb.broadcast(message);
     }

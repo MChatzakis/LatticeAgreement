@@ -34,12 +34,10 @@ public class BestEffortBroadcast extends Broadcast{
                 throw new RuntimeException(e);
             }
 
-            //m.setFrom(self.getId());
-            //m.setOriginalFrom(self.getId());
             m.setTo(process.getId());
 
-            if(true){
-                //System.out.println("[BEB] Process" + self.getId() + " sent message " + m + " to " + process.getId());
+            if(BEB_MESSAGING_VERBOSE){
+                System.out.println("[BEB] Process" + self.getId() + " sent message " + m + " to " + process.getId());
             }
 
             link.send(m, process);

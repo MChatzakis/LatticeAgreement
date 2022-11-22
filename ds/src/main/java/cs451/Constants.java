@@ -28,7 +28,7 @@ public class Constants {
     public static final boolean UDP_MESSAGING_VERBOSE = false;
     public static final boolean FLL_MESSAGING_VERBOSE = false;
     public static final boolean SBL_MESSAGING_VERBOSE = false;
-    public static final boolean PL_MESSAGING_VERBOSE = true;
+    public static final boolean PL_MESSAGING_VERBOSE = false;
     public static final boolean PROCESS_MESSAGING_VERBOSE = false;
     public static final boolean PROCESS_BROADCASTING_VERBOSE = false;
     public static final boolean BEB_MESSAGING_VERBOSE = false;

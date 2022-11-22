@@ -6,48 +6,23 @@ import java.io.Serializable;
  * This class represents a message of the distributed system
  */
 public class Message implements Serializable, Cloneable {
+    private int id;
     private String data;
-    private int from;
+    private int relayFrom;
+    private int originalFrom;
     private int to;
-    private int id; //can I use that as lsn?
     private boolean isACK;
-
-
-
-    private int lsn=0;
-
-    private int originalFrom; //original sender id
+    private int lsn;
 
     public Message(int from, int to, String data, int id){
-        this.from = from;
+        this.relayFrom = from;
         this.originalFrom = from;
-
-        this.to = to;
-
-        this.data = data;
-
-        this.id = id;
-
-        this.isACK = false;
-    }
-
-    public Message(int from, int to, String data, int id, boolean isACK){
-        this.from = from;
-        this.originalFrom = from;
-        this.to = to;
-        this.data = data;
-        this.id = id;
-        this.isACK = isACK;
-    }
-
-    public Message(int from, int originalFrom, int to, String data, int id){
-        this.from = from;
-        this.originalFrom = originalFrom;
         this.to = to;
         this.data = data;
         this.id = id;
 
         this.isACK = false;
+        this.lsn = 0;
     }
 
     public String getData() {
@@ -58,12 +33,12 @@ public class Message implements Serializable, Cloneable {
         this.data = data;
     }
 
-    public int getFrom() {
-        return from;
+    public int getRelayFrom() {
+        return relayFrom;
     }
 
-    public void setFrom(int from) {
-        this.from = from;
+    public void setRelayFrom(int relayFrom) {
+        this.relayFrom = relayFrom;
     }
 
     public int getTo() {
@@ -93,13 +68,14 @@ public class Message implements Serializable, Cloneable {
     public boolean equals(Object obj) {
         if (obj == null)
             return false;
+
         if (obj == this)
             return true;
 
         Message otherMsg = (Message) obj;
 
         boolean result = (
-                this.from == otherMsg.from &&
+                this.relayFrom == otherMsg.relayFrom &&
                 this.originalFrom == otherMsg.originalFrom &&
                 /*this.to == otherMsg.to &&*/
                 this.id == otherMsg.id &&
@@ -107,12 +83,11 @@ public class Message implements Serializable, Cloneable {
                 this.isACK == otherMsg.isACK
         );
 
-        //System.out.println("Comparing " + this + " with " + otherMsg + " => result="+result);
         return result;
     }
     @Override
     public int hashCode(){
-        return this.id /* this.to */* this.originalFrom; //ti kanw?
+        return this.id * this.relayFrom * this.originalFrom * new Boolean(this.isACK).hashCode() * this.data.hashCode();
     }
 
     @Override
@@ -123,19 +98,17 @@ public class Message implements Serializable, Cloneable {
     public Message generateAckMessage() throws CloneNotSupportedException {
         Message ackMsg = (Message) this.clone();
         ackMsg.setACK(true);
-
         return ackMsg;
     }
 
     public Message generateOriginalMessage() throws CloneNotSupportedException{
         Message orMsg = (Message) this.clone();
         orMsg.setACK(false);
-
         return orMsg;
     }
 
     public String toString(){
-        return "(id="+id+",or="+originalFrom+",from="+from+",to="+to+",ACK="+isACK+")";
+        return "(id="+id+",or="+originalFrom+",relayFrom="+ relayFrom +",to="+to+",ACK="+isACK+")";
     }
 
     public int getOriginalFrom() {

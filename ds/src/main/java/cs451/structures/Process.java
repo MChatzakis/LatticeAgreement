@@ -2,9 +2,7 @@ package cs451.structures;
 
 import cs451.Constants;
 import cs451.Host;
-import cs451.broadcast.BestEffortBroadcast;
 import cs451.broadcast.Broadcast;
-import cs451.broadcast.ReliableBroadcast;
 import cs451.broadcast.UniformReliableBroadcast;
 import cs451.commonUtils.CommonUtils;
 import cs451.commonUtils.Logger;
@@ -53,7 +51,7 @@ public class Process implements Deliverer{
         if(Constants.PROCESS_MESSAGING_VERBOSE || Constants.PROCESS_BROADCASTING_VERBOSE){
             System.out.println("[Process]: Delivery " + message);
         }
-        logger.addEvent("d " + message.getFrom() + " " + message.getId());
+        logger.addEvent("d " + message.getRelayFrom() + " " + message.getId());
 
         totalDelivered++;
 

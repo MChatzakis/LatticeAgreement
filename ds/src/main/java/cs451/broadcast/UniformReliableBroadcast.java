@@ -2,6 +2,7 @@ package cs451.broadcast;
 
 import cs451.Host;
 import cs451.commonUtils.CommonUtils;
+import cs451.commonUtils.IntPair;
 import cs451.commonUtils.MHPair;
 import cs451.structures.Deliverer;
 import cs451.structures.Message;
@@ -12,10 +13,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class UniformReliableBroadcast extends Broadcast implements Deliverer {
 
+    /**
+     * Optimizations: When possible, we only keep the Integer IDs representations of the data.
+     */
     private BestEffortBroadcast beb;
-    private Map<Message, Set<Host>> ack;
-    private Set<MHPair> pending;
-    private Set<Message> delivered;
+    private Map<IntPair, Set<Integer>> ack; //int pair == <messageId, originalSenderId>, Integer == hostID
+    private Map<IntPair, Message> pending;
+    private Set<IntPair> delivered;
 
     public UniformReliableBroadcast(Deliverer deliverer, List<Host> processes, Host self) throws SocketException {
         super(deliverer, processes, self);
@@ -23,15 +27,13 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
         this.beb = new BestEffortBroadcast(this, processes, self);
 
         this.ack = new ConcurrentHashMap<>();
-        this.pending = ConcurrentHashMap.newKeySet();
+        this.pending = new ConcurrentHashMap<>();
         this.delivered = ConcurrentHashMap.newKeySet();
-
     }
 
     @Override
     public void broadcast(Message message) {
-        //message.setOriginalFrom(self.getId());
-        pending.add(new MHPair(message, self));
+        pending.put(new IntPair(message.getId(),message.getOriginalFrom()), message);
         beb.broadcast(message);
     }
 
@@ -42,26 +44,29 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
 
     @Override
     public void deliver(Message m) {
-        Host p = CommonUtils.getHost(m.getFrom(), processes);
-        Host s =  CommonUtils.getHost(m.getOriginalFrom(), processes);
+        Host p = CommonUtils.getHost(m.getRelayFrom(), processes);
+        //Host s =  CommonUtils.getHost(m.getOriginalFrom(), processes);
 
-        System.out.println("{URB} : >>>>>> 1. Got a message and will start 'deliver' routine " + m);
+        IntPair messageIDs = new IntPair(m.getId(), m.getOriginalFrom());
 
-        if(ack.containsKey(m)){
-            Set set = ack.get(m);
-            set.add(p); //! check again!
+        //System.out.println("{URB} : >>>>>> 1. Got a message and will start 'deliver' routine " + m);
+
+        if(ack.containsKey(messageIDs)){
+            Set set = ack.get(messageIDs);
+            set.add(p.getId());
         }
         else{
             Set set = new HashSet<Host>();
-            set.add(p);
-            ack.put(m, set);
+            set.add(p.getId());
+            ack.put(messageIDs, set);
         }
 
-        System.out.println("{URB} : >>>>>> 2. Processed the ack structure. Current ack: " + ack);
+        //System.out.println("{URB} : >>>>>> 2. Processed the ack structure. Current ack: " + ack);
 
-        MHPair sm = new MHPair(m, s);
-        if(!pending.contains(sm)){
-            pending.add(sm);
+        //MHPair sm = new MHPair(m, s);
+        IntPair sm = new IntPair(m.getId(), m.getOriginalFrom());
+        if(!pending.containsKey(sm)){
+            pending.put(sm, m);
 
             Message relayMessage = null;
             try {
@@ -70,56 +75,44 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
                 throw new RuntimeException(e);
             }
 
-            System.out.println("{URB} :     >>>>>> 2.1. : Message did not belong to 'pending'. Added and relaying.");
-            System.out.println("{URB} :     >>>>>> 2.2. : Pending set: " + pending);
+            //System.out.println("{URB} :     >>>>>> 2.1. : Message did not belong to 'pending'. Added and relaying.");
+            //System.out.println("{URB} :     >>>>>> 2.2. : Pending set: " + pending);
 
-            relayMessage.setFrom(self.getId());
+            relayMessage.setRelayFrom(self.getId());
             beb.broadcast(relayMessage);
 
-            System.out.println("{URB} :     >>>>>> 2.3. : Broadcasted relay as: " + relayMessage);
-
+            //System.out.println("{URB} :     >>>>>> 2.3. : Broadcasted relay as: " + relayMessage);
         }
 
-        //upon exists....
-        System.out.println("{URB} : >>>>>> 3. Uppon exist routine. Traversing over pending messages. Pending: " + pending);
-        for(MHPair mhpair : pending){
-            System.out.println("{URB} :     >>>>>> 3.1. : Current pending variable: " + mhpair);
-            Message mes = mhpair.getMessage();
-            if(!delivered.contains(mes) && canDeliver(mes)){
+        //System.out.println("{URB} : >>>>>> 3. Uppon exist routine. Traversing over pending messages. Pending: " + pending);
+        for(IntPair messageData : pending.keySet()){
+            //System.out.println("{URB} :     >>>>>> 3.1. : Current pending variable: " + messageData);
+            Message mes = pending.get(messageData);
+            if(!delivered.contains(messageData) && canDeliver(messageData)){
 
-                System.out.println("\"{URB} :     >>>>>> 3.2. : Message not inside 'contains' variable and canDeliver. Delivering " + mes);
+                //System.out.println("\"{URB} :     >>>>>> 3.2. : Message not inside 'contains' variable and canDeliver. Delivering " + mes);
 
                 deliverer.deliver(mes);
-                delivered.add(mes);
+                delivered.add(messageData);
             }
         }
 
-        System.out.println("{URB} : >>>>>> 4. 'Delivered' : " + delivered);
+        //System.out.println("{URB} : >>>>>> 4. 'Delivered' : " + delivered);
 
     }
 
-    public boolean canDeliver(Message m){
+    public boolean canDeliver(IntPair p){
         int N = processes.size();
 
-        System.out.println("{URB} :         CAN-DELIVER 1. -- Message:" + m);
-        System.out.println("{URB} :         CAN-DELIVER 2. -- N:" + N);
-        System.out.println("{URB} :         CAN-DELIVER 3. -- ack:" + ack);
+        //System.out.println("{URB} :         CAN-DELIVER 1. -- Message:" + m);
+        //System.out.println("{URB} :         CAN-DELIVER 2. -- N:" + N);
+        //System.out.println("{URB} :         CAN-DELIVER 3. -- ack:" + ack);
 
-        int setSize;
-
-        if(ack.get(m) == null){
-            //System.out.println("{URB} :     CAN-DELIVER -- 1.ACK:" + ack);
-            //System.out.println("{URB} :     CAN-DELIVER -- 2.MSG:" + m);
-            //System.out.println();
-            //return false;
-            setSize = 0;
-        }else{
-            setSize = ack.get(m).size();
+        if(!ack.containsKey(p)){
+            return false;
         }
 
-        //System.out.println("{URB} :         CAN-DELIVER 3. -- ack.get.size:" + ack.get(m).size());
-
-        return (setSize > N/2);
+        return ack.get(p).size() > N/2.0;
     }
 
     @Override
