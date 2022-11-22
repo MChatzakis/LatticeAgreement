@@ -3,6 +3,7 @@ package cs451.structures;
 import cs451.Constants;
 import cs451.Host;
 import cs451.broadcast.Broadcast;
+import cs451.broadcast.FIFOBroadcast;
 import cs451.broadcast.UniformReliableBroadcast;
 import cs451.commonUtils.CommonUtils;
 import cs451.commonUtils.Logger;
@@ -35,7 +36,7 @@ public class Process implements Deliverer{
         this.selfHost = CommonUtils.getHost(id, hosts);
 
         //this.perfectLink = new PerfectLink(this, selfHost.getPort(), hosts);
-        this.broadcast = new UniformReliableBroadcast(this, hosts, selfHost);
+        this.broadcast = new FIFOBroadcast(this, hosts, selfHost);
 
         this.totalDelivered = 0;
         this.totalSent = 0;

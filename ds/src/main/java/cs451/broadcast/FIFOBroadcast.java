@@ -11,42 +11,40 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FIFOBroadcast extends Broadcast implements Deliverer {
-    //private ReliableBroadcast rb;
     private UniformReliableBroadcast urb;
-    private Set<MHPair> pending;
+    private Set<Message> pending;
     private Map<Integer, Integer> next;
     private int lsn;
+
     public FIFOBroadcast(Deliverer deliverer, List<Host> processes, Host self) throws SocketException {
         super(deliverer, processes, self);
 
         this.urb = new UniformReliableBroadcast(this, processes, self);
         this.lsn = 0;
 
-        this.next = new HashMap<>();
+        this.pending = ConcurrentHashMap.newKeySet();
+
+        this.next = new ConcurrentHashMap<>();
         for(Host h : processes){
             next.put(h.getId(), 1);
         }
     }
 
-
     @Override
     public void deliver(Message message) {
-        Host s = CommonUtils.getHost(message.getOriginalFrom(), processes);
+        pending.add(message);
 
-        pending.add(new MHPair(message, s));
-
-        for(MHPair mh : pending){
-            Host ss = mh.getHost();
-            Message mp = mh.getMessage();
-            int snp = mp.getLsn();
-
-            int nextNum = next.get(ss);
+        for(Message m : pending){
+            int originalSenderHostId = m.getOriginalFrom();
+            int snp = m.getLsn();
+            int nextNum = next.get(originalSenderHostId);
 
             if(nextNum == snp){
-                next.put(ss.getId(), nextNum+1);
-                pending.remove(mh);
+                next.put(originalSenderHostId, nextNum+1);
+                pending.remove(m);
                 deliverer.deliver(message);
             }
         }
@@ -54,21 +52,18 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
 
     @Override
     public void freeResources() {
-        rb.freeResources();
+        urb.freeResources();
     }
 
     @Override
     public void broadcast(Message message) {
         lsn++;
-
         message.setLsn(lsn);
-        //message.setOriginalFrom(self.getId());
-
-        rb.broadcast(message);
+        urb.broadcast(message);
     }
 
     @Override
     public void startReceiving() {
-        rb.startReceiving();
+        urb.startReceiving();
     }
 }
