@@ -9,22 +9,48 @@ import java.io.IOException;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketException;
 import java.util.ArrayList;
 
-/**
- * UDPSender contains a UDPSending method
- */
-public class UDPSender extends UDPInstance {
+public class LightUDPSender {
 
-    public UDPSender() throws SocketException {
-        super();
-        System.out.println("Socket opened for sender");
+    public LightUDPSender(){
+
     }
+
+    public void sendBatch(ArrayList<Message> batch, String toIP, int toPort) {
+        try {
+            DatagramSocket socket = new DatagramSocket();
+
+            ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+            ObjectOutput oo = new ObjectOutputStream(bStream);
+            oo.writeObject(batch);
+
+            byte[] data2sent = bStream.toByteArray();
+            byte[] compressedData2sent = CommonUtils.compressByteArray(data2sent);
+
+            DatagramPacket packet2send = new DatagramPacket(compressedData2sent, compressedData2sent.length, InetAddress.getByName(toIP), toPort);
+
+            if (Constants.UDP_MESSAGING_VERBOSE) {
+                System.out.println("[UDPSender]: Sent " + batch);
+            }
+
+            socket.send(packet2send);
+
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Exception in Light Sender: Could not send the message.");
+        }
+
+    }
+
 
     public void send(Message message, String toIP, int toPort) {
         try {
+            DatagramSocket socket = new DatagramSocket();
+
             byte [] data2sent = CommonUtils.getBytesOfObject(message);
             byte [] compressedData2sent = CommonUtils.compressByteArray(data2sent);
 
@@ -39,26 +65,4 @@ public class UDPSender extends UDPInstance {
             e.printStackTrace();
         }
     }
-
-    public void sendBatch(ArrayList<Message>batch, String toIP, int toPort){
-        try {
-            ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-            ObjectOutput oo = new ObjectOutputStream(bStream);
-            oo.writeObject(batch);
-
-            byte [] data2sent = bStream.toByteArray();
-            byte [] compressedData2sent = CommonUtils.compressByteArray(data2sent);
-
-            DatagramPacket packet2send = new DatagramPacket(compressedData2sent, compressedData2sent.length, InetAddress.getByName(toIP), toPort);
-
-            if(Constants.UDP_MESSAGING_VERBOSE){
-                System.out.println("[UDPSender]: Sent " + batch);
-            }
-
-            socket.send(packet2send);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }
-
