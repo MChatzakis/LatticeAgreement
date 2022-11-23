@@ -4,6 +4,8 @@ import cs451.Host;
 import cs451.structures.Deliverer;
 import cs451.broadcast.messaging.Message;
 
+import java.util.ArrayList;
+
 /**
  * Abstract link class
  * Notes:
@@ -11,9 +13,11 @@ import cs451.broadcast.messaging.Message;
  *                      receiving a message
  */
 public abstract class Link implements Deliverer {
-    protected Deliverer deliverer; //Used to push a delivery to another layer
+    protected Deliverer deliverer;
 
     public abstract void send(Message message, Host host);
+
+    public abstract void sendBatch(ArrayList<Message> batch, Host host);
 
     public abstract void startReceiving();
 }

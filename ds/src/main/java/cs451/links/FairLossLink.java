@@ -8,6 +8,7 @@ import cs451.structures.Deliverer;
 import cs451.broadcast.messaging.Message;
 
 import java.net.SocketException;
+import java.util.ArrayList;
 
 /**
  * FairLossLink implementation
@@ -39,6 +40,14 @@ public class FairLossLink extends Link{
             System.out.println("[FairLossLink]: Sent " + message);
         }
         sender.send(message, host.getIp(), host.getPort());
+    }
+
+    @Override
+    public void sendBatch(ArrayList<Message> batch, Host host) {
+        if(Constants.FLL_MESSAGING_VERBOSE){
+            System.out.println("[FairLossLink]: Sent " + batch);
+        }
+        sender.sendBatch(batch, host.getIp(), host.getPort());
     }
 
     @Override

@@ -19,7 +19,6 @@ public class PerfectLink extends Link{
 
     public PerfectLink(Deliverer deliverer, int port, ArrayList<Host> hosts) throws SocketException {
         this.deliverer = deliverer;
-
         this.slink = new StubbornLink(this, port, hosts);
         this.deliveredMessages = ConcurrentHashMap.newKeySet();
     }
@@ -29,8 +28,15 @@ public class PerfectLink extends Link{
         if(Constants.PL_MESSAGING_VERBOSE){
             System.out.println("[Perfect Link]: Sent " + message);
         }
-
         slink.send(message, host);
+    }
+
+    @Override
+    public void sendBatch(ArrayList<Message> batch, Host host) {
+        if(Constants.PL_MESSAGING_VERBOSE){
+            System.out.println("[Perfect Link]: Sent " + batch);
+        }
+        slink.sendBatch(batch, host);
     }
 
     @Override
@@ -40,24 +46,18 @@ public class PerfectLink extends Link{
 
     @Override
     public void deliver(Message message) {
-
         if(Constants.PL_MESSAGING_VERBOSE) {
             System.out.println("[Perfect Link]: 1. Got a message for delivery. "+ message +" Set size="+deliveredMessages.size());
             System.out.println("[Perfect Link]: 2. Current set " + deliveredMessages);
-
         }
 
         if(!deliveredMessages.contains(message)){
-
-
             deliveredMessages.add(message);
 
             if(Constants.PL_MESSAGING_VERBOSE) {
                 System.out.println("[Perfect Link]: 3. Delivery " + message);
                 System.out.println("[Perfect Link]: 4. Current set " + deliveredMessages);
-
                 System.out.println();
-
             }
 
             deliverer.deliver(message);

@@ -1,5 +1,6 @@
 package cs451;
 
+import cs451.broadcast.messaging.MessageBatch;
 import cs451.commonUtils.CommonUtils;
 import cs451.commonUtils.Logger;
 import cs451.broadcast.messaging.Message;
@@ -69,8 +70,8 @@ public class Main {
 
         PROCESS.startReceiving();
 
-        //sendAllMessages(parser.config());
-        broadcastAllMessages(parser.config());
+        sendAllMessages(parser.config());
+        //broadcastAllMessages(parser.config());
 
         // After a process finishes broadcasting it waits forever for the delivery of messages.
         while (true) {
@@ -92,12 +93,14 @@ public class Main {
                 return;
             }
 
-            for(int i=0; i<repetitions; i++){
+            /*for(int i=0; i<repetitions; i++){
                 Message msg2sent = new Message(PROCESS.getId(), to, id++);
                 Host host2sent = CommonUtils.getHost(to, PROCESS.getHosts());
 
                 PROCESS.send(msg2sent, host2sent);
-            }
+            }*/
+
+            MessageBatch.sendBatch(repetitions, PROCESS, CommonUtils.getHost(to, PROCESS.getHosts()));
 
         }
     }

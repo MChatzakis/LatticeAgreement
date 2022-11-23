@@ -8,6 +8,8 @@ import cs451.broadcast.messaging.Message;
 import cs451.broadcast.messaging.MessageBatch;
 import cs451.commonUtils.CommonUtils;
 import cs451.commonUtils.Logger;
+import cs451.links.FairLossLink;
+import cs451.links.Link;
 import cs451.links.PerfectLink;
 
 import java.io.IOException;
@@ -23,7 +25,7 @@ public class Process implements Deliverer{
     private Host selfHost;
     private ArrayList<Host>hosts;
     private Logger logger;
-    private PerfectLink perfectLink;
+    private Link link;
     private Broadcast broadcast;
     private long totalDelivered;
     private long totalSent;
@@ -40,10 +42,10 @@ public class Process implements Deliverer{
         this.pid = pid;
         this.hosts = hosts;
         this.logger = logger;
-
         this.selfHost = CommonUtils.getHost(id, hosts);
 
-        this.broadcast = new FIFOBroadcast(this, hosts, selfHost);
+        //this.broadcast = new FIFOBroadcast(this, hosts, selfHost);
+        this.link = new FairLossLink(this, selfHost.getPort());
 
         this.totalDelivered = 0;
         this.totalSent = 0;
@@ -52,8 +54,9 @@ public class Process implements Deliverer{
 
     public void startReceiving(){
         deliveryCountTimeStart = System.nanoTime();
-        broadcast.startReceiving();
-        //perfectLink.startReceiving();
+
+        //broadcast.startReceiving();
+        link.startReceiving();
     }
 
     @Override
@@ -79,13 +82,26 @@ public class Process implements Deliverer{
     }
 
     public void send(Message message, Host toHost) throws IOException {
-        perfectLink.send(message, toHost);
+        link.send(message, toHost);
 
         logger.addEvent("b " + message.getId());
         totalSent++;
 
         if(Constants.PROCESS_MESSAGING_VERBOSE) {
             System.out.println("[Process]: Sent " + message);
+        }
+    }
+
+    public void sendBatch(ArrayList<Message>batch, Host toHost) throws IOException {
+        link.sendBatch(batch, toHost);
+
+        for(Message message : batch) {
+            logger.addEvent("b " + message.getId());
+            totalSent++;
+        }
+
+        if(Constants.PROCESS_MESSAGING_VERBOSE) {
+            System.out.println("[Process]: Sent " + batch);
         }
     }
 
@@ -179,7 +195,7 @@ public class Process implements Deliverer{
         this.performanceLog = performanceLog;
     }
 
-    public void broadcastBatch(MessageBatch batch){
+    public void broadcastBatch(ArrayList<Message> batch){
 
     }
 

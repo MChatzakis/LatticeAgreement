@@ -17,22 +17,17 @@ import static cs451.Constants.RETRANSMISSION_DELAY;
  * Stubborn Link implementation
  */
 public class StubbornLink extends Link{
-
     private FairLossLink fllink;
     private Timer retransmissionTimer;
     private Set<MHPair> sent;
-
     private ArrayList<Host> hosts;
 
     public StubbornLink(Deliverer deliverer, int port, ArrayList<Host> hosts) throws SocketException {
         this.deliverer = deliverer;
         this.hosts = hosts;
-
         this.retransmissionTimer = new Timer("RetransmissionTimer");
-
         this.sent = ConcurrentHashMap.newKeySet();
         this.fllink = new FairLossLink(this,port);
-
         setTimer();
     }
 
@@ -47,15 +42,24 @@ public class StubbornLink extends Link{
 
     @Override
     public void send(Message message, Host host){
-
         sent.add(new MHPair(message, host));
-
         if(Constants.SBL_MESSAGING_VERBOSE){
             System.out.println("[Stubborn Link]: Sent " + message + " to host " + host.getId() + " sent set = " + Arrays.toString(sent.toArray()));
         }
-
-
         fllink.send(message, host);
+    }
+
+    @Override
+    public void sendBatch(ArrayList<Message> batch, Host host) {
+        for(Message message : batch){
+            sent.add(new MHPair(message, host));
+        }
+
+        if(Constants.SBL_MESSAGING_VERBOSE){
+            System.out.println("[Stubborn Link]: Sent " + batch + " to host " + host.getId() + " sent set = " + Arrays.toString(sent.toArray()));
+        }
+
+        fllink.sendBatch(batch, host);
     }
 
     @Override
@@ -65,22 +69,17 @@ public class StubbornLink extends Link{
 
     @Override
     public void deliver(Message message) {
-        if(message.isACK()){
-            receiveACK(message);
-        }
+        if(message.isACK()){ receiveACK(message); }
         else{
             if(Constants.SBL_MESSAGING_VERBOSE){
                 System.out.println("[Stubborn Link]: Delivery " + message);
             }
             deliverer.deliver(message);
-
             sendACK(message);
         }
-
     }
 
     public void retransmit(){
-
         if(Constants.SBL_MESSAGING_VERBOSE){
             System.out.println("[Stubborn Link]: 1. >>>> Retransmission sent set: " + Arrays.toString(sent.toArray()) );
         }
@@ -91,6 +90,22 @@ public class StubbornLink extends Link{
             }
 
             fllink.send(p.getMessage(), p.getHost());
+        }
+    }
+
+    public void retransmitBatch(){
+        if(Constants.SBL_MESSAGING_VERBOSE){
+            System.out.println("[Stubborn Link]: 1. >>>> Retransmission sent set: " + Arrays.toString(sent.toArray()) );
+        }
+
+        for(MHPair p : sent){
+            if(Constants.SBL_MESSAGING_VERBOSE){
+                System.out.println("[Stubborn Link]: 2. >>>> Retransmission " + p.getMessage() + " to host " + p.getHost());
+            }
+
+            ArrayList<Message>batch = new ArrayList<>();
+            batch.add(p.getMessage());
+            fllink.sendBatch(batch, p.getHost());
         }
     }
 
@@ -111,12 +126,29 @@ public class StubbornLink extends Link{
         }
     }
 
+    private void sendACKBatch(Message message){
+        try {
+            Message ackMsg = message.generateAckMessage();
+
+            int destinationID = message.getOriginalFrom();
+            Host h = CommonUtils.getHost(destinationID, hosts);
+
+            if(Constants.SBL_MESSAGING_VERBOSE){
+                System.out.println("[Stubborn Link]: Sending ACK: " + ackMsg + " to host " + h.getId());
+            }
+
+            ArrayList<Message>batch = new ArrayList<>();
+            batch.add(ackMsg);
+            fllink.sendBatch(batch, h);
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void receiveACK(Message message){
         try {
             Message originalMessage = message.generateOriginalMessage();
-            //System.out.println("get to = " + originalMessage.getTo());
             Host destHost = CommonUtils.getHost(originalMessage.getTo(), hosts);
-
             MHPair originalMSpair = new MHPair(originalMessage, destHost);
 
             if(Constants.SBL_MESSAGING_VERBOSE){
