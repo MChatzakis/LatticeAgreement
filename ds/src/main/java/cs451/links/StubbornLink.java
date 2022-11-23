@@ -34,7 +34,7 @@ public class StubbornLink extends Link{
     private void setTimer(){
         TimerTask retransmissionTask = new TimerTask() {
             public void run() {
-                retransmit();
+                retransmitBatch();
             }
         };
         retransmissionTimer.scheduleAtFixedRate(retransmissionTask, RETRANSMISSION_DELAY,RETRANSMISSION_DELAY);
@@ -75,7 +75,8 @@ public class StubbornLink extends Link{
                 System.out.println("[Stubborn Link]: Delivery " + message);
             }
             deliverer.deliver(message);
-            sendACK(message);
+            //sendACK(message);
+            sendACKBatch(message);
         }
     }
 

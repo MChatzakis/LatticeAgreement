@@ -63,6 +63,16 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
     }
 
     @Override
+    public void broadcastBatch(ArrayList<Message> batch) {
+        for(Message message : batch){
+            lsn++;
+            message.setLsn(lsn); // will change that
+        }
+
+        urb.broadcastBatch(batch);
+    }
+
+    @Override
     public void startReceiving() {
         urb.startReceiving();
     }

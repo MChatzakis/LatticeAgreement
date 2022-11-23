@@ -5,6 +5,7 @@ import cs451.structures.Deliverer;
 import cs451.broadcast.messaging.Message;
 
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,6 +26,11 @@ public class ReliableBroadcast extends Broadcast{
     }
 
     @Override
+    public void broadcastBatch(ArrayList<Message> batch) {
+        beb.broadcastBatch(batch);
+    }
+
+    @Override
     public void startReceiving() {
         beb.startReceiving();
     }
@@ -35,7 +41,9 @@ public class ReliableBroadcast extends Broadcast{
             delivered.add(message);
             deliverer.deliver(message);
 
-            beb.broadcast(message);
+            ArrayList<Message>batch = new ArrayList<>();
+            batch.add(message);
+            beb.broadcastBatch(batch);
         }
     }
 

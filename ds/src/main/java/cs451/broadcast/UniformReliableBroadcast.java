@@ -35,6 +35,14 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
     }
 
     @Override
+    public void broadcastBatch(ArrayList<Message> batch) {
+        for(Message message : batch) {
+            pending.put(new IntPair(message.getId(), message.getOriginalFrom()), message);
+        }
+        beb.broadcastBatch(batch);
+    }
+
+    @Override
     public void startReceiving() {
         beb.startReceiving();
     }
@@ -70,7 +78,9 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
             //System.out.println("{URB} :     >>>>>> 2.1. : Message did not belong to 'pending'. Added and relaying.");
             //System.out.println("{URB} :     >>>>>> 2.2. : Pending set: " + pending);
             relayMessage.setRelayFrom(self.getId());
-            beb.broadcast(relayMessage);
+            ArrayList<Message>batch = new ArrayList<>();
+            batch.add(relayMessage);
+            beb.broadcastBatch(batch);
             //System.out.println("{URB} :     >>>>>> 2.3. : Broadcasted relay as: " + relayMessage);
         }
 
@@ -89,7 +99,6 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
                 System.gc();
             }
         }
-        //maybe iterate over ack?
         //System.out.println("{URB} : >>>>>> 4. 'Delivered' : " + delivered);
     }
 

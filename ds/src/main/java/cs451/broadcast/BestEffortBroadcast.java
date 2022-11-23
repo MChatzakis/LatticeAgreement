@@ -43,6 +43,18 @@ public class BestEffortBroadcast extends Broadcast{
     }
 
     @Override
+    public void broadcastBatch(ArrayList<Message> batch) {
+        for(Host process:processes) {
+            ArrayList<Message>batchCopy = new ArrayList<>(batch);
+            for(Message m : batchCopy){
+                m.setTo(process.getId());
+            }
+
+            link.sendBatch(batchCopy, process);
+        }
+    }
+
+    @Override
     public void startReceiving() {
         link.startReceiving();
     }

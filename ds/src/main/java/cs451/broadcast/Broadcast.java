@@ -4,6 +4,7 @@ import cs451.Host;
 import cs451.structures.Deliverer;
 import cs451.broadcast.messaging.Message;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Broadcast implements Deliverer {
@@ -19,6 +20,8 @@ public abstract class Broadcast implements Deliverer {
     }
 
     public abstract void broadcast(Message message);
+
+    public abstract void broadcastBatch(ArrayList<Message>message);
 
     public abstract void startReceiving();
 

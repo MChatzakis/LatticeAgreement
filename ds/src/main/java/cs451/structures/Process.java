@@ -2,6 +2,7 @@ package cs451.structures;
 
 import cs451.Constants;
 import cs451.Host;
+import cs451.broadcast.BestEffortBroadcast;
 import cs451.broadcast.Broadcast;
 import cs451.broadcast.FIFOBroadcast;
 import cs451.broadcast.messaging.Message;
@@ -11,6 +12,7 @@ import cs451.commonUtils.Logger;
 import cs451.links.FairLossLink;
 import cs451.links.Link;
 import cs451.links.PerfectLink;
+import cs451.links.StubbornLink;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -30,10 +32,8 @@ public class Process implements Deliverer{
     private long totalDelivered;
     private long totalSent;
     private long totalBroadcasted;
-
     private long deliveryCountTimeStart;
     private long DELIVERY_MESSAGE_COUNT = 1000;
-
 
     private String performanceLog;
 
@@ -44,19 +44,19 @@ public class Process implements Deliverer{
         this.logger = logger;
         this.selfHost = CommonUtils.getHost(id, hosts);
 
-        //this.broadcast = new FIFOBroadcast(this, hosts, selfHost);
-        this.link = new FairLossLink(this, selfHost.getPort());
+        this.broadcast = new BestEffortBroadcast(this, hosts, selfHost);
+        //this.link = new PerfectLink(this, selfHost.getPort(), hosts);
 
         this.totalDelivered = 0;
         this.totalSent = 0;
-        this.performanceLog = "Not enough messages to count.";
+        this.performanceLog = "Not enough messages to count performance.";
     }
 
     public void startReceiving(){
         deliveryCountTimeStart = System.nanoTime();
 
-        //broadcast.startReceiving();
-        link.startReceiving();
+        broadcast.startReceiving();
+        //link.startReceiving();
     }
 
     @Override
@@ -196,7 +196,15 @@ public class Process implements Deliverer{
     }
 
     public void broadcastBatch(ArrayList<Message> batch){
+        broadcast.broadcastBatch(batch);
+        for(Message message : batch) {
+            logger.addEvent("b " + message.getId());
+            totalBroadcasted++;
 
+            if(Constants.PROCESS_BROADCASTING_VERBOSE) {
+                System.out.println("[Process]: Broadcast " + message);
+            }
+        }
     }
 
 }

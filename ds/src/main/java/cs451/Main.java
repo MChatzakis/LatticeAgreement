@@ -70,8 +70,8 @@ public class Main {
 
         PROCESS.startReceiving();
 
-        sendAllMessages(parser.config());
-        //broadcastAllMessages(parser.config());
+        //sendAllMessages(parser.config());
+        broadcastAllMessages(parser.config());
 
         // After a process finishes broadcasting it waits forever for the delivery of messages.
         while (true) {
@@ -93,15 +93,7 @@ public class Main {
                 return;
             }
 
-            /*for(int i=0; i<repetitions; i++){
-                Message msg2sent = new Message(PROCESS.getId(), to, id++);
-                Host host2sent = CommonUtils.getHost(to, PROCESS.getHosts());
-
-                PROCESS.send(msg2sent, host2sent);
-            }*/
-
             MessageBatch.sendBatch(repetitions, PROCESS, CommonUtils.getHost(to, PROCESS.getHosts()));
-
         }
     }
 
@@ -111,15 +103,9 @@ public class Main {
         int id=1;
         while ((st = br.readLine()) != null) {
             String [] contents = st.split(" ");
-
             int repetitions = Integer.parseInt(contents[0]); //how many messages to broadcast.
             int numberOfMessages = Integer.parseInt(contents[0]);
-            for(int i=0; i<repetitions; i++){
-                int to = -1;
-                Message msg2sent = new Message(PROCESS.getId(), to, id++);
-                PROCESS.broadcast(msg2sent);
-            }
-
+            MessageBatch.broadcastBatch(repetitions, PROCESS);
         }
     }
 
