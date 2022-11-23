@@ -52,7 +52,8 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
     public void deliver(Message m) {
         Host p = CommonUtils.getHost(m.getRelayFrom(), processes);
         IntPair messageIDs = new IntPair(m.getId(), m.getOriginalFrom());
-        //System.out.println("{URB} : >>>>>> 1. Got a message and will start 'deliver' routine " + m);
+
+        System.out.println("{URB} : >>>>>> 1. Got a message and will start 'deliver' routine " + m);
 
         if(ack.containsKey(messageIDs)){
             Set set = ack.get(messageIDs);
@@ -76,10 +77,8 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
             } catch (CloneNotSupportedException e) {
                 throw new RuntimeException(e);
             }
-
             //System.out.println("{URB} :     >>>>>> 2.1. : Message did not belong to 'pending'. Added and relaying.");
             //System.out.println("{URB} :     >>>>>> 2.2. : Pending set: " + pending);
-
             ArrayList<Message>batch = new ArrayList<>();
             batch.add(relayMessage);
             beb.broadcastBatch(batch);
@@ -95,7 +94,7 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
                 deliverer.deliver(mes);
                 delivered.add(messageData);
                 //can I remove from here? !!!! check again
-                //pending.remove(messageData);
+                pending.remove(messageData);
                 //delete also from acks
                 //ack.remove(messageData);
                 //System.gc();
@@ -106,11 +105,9 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
 
     public boolean canDeliver(IntPair p){
         int N = processes.size();
-
         //System.out.println("{URB} :         CAN-DELIVER 1. -- Message:" + m);
         //System.out.println("{URB} :         CAN-DELIVER 2. -- N:" + N);
         //System.out.println("{URB} :         CAN-DELIVER 3. -- ack:" + ack);
-
         if(!ack.containsKey(p)){
             return false;
         }
