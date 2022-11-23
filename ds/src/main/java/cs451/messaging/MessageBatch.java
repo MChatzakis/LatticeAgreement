@@ -15,14 +15,14 @@ public class MessageBatch {
         for(int i=0; i<numberOfMessages; i++){
             batch.add(new Message(process.getId(), -1, i+1));
             if(batch.size() == MESSAGES_PER_BATCH){
-                System.out.println("Batch:" + batch);
+                //System.out.println("Batch:" + batch);
                 process.broadcastBatch(batch);
                 batch.clear();
             }
         }
 
         if(batch.size() > 0){
-            System.out.println("Batch:" + batch);
+            //System.out.println("Batch:" + batch);
             process.broadcastBatch(batch);
 
         }
@@ -34,14 +34,14 @@ public class MessageBatch {
         for(int i=0; i<numberOfMessages; i++){
             batch.add(new Message(process.getId(), toHost.getId(), i+1));
             if(batch.size() == MESSAGES_PER_BATCH){
-                System.out.println("Batch:" + batch);
+                //System.out.println("Batch:" + batch);
                 process.sendBatch(batch, toHost);
                 batch.clear();
             }
         }
 
         if(batch.size() > 0){
-            System.out.println("Batch:" + batch);
+            //System.out.println("Batch:" + batch);
             process.sendBatch(batch, toHost);
         }
     }

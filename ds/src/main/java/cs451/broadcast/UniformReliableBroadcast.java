@@ -39,6 +39,7 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
         for(Message message : batch) {
             pending.put(new IntPair(message.getId(), message.getOriginalFrom()), message);
         }
+
         beb.broadcastBatch(batch);
     }
 
@@ -71,13 +72,14 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
             Message relayMessage = null;
             try {
                 relayMessage = (Message) m.clone();
+                relayMessage.setRelayFrom(self.getId());
             } catch (CloneNotSupportedException e) {
                 throw new RuntimeException(e);
             }
 
             //System.out.println("{URB} :     >>>>>> 2.1. : Message did not belong to 'pending'. Added and relaying.");
             //System.out.println("{URB} :     >>>>>> 2.2. : Pending set: " + pending);
-            relayMessage.setRelayFrom(self.getId());
+
             ArrayList<Message>batch = new ArrayList<>();
             batch.add(relayMessage);
             beb.broadcastBatch(batch);
@@ -93,10 +95,10 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
                 deliverer.deliver(mes);
                 delivered.add(messageData);
                 //can I remove from here? !!!! check again
-                pending.remove(messageData);
+                //pending.remove(messageData);
                 //delete also from acks
-                ack.remove(messageData);
-                System.gc();
+                //ack.remove(messageData);
+                //System.gc();
             }
         }
         //System.out.println("{URB} : >>>>>> 4. 'Delivered' : " + delivered);
