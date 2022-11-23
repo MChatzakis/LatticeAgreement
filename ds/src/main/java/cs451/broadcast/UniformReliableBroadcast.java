@@ -53,7 +53,7 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
         Host p = CommonUtils.getHost(m.getRelayFrom(), processes);
         IntPair messageIDs = new IntPair(m.getId(), m.getOriginalFrom());
 
-        System.out.println("{URB} : >>>>>> 1. Got a message and will start 'deliver' routine " + m);
+        //System.out.println("{URB} : >>>>>> 1. Got a message and will start 'deliver' routine " + m);
 
         if(ack.containsKey(messageIDs)){
             Set set = ack.get(messageIDs);

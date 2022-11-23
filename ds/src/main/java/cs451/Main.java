@@ -69,8 +69,8 @@ public class Main {
 
         PROCESS.startReceiving();
 
-        sendAllMessages(parser.config());
-        //broadcastAllMessages(parser.config());
+        //sendAllMessages(parser.config());
+        broadcastAllMessages(parser.config());
 
         // After a process finishes broadcasting it waits forever for the delivery of messages.
         while (true) {

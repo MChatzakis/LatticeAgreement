@@ -2,10 +2,7 @@ package cs451.structures;
 
 import cs451.Constants;
 import cs451.Host;
-import cs451.broadcast.BestEffortBroadcast;
-import cs451.broadcast.Broadcast;
-import cs451.broadcast.ReliableBroadcast;
-import cs451.broadcast.UniformReliableBroadcast;
+import cs451.broadcast.*;
 import cs451.links.PerfectLink;
 import cs451.messaging.Message;
 import cs451.commonUtils.CommonUtils;
@@ -42,8 +39,8 @@ public class Process implements Deliverer{
         this.logger = logger;
         this.selfHost = CommonUtils.getHost(id, hosts);
 
-        //this.broadcast = new BestEffortBroadcast(this, hosts,selfHost);
-        this.link = new PerfectLink(this, selfHost.getPort(), hosts);
+        this.broadcast = new FIFOBroadcast(this, hosts,selfHost);
+        //this.link = new PerfectLink(this, selfHost.getPort(), hosts);
 
         this.totalDelivered = 0;
         this.totalSent = 0;
@@ -53,8 +50,8 @@ public class Process implements Deliverer{
     public void startReceiving(){
         deliveryCountTimeStart = System.nanoTime();
 
-        //broadcast.startReceiving();
-        link.startReceiving();
+        broadcast.startReceiving();
+        //link.startReceiving();
     }
 
     @Override

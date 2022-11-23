@@ -7,10 +7,13 @@ import cs451.messaging.Message;
 import java.net.SocketException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class FIFOBroadcast extends Broadcast implements Deliverer {
     private UniformReliableBroadcast urb;
-    private Set<Message> pending;
+    //private Set<Message> pending;
+    private ConcurrentLinkedQueue<Message> pending; //synchronized
+
     private Map<Integer, Integer> next;
     private int lsn;
 
@@ -20,7 +23,7 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
         this.urb = new UniformReliableBroadcast(this, processes, self);
         this.lsn = 0;
 
-        this.pending = ConcurrentHashMap.newKeySet();
+        this.pending = new ConcurrentLinkedQueue<>();//ConcurrentHashMap.newKeySet();
 
         this.next = new ConcurrentHashMap<>();
         for(Host h : processes){
@@ -37,7 +40,7 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
             Message m = pendingIterator.next();
 
             int originalSenderHostId = m.getOriginalFrom();
-            int snp = m.getId();//m.getLsn();
+            int snp = m.getId();
             int nextNum = next.get(originalSenderHostId);
 
             if(nextNum == snp){
@@ -48,6 +51,7 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
                 pendingIterator = pending.iterator(); //start over
             }
         }
+
     }
 
     @Override
@@ -58,7 +62,7 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
     @Override
     public void broadcast(Message message) {
         lsn++;
-        message.setId(lsn);//setLsn(lsn);
+        message.setId(lsn);
         urb.broadcast(message);
     }
 
@@ -66,7 +70,7 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
     public void broadcastBatch(ArrayList<Message> batch) {
         for(Message message : batch){
             lsn++;
-            message.setId(lsn);//setLsn(lsn); // will change that
+            message.setId(lsn);
         }
 
         urb.broadcastBatch(batch);
