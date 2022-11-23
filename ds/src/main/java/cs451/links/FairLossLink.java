@@ -37,10 +37,11 @@ public class FairLossLink extends Link{
 
     @Override
     public void send(Message message, Host host){
-        /*if(Constants.FLL_MESSAGING_VERBOSE){
+        if(Constants.FLL_MESSAGING_VERBOSE){
             System.out.println("[FairLossLink]: Sent " + message);
         }
-        sender.send(message, host.getIp(), host.getPort());*/
+        //new LightUDPSender().send(message, host.getIp(), host.getPort());
+        receiver.send(message, host.getIp(), host.getPort());
     }
 
     @Override
@@ -49,7 +50,9 @@ public class FairLossLink extends Link{
             System.out.println("[FairLossLink]: Sent " + batch);
         }
 
-        new LightUDPSender().sendBatch(batch, host.getIp(), host.getPort());
+        //new LightUDPSender().sendBatch(batch, host.getIp(), host.getPort());
+        //sender.sendBatch(batch, host.getIp(), host.getPort());
+        receiver.sendBatch(batch, host.getIp(), host.getPort());
     }
 
     @Override

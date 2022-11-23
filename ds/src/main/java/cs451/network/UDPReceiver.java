@@ -5,9 +5,9 @@ import cs451.commonUtils.CommonUtils;
 import cs451.structures.Deliverer;
 import cs451.messaging.Message;
 
-import java.io.ByteArrayInputStream;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.net.DatagramPacket;
+import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 
@@ -79,6 +79,42 @@ public class UDPReceiver extends UDPInstance implements Runnable{
         }
     }
 
+    public void send(Message message, String toIP, int toPort) {
+        try {
+            byte [] data2sent = CommonUtils.getBytesOfObject(message);
+            byte [] compressedData2sent = CommonUtils.compressByteArray(data2sent);
 
+            DatagramPacket packet2send = new DatagramPacket(compressedData2sent, compressedData2sent.length, InetAddress.getByName(toIP), toPort);
+
+            if(Constants.UDP_MESSAGING_VERBOSE){
+                System.out.println("[UDPSender]: Sent " + message);
+            }
+
+            socket.send(packet2send);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendBatch(ArrayList<Message>batch, String toIP, int toPort){
+        try {
+            ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+            ObjectOutput oo = new ObjectOutputStream(bStream);
+            oo.writeObject(batch);
+
+            byte [] data2sent = bStream.toByteArray();
+            byte [] compressedData2sent = CommonUtils.compressByteArray(data2sent);
+
+            DatagramPacket packet2send = new DatagramPacket(compressedData2sent, compressedData2sent.length, InetAddress.getByName(toIP), toPort);
+
+            if(Constants.UDP_MESSAGING_VERBOSE){
+                System.out.println("[UDPSender]: Sent " + batch);
+            }
+
+            socket.send(packet2send);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

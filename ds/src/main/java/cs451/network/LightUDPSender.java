@@ -37,7 +37,6 @@ public class LightUDPSender {
             }
 
             socket.send(packet2send);
-
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -61,8 +60,10 @@ public class LightUDPSender {
             }
 
             socket.send(packet2send);
+            socket.close();
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println("Exception in Light Sender: Could not send the message.");
         }
     }
 }
