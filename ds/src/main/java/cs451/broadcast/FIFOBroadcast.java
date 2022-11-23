@@ -2,7 +2,7 @@ package cs451.broadcast;
 
 import cs451.Host;
 import cs451.structures.Deliverer;
-import cs451.broadcast.messaging.Message;
+import cs451.messaging.Message;
 
 import java.net.SocketException;
 import java.util.*;
@@ -37,7 +37,7 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
             Message m = pendingIterator.next();
 
             int originalSenderHostId = m.getOriginalFrom();
-            int snp = m.getLsn();
+            int snp = m.getId();//m.getLsn();
             int nextNum = next.get(originalSenderHostId);
 
             if(nextNum == snp){
@@ -58,7 +58,7 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
     @Override
     public void broadcast(Message message) {
         lsn++;
-        message.setLsn(lsn);
+        message.setId(lsn);//setLsn(lsn);
         urb.broadcast(message);
     }
 
@@ -66,7 +66,7 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
     public void broadcastBatch(ArrayList<Message> batch) {
         for(Message message : batch){
             lsn++;
-            message.setLsn(lsn); // will change that
+            message.setId(lsn);//setLsn(lsn); // will change that
         }
 
         urb.broadcastBatch(batch);

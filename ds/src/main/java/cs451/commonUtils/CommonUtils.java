@@ -1,7 +1,7 @@
 package cs451.commonUtils;
 
 import cs451.Host;
-import cs451.broadcast.messaging.Message;
+import cs451.messaging.Message;
 
 import java.io.*;
 import java.util.LinkedList;

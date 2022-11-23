@@ -1,10 +1,9 @@
-package cs451.broadcast.messaging;
+package cs451.messaging;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 import cs451.Host;
-import cs451.structures.Process;
 
 
 public class MessageBatch {

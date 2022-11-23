@@ -1,4 +1,4 @@
-package cs451.broadcast.messaging;
+package cs451.messaging;
 
 import java.io.Serializable;
 
@@ -11,7 +11,7 @@ public class Message implements Serializable, Cloneable {
     private int originalFrom;
     private int to;
     private boolean isACK;
-    private int lsn;
+    //private int lsn;
 
     public Message(int from, int to, /*String data,*/ int id){
         this.relayFrom = from;
@@ -20,7 +20,7 @@ public class Message implements Serializable, Cloneable {
         this.id = id;
 
         this.isACK = false;
-        this.lsn = 0;
+        //this.lsn = 0;
     }
 
     public int getRelayFrom() {
@@ -96,7 +96,7 @@ public class Message implements Serializable, Cloneable {
     }
 
     public String toString(){
-        return "(id="+id+",or="+originalFrom+",relayFrom="+ relayFrom +",to="+to+",ACK="+isACK+",lsn="+lsn+")";
+        return "(id="+id+",or="+originalFrom+",relayFrom="+ relayFrom +",to="+to+",ACK="+isACK+/*",lsn="+lsn+*/")";
     }
 
     public int getOriginalFrom() {
@@ -107,12 +107,12 @@ public class Message implements Serializable, Cloneable {
         this.originalFrom = originalFrom;
     }
 
-    public int getLsn() {
+    /*public int getLsn() {
         return lsn;
     }
 
     public void setLsn(int lsn) {
         this.lsn = lsn;
-    }
+    }*/
 
 }
