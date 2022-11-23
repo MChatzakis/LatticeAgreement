@@ -1,9 +1,8 @@
 package cs451;
 
-import cs451.broadcast.messaging.MessageBatch;
+import cs451.messaging.MessageBatch;
 import cs451.commonUtils.CommonUtils;
 import cs451.commonUtils.Logger;
-import cs451.broadcast.messaging.Message;
 import cs451.structures.Process;
 
 import java.io.BufferedReader;

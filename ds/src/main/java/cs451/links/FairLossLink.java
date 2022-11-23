@@ -5,7 +5,7 @@ import cs451.Host;
 import cs451.network.UDPReceiver;
 import cs451.network.UDPSender;
 import cs451.structures.Deliverer;
-import cs451.broadcast.messaging.Message;
+import cs451.messaging.Message;
 
 import java.net.SocketException;
 import java.util.ArrayList;
