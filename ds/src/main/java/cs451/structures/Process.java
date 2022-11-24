@@ -76,17 +76,6 @@ public class Process implements Deliverer{
         }
     }
 
-    public void send(Message message, Host toHost) throws IOException {
-        link.send(message, toHost);
-
-        logger.addEvent("b " + message.getId());
-        totalSent++;
-
-        if(Constants.PROCESS_MESSAGING_VERBOSE) {
-            System.out.println("[Process]: Sent " + message);
-        }
-    }
-
     public void sendBatch(ArrayList<Message>batch, Host toHost) throws IOException {
         link.sendBatch(batch, toHost);
 
