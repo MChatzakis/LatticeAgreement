@@ -10,7 +10,7 @@ import java.util.List;
 public abstract class Broadcast implements Deliverer {
 
     protected Deliverer deliverer;
-    protected List<Host>processes; //Hosts and Processes mean the same
+    protected List<Host>processes;
     protected Host self;
 
     public Broadcast(Deliverer deliverer, List<Host>processes, Host self){
