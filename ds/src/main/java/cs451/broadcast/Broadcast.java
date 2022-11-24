@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Broadcast implements Deliverer {
-
     protected Deliverer deliverer;
     protected List<Host>processes;
     protected Host self;
@@ -19,7 +18,7 @@ public abstract class Broadcast implements Deliverer {
         this.self = self;
     }
 
-    public abstract void broadcast(Message message);
+    //public abstract void broadcast(Message message);
 
     public abstract void broadcastBatch(ArrayList<Message>message);
 

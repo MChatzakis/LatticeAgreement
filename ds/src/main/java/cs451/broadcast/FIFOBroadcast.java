@@ -57,12 +57,12 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
         urb.freeResources();
     }
 
-    @Override
+    /*@Override
     public void broadcast(Message message) {
         lsn++;
         message.setId(lsn);
         urb.broadcast(message);
-    }
+    }*/
 
     @Override
     public void broadcastBatch(ArrayList<Message> batch) {

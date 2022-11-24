@@ -100,18 +100,6 @@ public class Process implements Deliverer{
         }
     }
 
-    public void broadcast(Message message){
-        broadcast.broadcast(message);
-
-        logger.addEvent("b " + message.getId());
-        totalBroadcasted++;
-
-        if(Constants.PROCESS_BROADCASTING_VERBOSE) {
-            System.out.println("[Process]: Broadcast " + message);
-        }
-
-    }
-
     public int getId() {
         return id;
     }

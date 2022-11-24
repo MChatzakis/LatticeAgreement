@@ -20,7 +20,7 @@ public class BestEffortBroadcast extends Broadcast{
         link = new PerfectLink(this, self.getPort(), new ArrayList<>(processes));
     }
 
-    @Override
+    /*@Override
     public void broadcast(Message message) {
         for(Host process:processes) {
             Message m = null;
@@ -38,7 +38,7 @@ public class BestEffortBroadcast extends Broadcast{
 
             link.send(m, process);
         }
-    }
+    }*/
 
     @Override
     public void broadcastBatch(ArrayList<Message> batch) {

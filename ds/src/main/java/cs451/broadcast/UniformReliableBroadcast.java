@@ -28,12 +28,12 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
         this.delivered = ConcurrentHashMap.newKeySet();
     }
 
-    @Override
+    /*@Override
     public void broadcast(Message message) {
         pending.put(new MHIDPair(message.getId(),message.getOriginalFrom()), message);
         beb.broadcast(message);
     }
-
+    */
     @Override
     public void broadcastBatch(ArrayList<Message> batch) {
         for(Message message : batch) {
