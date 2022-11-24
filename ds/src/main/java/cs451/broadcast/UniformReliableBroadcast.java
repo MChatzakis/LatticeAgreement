@@ -11,10 +11,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class UniformReliableBroadcast extends Broadcast implements Deliverer {
-
-    /**
-     * Optimizations: When possible, we only keep the Integer IDs representations of the data.
-     */
     private BestEffortBroadcast beb;
     private Map<MHIDPair, Set<Byte>> ack; //int pair == <messageId, originalSenderId>, Integer == hostID
     private Map<MHIDPair, Message> pending;
@@ -28,12 +24,6 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
         this.delivered = ConcurrentHashMap.newKeySet();
     }
 
-    /*@Override
-    public void broadcast(Message message) {
-        pending.put(new MHIDPair(message.getId(),message.getOriginalFrom()), message);
-        beb.broadcast(message);
-    }
-    */
     @Override
     public void broadcastBatch(ArrayList<Message> batch) {
         for(Message message : batch) {

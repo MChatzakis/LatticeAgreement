@@ -36,28 +36,6 @@ public class CommonUtils {
         return null;
     }
 
-    public static Queue<Message> generateMessageQueue(String configFile, int processID) throws IOException {
-        Queue<Message>messageQueue = new LinkedList<>();
-
-        // Creating an object of BufferedReader class
-        BufferedReader br = new BufferedReader(new FileReader(new File(configFile)));
-
-        String st;
-        int id=1;
-        while ((st = br.readLine()) != null) {
-            String [] contents = st.split(" ");
-
-            int repetitions = Integer.parseInt(contents[0]);
-            int to = Integer.parseInt(contents[1]);
-
-            for(int i=0; i<repetitions; i++){
-                messageQueue.add(new Message((byte) processID, (byte) to, id++));
-            }
-
-        }
-        return messageQueue;
-    }
-
     /**
      * Credits to stackOverflow :)
      * @param obj
@@ -84,7 +62,6 @@ public class CommonUtils {
         ObjectInputStream is = new ObjectInputStream(in);
         return is.readObject();
     }
-
 
     /**
      * Credits to stackOverflow :)
@@ -125,10 +102,8 @@ public class CommonUtils {
         return byteArrayOutputStream.toByteArray();
     }
 
-
     public static void createEmptyFile(String filename) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
         writer.close();
     }
-
 }

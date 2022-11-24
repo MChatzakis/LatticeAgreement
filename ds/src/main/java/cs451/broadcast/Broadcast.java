@@ -18,8 +18,6 @@ public abstract class Broadcast implements Deliverer {
         this.self = self;
     }
 
-    //public abstract void broadcast(Message message);
-
     public abstract void broadcastBatch(ArrayList<Message>message);
 
     public abstract void startReceiving();

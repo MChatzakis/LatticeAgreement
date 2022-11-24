@@ -20,26 +20,6 @@ public class BestEffortBroadcast extends Broadcast{
         link = new PerfectLink(this, self.getPort(), new ArrayList<>(processes));
     }
 
-    /*@Override
-    public void broadcast(Message message) {
-        for(Host process:processes) {
-            Message m = null;
-            try {
-                m = (Message) message.clone();
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
-            }
-
-            m.setTo(process.getId());
-
-            if(BEB_MESSAGING_VERBOSE){
-                System.out.println("[BEB] Process" + self.getId() + " sent message " + m + " to " + process.getId());
-            }
-
-            link.send(m, process);
-        }
-    }*/
-
     @Override
     public void broadcastBatch(ArrayList<Message> batch) {
         for(Host process:processes) {

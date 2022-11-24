@@ -20,12 +20,6 @@ public class ReliableBroadcast extends Broadcast{
         this.delivered = ConcurrentHashMap.newKeySet();
     }
 
-    /*@Override
-    public void broadcast(Message message) {
-        beb.broadcast(message);
-    }
-    */
-
     @Override
     public void broadcastBatch(ArrayList<Message> batch) {
         beb.broadcastBatch(batch);
