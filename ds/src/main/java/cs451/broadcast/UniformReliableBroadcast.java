@@ -12,8 +12,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class UniformReliableBroadcast extends Broadcast implements Deliverer {
     private BestEffortBroadcast beb;
-    //private Map<MHIDPair, Byte> ack;
-    private Map<MHIDPair, Set<Byte>> ack; //int pair == <messageId, originalSenderId>, Integer == hostID
+    private Map<MHIDPair, Byte> ack;
+    //private Map<MHIDPair, Set<Byte>> ack; //int pair == <messageId, originalSenderId>, Integer == hostID
     private Map<MHIDPair, Message> pending;
     private Set<MHIDPair> delivered;
 
@@ -46,16 +46,16 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
         //System.out.println("{URB} : >>>>>> 1. Got a message and will start 'deliver' routine " + m);
 
         if(ack.containsKey(messageIDs)){
-            Set set = ack.get(messageIDs);
-            set.add(p.getId());
-            //Byte num = ack.get(messageIDs);
-            //ack.put(messageIDs, (byte) (num+1));
+            //Set set = ack.get(messageIDs);
+            //set.add(p.getId());
+            Byte num = ack.get(messageIDs);
+            ack.put(messageIDs, (byte) (num+1));
         }
         else{
-            Set set = new HashSet<Host>();
-            set.add(p.getId());
-            ack.put(messageIDs, set);
-            //ack.put(messageIDs, (byte) 1);
+            //Set set = new HashSet<Host>();
+            //set.add(p.getId());
+            //ack.put(messageIDs, set);
+            ack.put(messageIDs, (byte) 1);
         }
 
         //System.out.println("{URB} : >>>>>> 2. Processed the ack structure. Current ack: " + ack);
@@ -106,7 +106,7 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
             return false;
         }
 
-        return ack.get(p).size() > N/2.0;
+        return ack.get(p) > N/2.0;
     }
 
     @Override

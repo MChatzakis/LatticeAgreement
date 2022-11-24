@@ -20,8 +20,8 @@ import static cs451.Constants.RETRANSMISSION_DELAY;
 public class StubbornLink extends Link{
     private FairLossLink fllink;
     private Timer retransmissionTimer;
-    //private Set<MHPair> sent; //!gotta need to change this shit
-    private Set<MHIDPair> sent;
+    private Set<MHPair> sent; //!gotta need to change this shit
+    //private Set<MHIDPair> sent;
     private ArrayList<Host> hosts;
     private byte selfID;
 
@@ -47,8 +47,8 @@ public class StubbornLink extends Link{
     @Override
     public void sendBatch(ArrayList<Message> batch, Host host) {
         for(Message message : batch){
-            //sent.add(new MHPair(message, host.getId())); //id, destination
-            sent.add(new MHIDPair(message.getId(), host.getId()));
+            sent.add(new MHPair(message, host.getId())); //id, destination
+            //sent.add(new MHIDPair(message.getId(), host.getId()));
         }
 
         if(Constants.SBL_MESSAGING_VERBOSE){
@@ -80,16 +80,16 @@ public class StubbornLink extends Link{
             System.out.println("[Stubborn Link]: 1. >>>> Retransmission sent set: " + Arrays.toString(sent.toArray()) );
         }
 
-        //for(MHPair p : sent){
-        for(MHIDPair p : sent){
+        for(MHPair p : sent){
+        //for(MHIDPair p : sent){
             if(Constants.SBL_MESSAGING_VERBOSE){
                 //System.out.println("[Stubborn Link]: 2. >>>> Retransmission " + p.getMessage() + " to host " + p.getHostID());
             }
 
             ArrayList<Message>batch = new ArrayList<>();
-            Message m = new Message(selfID, p.getHostID(), p.getMessageID());
-            //batch.add(p.getMessage());
-            batch.add(m);
+            //Message m = new Message(selfID, p.getHostID(), p.getMessageID());
+            batch.add(p.getMessage());
+            //batch.add(m);
             fllink.sendBatch(batch, CommonUtils.getHost(p.getHostID(), hosts));
         }
     }
@@ -118,8 +118,8 @@ public class StubbornLink extends Link{
         try {
             Message originalMessage = message.generateOriginalMessage();
             Host destHost = CommonUtils.getHost(originalMessage.getTo(), hosts);
-            //MHPair originalMSpair = new MHPair(originalMessage, destHost.getId());
-            MHIDPair originalMSpair = new MHIDPair(originalMessage.getId(), destHost.getId()); //elpizw?
+            MHPair originalMSpair = new MHPair(originalMessage, destHost.getId());
+            //MHIDPair originalMSpair = new MHIDPair(originalMessage.getId(), destHost.getId()); //elpizw?!
 
             if(Constants.SBL_MESSAGING_VERBOSE){
                 System.out.print("[Stubborn Link]: Received ACK: " + message);
