@@ -22,7 +22,7 @@ public class Constants {
     public static final int MAX_PACKET_SIZE = 65535; //!need to recheck that
 
     //Retrans
-    public static final long RETRANSMISSION_DELAY = 1000L;
+    public static final long RETRANSMISSION_DELAY = 5000L;
 
     //DEBUG
     public static final boolean UDP_MESSAGING_VERBOSE = false;

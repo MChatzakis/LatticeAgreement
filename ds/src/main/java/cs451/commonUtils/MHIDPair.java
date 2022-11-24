@@ -3,7 +3,20 @@ package cs451.commonUtils;
 
 public class MHIDPair {
     private int messageID;
+
+    public byte getHostID() {
+        return hostID;
+    }
+
     private byte hostID;
+
+    public int getMessageID() {
+        return messageID;
+    }
+
+    public void setMessageID(int messageID) {
+        this.messageID = messageID;
+    }
 
     public MHIDPair(int messageID, byte hostID){
         this.messageID = messageID;

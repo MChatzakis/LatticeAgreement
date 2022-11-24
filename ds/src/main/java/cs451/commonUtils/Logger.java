@@ -13,13 +13,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Logger class saves the send and delivery events of a process
  */
 public class Logger {
-    private static int FLUSH_LIMIT=1000;
+    private static int FLUSH_LIMIT=50;
     private String outputFilename;
     private ConcurrentLinkedQueue<String> submittedEvents; //synchronized
 
     public Logger(String outputFilename){
         this.outputFilename = outputFilename;
-
         submittedEvents = new ConcurrentLinkedQueue<>();
     }
 

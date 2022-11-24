@@ -32,14 +32,6 @@ public class FairLossLink extends Link{
     }
 
     @Override
-    public void send(Message message, Host host){
-        if(Constants.FLL_MESSAGING_VERBOSE){
-            System.out.println("[FairLossLink]: Sent " + message);
-        }
-        receiver.send(message, host.getIp(), host.getPort());
-    }
-
-    @Override
     public void sendBatch(ArrayList<Message> batch, Host host) {
         if(Constants.FLL_MESSAGING_VERBOSE){
             System.out.println("[FairLossLink]: Sent " + batch);

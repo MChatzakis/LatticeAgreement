@@ -2,6 +2,7 @@ package cs451.links;
 
 import cs451.Constants;
 import cs451.Host;
+import cs451.commonUtils.MHIDPair;
 import cs451.structures.Deliverer;
 import cs451.messaging.Message;
 
@@ -14,21 +15,15 @@ import java.util.concurrent.ConcurrentHashMap;
  * Perfect Link implementation
  */
 public class PerfectLink extends Link{
-    private Set<Message> deliveredMessages;
+    //private Set<Message> deliveredMessages;
+    private Set<MHIDPair> deliveredMessages;
+
     private StubbornLink slink;
 
-    public PerfectLink(Deliverer deliverer, int port, ArrayList<Host> hosts) throws SocketException {
+    public PerfectLink(Deliverer deliverer, int port, ArrayList<Host> hosts, byte selfID) throws SocketException {
         this.deliverer = deliverer;
-        this.slink = new StubbornLink(this, port, hosts);
+        this.slink = new StubbornLink(this, port, hosts, selfID);
         this.deliveredMessages = ConcurrentHashMap.newKeySet();
-    }
-
-    @Override
-    public void send(Message message, Host host){
-        if(Constants.PL_MESSAGING_VERBOSE){
-            System.out.println("[Perfect Link]: Sent " + message);
-        }
-        slink.send(message, host);
     }
 
     @Override
@@ -51,8 +46,9 @@ public class PerfectLink extends Link{
             System.out.println("[Perfect Link]: 2. Current set " + deliveredMessages);
         }
 
-        if(!deliveredMessages.contains(message)){
-            deliveredMessages.add(message);
+        MHIDPair p = new MHIDPair(message.getId(), message.getOriginalFrom());
+        if(!deliveredMessages.contains(p)){
+            deliveredMessages.add(p);
 
             if(Constants.PL_MESSAGING_VERBOSE) {
                 System.out.println("[Perfect Link]: 3. Delivery " + message);
