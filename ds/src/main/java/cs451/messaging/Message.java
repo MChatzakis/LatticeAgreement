@@ -9,18 +9,16 @@ public class Message implements Serializable, Cloneable {
     private int id;
     private int relayFrom;
     private int originalFrom;
-    private int to;
+    private byte to;
     private boolean isACK;
-    //private int lsn;
 
-    public Message(int from, int to, /*String data,*/ int id){
+    public Message(int from, int to, int id){
         this.relayFrom = from;
         this.originalFrom = from;
         this.to = to;
         this.id = id;
 
         this.isACK = false;
-        //this.lsn = 0;
     }
 
     public int getRelayFrom() {

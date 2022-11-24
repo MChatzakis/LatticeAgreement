@@ -11,8 +11,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class FIFOBroadcast extends Broadcast implements Deliverer {
     private UniformReliableBroadcast urb;
-    //private Set<Message> pending;
-    private ConcurrentLinkedQueue<Message> pending; //synchronized
+    private Set<Message> pending;
+    //private ConcurrentLinkedQueue<Message> pending; //synchronized
 
     private Map<Integer, Integer> next;
     private int lsn;
@@ -23,7 +23,7 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
         this.urb = new UniformReliableBroadcast(this, processes, self);
         this.lsn = 0;
 
-        this.pending = new ConcurrentLinkedQueue<>();//ConcurrentHashMap.newKeySet();
+        this.pending = ConcurrentHashMap.newKeySet();
 
         this.next = new ConcurrentHashMap<>();
         for(Host h : processes){

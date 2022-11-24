@@ -93,10 +93,11 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
                 //System.out.println("\"{URB} :     >>>>>> 3.2. : Message not inside 'contains' variable and canDeliver. Delivering " + mes);
                 deliverer.deliver(mes);
                 delivered.add(messageData);
+
                 //can I remove from here? !!!! check again
                 pending.remove(messageData);
                 //delete also from acks
-                //ack.remove(messageData);
+                ack.remove(messageData);
                 //System.gc();
             }
         }

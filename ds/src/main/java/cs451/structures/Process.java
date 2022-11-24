@@ -39,7 +39,7 @@ public class Process implements Deliverer{
         this.logger = logger;
         this.selfHost = CommonUtils.getHost(id, hosts);
 
-        this.broadcast = new FIFOBroadcast(this, hosts,selfHost);
+        this.broadcast = new UniformReliableBroadcast(this, hosts,selfHost);
         //this.link = new PerfectLink(this, selfHost.getPort(), hosts);
 
         this.totalDelivered = 0;
