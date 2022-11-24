@@ -42,7 +42,7 @@ public class StubbornLink extends Link{
 
     @Override
     public void send(Message message, Host host){
-        sent.add(new MHPair(message, host));
+        sent.add(new MHPair(message, host.getId()));
         if(Constants.SBL_MESSAGING_VERBOSE){
             System.out.println("[Stubborn Link]: Sent " + message + " to host " + host.getId() + " sent set = " + Arrays.toString(sent.toArray()));
         }
@@ -52,7 +52,7 @@ public class StubbornLink extends Link{
     @Override
     public void sendBatch(ArrayList<Message> batch, Host host) {
         for(Message message : batch){
-            sent.add(new MHPair(message, host));
+            sent.add(new MHPair(message, host.getId()));
         }
 
         if(Constants.SBL_MESSAGING_VERBOSE){
@@ -75,13 +75,12 @@ public class StubbornLink extends Link{
                 System.out.println("[Stubborn Link]: Delivery " + message);
             }
             deliverer.deliver(message);
-            //sendACK(message);
             sendACKBatch(message);
         }
     }
 
     public void retransmit(){
-        if(Constants.SBL_MESSAGING_VERBOSE){
+        /*if(Constants.SBL_MESSAGING_VERBOSE){
             System.out.println("[Stubborn Link]: 1. >>>> Retransmission sent set: " + Arrays.toString(sent.toArray()) );
         }
 
@@ -91,7 +90,7 @@ public class StubbornLink extends Link{
             }
 
             fllink.send(p.getMessage(), p.getHost());
-        }
+        }*/
     }
 
     public void retransmitBatch(){
@@ -101,12 +100,12 @@ public class StubbornLink extends Link{
 
         for(MHPair p : sent){
             if(Constants.SBL_MESSAGING_VERBOSE){
-                System.out.println("[Stubborn Link]: 2. >>>> Retransmission " + p.getMessage() + " to host " + p.getHost());
+                System.out.println("[Stubborn Link]: 2. >>>> Retransmission " + p.getMessage() + " to host " + p.getHostID());
             }
 
             ArrayList<Message>batch = new ArrayList<>();
             batch.add(p.getMessage());
-            fllink.sendBatch(batch, p.getHost());
+            fllink.sendBatch(batch, CommonUtils.getHost(p.getHostID(), hosts));
         }
     }
 
@@ -114,7 +113,7 @@ public class StubbornLink extends Link{
         try {
             Message ackMsg = message.generateAckMessage();
 
-            int destinationID = message.getOriginalFrom();
+            byte destinationID = message.getOriginalFrom();
             Host h = CommonUtils.getHost(destinationID, hosts);
 
             if(Constants.SBL_MESSAGING_VERBOSE){
@@ -150,7 +149,7 @@ public class StubbornLink extends Link{
         try {
             Message originalMessage = message.generateOriginalMessage();
             Host destHost = CommonUtils.getHost(originalMessage.getTo(), hosts);
-            MHPair originalMSpair = new MHPair(originalMessage, destHost);
+            MHPair originalMSpair = new MHPair(originalMessage, destHost.getId());
 
             if(Constants.SBL_MESSAGING_VERBOSE){
                 System.out.print("[Stubborn Link]: Received ACK: " + message);

@@ -22,9 +22,7 @@ public class BestEffortBroadcast extends Broadcast{
 
     @Override
     public void broadcast(Message message) {
-
         for(Host process:processes) {
-
             Message m = null;
             try {
                 m = (Message) message.clone();
@@ -32,7 +30,7 @@ public class BestEffortBroadcast extends Broadcast{
                 throw new RuntimeException(e);
             }
 
-            m.setTo((byte) process.getId());
+            m.setTo(process.getId());
 
             if(BEB_MESSAGING_VERBOSE){
                 System.out.println("[BEB] Process" + self.getId() + " sent message " + m + " to " + process.getId());
@@ -54,10 +52,9 @@ public class BestEffortBroadcast extends Broadcast{
                     throw new RuntimeException(e);
                 }
 
-                m.setTo((byte) process.getId());
+                m.setTo(process.getId());
                 batchCopy.add(m);
             }
-
             link.sendBatch(batchCopy, process);
         }
     }

@@ -8,7 +8,15 @@ import cs451.messaging.Message;
  */
 public class MHPair {
     private Message message;
-    private Host host;
+    private byte hostID;
+
+    public byte getHostID() {
+        return hostID;
+    }
+
+    public void setHostID(byte hostID) {
+        this.hostID = hostID;
+    }
 
     public Message getMessage() {
         return message;
@@ -18,17 +26,10 @@ public class MHPair {
         this.message = message;
     }
 
-    public Host getHost() {
-        return host;
-    }
 
-    public void setHost(Host host) {
-        this.host = host;
-    }
-
-    public MHPair(Message message, Host host) {
+    public MHPair(Message message, Byte hostID) {
         this.message = message;
-        this.host = host;
+        this.hostID = hostID;
     }
 
     public boolean equals(Object obj)
@@ -41,18 +42,18 @@ public class MHPair {
         MHPair otherPair = (MHPair) obj;
         return (
                 this.message.equals(otherPair.message) &&
-                this.host.equals(otherPair.host)
+                this.hostID == otherPair.hostID
                 );
     }
 
     @Override
     public int hashCode(){
-        return this.message.hashCode() * this.host.hashCode();
+        return this.message.hashCode() * this.hostID;
     }
 
 
     public String toString(){
-        return host.toString() + " " + message.toString();
+        return hostID + " " + message.toString();
     }
 
 }
