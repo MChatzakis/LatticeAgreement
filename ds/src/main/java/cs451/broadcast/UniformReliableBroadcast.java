@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class UniformReliableBroadcast extends Broadcast implements Deliverer {
     private BestEffortBroadcast beb;
+    //private Map<MHIDPair, Byte> ack;
     private Map<MHIDPair, Set<Byte>> ack; //int pair == <messageId, originalSenderId>, Integer == hostID
     private Map<MHIDPair, Message> pending;
     private Set<MHIDPair> delivered;
@@ -29,7 +30,6 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
         for(Message message : batch) {
             pending.put(new MHIDPair(message.getId(), message.getOriginalFrom()), message);
         }
-
         beb.broadcastBatch(batch);
     }
 
@@ -48,11 +48,14 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
         if(ack.containsKey(messageIDs)){
             Set set = ack.get(messageIDs);
             set.add(p.getId());
+            //Byte num = ack.get(messageIDs);
+            //ack.put(messageIDs, (byte) (num+1));
         }
         else{
             Set set = new HashSet<Host>();
             set.add(p.getId());
             ack.put(messageIDs, set);
+            //ack.put(messageIDs, (byte) 1);
         }
 
         //System.out.println("{URB} : >>>>>> 2. Processed the ack structure. Current ack: " + ack);
@@ -63,7 +66,7 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
             Message relayMessage = null;
             try {
                 relayMessage = (Message) m.clone();
-                relayMessage.setRelayFrom((byte) self.getId());
+                relayMessage.setRelayFrom(self.getId());
             } catch (CloneNotSupportedException e) {
                 throw new RuntimeException(e);
             }
@@ -85,7 +88,7 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
                 delivered.add(messageData);
 
                 //can I remove from here? !!!! check again
-                pending.remove(messageData);
+                //pending.remove(messageData);
                 //delete also from acks
                 //ack.remove(messageData);
                 //System.gc();
@@ -96,7 +99,7 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
 
     public boolean canDeliver(MHIDPair p){
         int N = processes.size();
-        //System.out.println("{URB} :         CAN-DELIVER 1. -- Message:" + m);
+        //System.out.println("{URB} :         CAN-DELIVER 1. -- Message:" + p);
         //System.out.println("{URB} :         CAN-DELIVER 2. -- N:" + N);
         //System.out.println("{URB} :         CAN-DELIVER 3. -- ack:" + ack);
         if(!ack.containsKey(p)){

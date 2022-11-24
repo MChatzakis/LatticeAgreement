@@ -19,7 +19,6 @@ public class BestEffortBroadcast extends Broadcast{
     public BestEffortBroadcast(Deliverer deliverer, List<Host> processes, Host self) throws SocketException {
         super(deliverer, processes, self);
         link = new PerfectLink(this, self.getPort(), new ArrayList<>(processes), self.getId());
-        //link = new FairLossLink(this, self.getPort());
     }
 
     @Override
@@ -51,7 +50,6 @@ public class BestEffortBroadcast extends Broadcast{
         if(BEB_MESSAGING_VERBOSE){
             System.out.println("[BEB] Process" + self.getId() + " delivered message " + message);
         }
-
         deliverer.deliver(message);
     }
 

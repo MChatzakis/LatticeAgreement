@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class PerfectLink extends Link{
     //private Set<Message> deliveredMessages;
-    private Set<MHIDPair> deliveredMessages;
+    private Set<Message> deliveredMessages;
 
     private StubbornLink slink;
 
@@ -46,9 +46,9 @@ public class PerfectLink extends Link{
             System.out.println("[Perfect Link]: 2. Current set " + deliveredMessages);
         }
 
-        MHIDPair p = new MHIDPair(message.getId(), message.getOriginalFrom());
-        if(!deliveredMessages.contains(p)){
-            deliveredMessages.add(p);
+        //MHIDPair p = new MHIDPair(message.getId(), message.getOriginalFrom());
+        if(!deliveredMessages.contains(message)){
+            deliveredMessages.add(message);
 
             if(Constants.PL_MESSAGING_VERBOSE) {
                 System.out.println("[Perfect Link]: 3. Delivery " + message);

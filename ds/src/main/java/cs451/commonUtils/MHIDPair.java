@@ -43,4 +43,8 @@ public class MHIDPair {
     public int hashCode(){
         return this.messageID * this.hostID;
     }
+
+    public String toString(){
+        return this.messageID + "%" + this.hostID;
+    }
 }

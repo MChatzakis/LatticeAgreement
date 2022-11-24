@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public abstract class Link implements Deliverer {
     protected Deliverer deliverer;
-    
+
     public abstract void sendBatch(ArrayList<Message> batch, Host host);
 
     public abstract void startReceiving();
