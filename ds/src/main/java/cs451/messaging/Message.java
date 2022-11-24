@@ -7,12 +7,12 @@ import java.io.Serializable;
  */
 public class Message implements Serializable, Cloneable {
     private int id;
-    private int relayFrom;
-    private int originalFrom;
+    private byte relayFrom;
+    private byte originalFrom;
     private byte to;
     private boolean isACK;
 
-    public Message(int from, int to, int id){
+    public Message(byte from, byte to, int id){
         this.relayFrom = from;
         this.originalFrom = from;
         this.to = to;
@@ -21,19 +21,19 @@ public class Message implements Serializable, Cloneable {
         this.isACK = false;
     }
 
-    public int getRelayFrom() {
+    public byte getRelayFrom() {
         return relayFrom;
     }
 
-    public void setRelayFrom(int relayFrom) {
+    public void setRelayFrom(byte relayFrom) {
         this.relayFrom = relayFrom;
     }
 
-    public int getTo() {
+    public byte getTo() {
         return to;
     }
 
-    public void setTo(int to) {
+    public void setTo(byte to) {
         this.to = to;
     }
 
@@ -73,7 +73,7 @@ public class Message implements Serializable, Cloneable {
     }
     @Override
     public int hashCode(){
-        return this.id * this.relayFrom * this.originalFrom * new Boolean(this.isACK).hashCode() /** this.data.hashCode()*/;
+        return this.id * this.relayFrom * this.originalFrom * new Boolean(this.isACK).hashCode();
     }
 
     @Override
@@ -94,23 +94,15 @@ public class Message implements Serializable, Cloneable {
     }
 
     public String toString(){
-        return "(id="+id+",or="+originalFrom+",relayFrom="+ relayFrom +",to="+to+",ACK="+isACK+/*",lsn="+lsn+*/")";
+        return "(id="+id+",or="+originalFrom+",relayFrom="+ relayFrom +",to="+to+",ACK="+isACK+")";
     }
 
-    public int getOriginalFrom() {
+    public byte getOriginalFrom() {
         return originalFrom;
     }
 
-    public void setOriginalFrom(int originalFrom) {
+    public void setOriginalFrom(byte originalFrom) {
         this.originalFrom = originalFrom;
     }
-
-    /*public int getLsn() {
-        return lsn;
-    }
-
-    public void setLsn(int lsn) {
-        this.lsn = lsn;
-    }*/
 
 }

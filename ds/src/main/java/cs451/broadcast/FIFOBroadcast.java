@@ -7,14 +7,11 @@ import cs451.messaging.Message;
 import java.net.SocketException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class FIFOBroadcast extends Broadcast implements Deliverer {
     private UniformReliableBroadcast urb;
     private Set<Message> pending;
-    //private ConcurrentLinkedQueue<Message> pending; //synchronized
-
-    private Map<Integer, Integer> next;
+    private Map<Byte, Integer> next;
     private int lsn;
 
     public FIFOBroadcast(Deliverer deliverer, List<Host> processes, Host self) throws SocketException {
@@ -39,7 +36,7 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
         while(pendingIterator.hasNext()){
             Message m = pendingIterator.next();
 
-            int originalSenderHostId = m.getOriginalFrom();
+            byte originalSenderHostId = m.getOriginalFrom();
             int snp = m.getId();
             int nextNum = next.get(originalSenderHostId);
 
@@ -49,6 +46,7 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
                 deliverer.deliver(m);
 
                 pendingIterator = pending.iterator(); //start over
+                //System.gc();
             }
         }
 

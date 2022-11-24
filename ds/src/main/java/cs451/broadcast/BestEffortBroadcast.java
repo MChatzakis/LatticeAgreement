@@ -32,7 +32,7 @@ public class BestEffortBroadcast extends Broadcast{
                 throw new RuntimeException(e);
             }
 
-            m.setTo(process.getId());
+            m.setTo((byte) process.getId());
 
             if(BEB_MESSAGING_VERBOSE){
                 System.out.println("[BEB] Process" + self.getId() + " sent message " + m + " to " + process.getId());
@@ -47,7 +47,6 @@ public class BestEffortBroadcast extends Broadcast{
         for(Host process:processes) {
             ArrayList<Message>batchCopy = new ArrayList<>();
             for(Message message : batch){
-                //m.setTo(process.getId());
                 Message m = null;
                 try {
                     m = (Message) message.clone();
@@ -55,37 +54,12 @@ public class BestEffortBroadcast extends Broadcast{
                     throw new RuntimeException(e);
                 }
 
-                m.setTo(process.getId());
+                m.setTo((byte) process.getId());
                 batchCopy.add(m);
             }
 
             link.sendBatch(batchCopy, process);
         }
-
-        /*for(Host process:processes) {
-            for(Message message : batch){
-                Message m = null;
-                try {
-                    m = (Message) message.clone();
-                } catch (CloneNotSupportedException e) {
-                    throw new RuntimeException(e);
-                }
-
-                m.setTo(process.getId());
-
-                if(BEB_MESSAGING_VERBOSE){
-                    System.out.println("[BEB] Process" + self.getId() + " sent message " + m + " to " + process.getId());
-                }
-
-                ArrayList<Message>single = new ArrayList<>();
-                single.add(m);
-                link.sendBatch(single, process);
-            }
-
-
-        }*/
-
-
     }
 
     @Override

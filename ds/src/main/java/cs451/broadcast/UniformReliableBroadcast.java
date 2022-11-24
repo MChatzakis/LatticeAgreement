@@ -2,7 +2,7 @@ package cs451.broadcast;
 
 import cs451.Host;
 import cs451.commonUtils.CommonUtils;
-import cs451.commonUtils.IntPair;
+import cs451.commonUtils.MHIDPair;
 import cs451.structures.Deliverer;
 import cs451.messaging.Message;
 
@@ -16,9 +16,9 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
      * Optimizations: When possible, we only keep the Integer IDs representations of the data.
      */
     private BestEffortBroadcast beb;
-    private Map<IntPair, Set<Integer>> ack; //int pair == <messageId, originalSenderId>, Integer == hostID
-    private Map<IntPair, Message> pending;
-    private Set<IntPair> delivered;
+    private Map<MHIDPair, Set<Byte>> ack; //int pair == <messageId, originalSenderId>, Integer == hostID
+    private Map<MHIDPair, Message> pending;
+    private Set<MHIDPair> delivered;
 
     public UniformReliableBroadcast(Deliverer deliverer, List<Host> processes, Host self) throws SocketException {
         super(deliverer, processes, self);
@@ -30,14 +30,14 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
 
     @Override
     public void broadcast(Message message) {
-        pending.put(new IntPair(message.getId(),message.getOriginalFrom()), message);
+        pending.put(new MHIDPair(message.getId(),message.getOriginalFrom()), message);
         beb.broadcast(message);
     }
 
     @Override
     public void broadcastBatch(ArrayList<Message> batch) {
         for(Message message : batch) {
-            pending.put(new IntPair(message.getId(), message.getOriginalFrom()), message);
+            pending.put(new MHIDPair(message.getId(), message.getOriginalFrom()), message);
         }
 
         beb.broadcastBatch(batch);
@@ -51,7 +51,7 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
     @Override
     public void deliver(Message m) {
         Host p = CommonUtils.getHost(m.getRelayFrom(), processes);
-        IntPair messageIDs = new IntPair(m.getId(), m.getOriginalFrom());
+        MHIDPair messageIDs = new MHIDPair(m.getId(), m.getOriginalFrom());
 
         //System.out.println("{URB} : >>>>>> 1. Got a message and will start 'deliver' routine " + m);
 
@@ -66,14 +66,14 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
         }
 
         //System.out.println("{URB} : >>>>>> 2. Processed the ack structure. Current ack: " + ack);
-        IntPair sm = new IntPair(m.getId(), m.getOriginalFrom());
+        MHIDPair sm = new MHIDPair(m.getId(), m.getOriginalFrom());
         if(!pending.containsKey(sm)){
             pending.put(sm, m);
 
             Message relayMessage = null;
             try {
                 relayMessage = (Message) m.clone();
-                relayMessage.setRelayFrom(self.getId());
+                relayMessage.setRelayFrom((byte) self.getId());
             } catch (CloneNotSupportedException e) {
                 throw new RuntimeException(e);
             }
@@ -86,7 +86,7 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
         }
 
         //System.out.println("{URB} : >>>>>> 3. Uppon exist routine. Traversing over pending messages. Pending: " + pending);
-        for(IntPair messageData : pending.keySet()){
+        for(MHIDPair messageData : pending.keySet()){
             //System.out.println("{URB} :     >>>>>> 3.1. : Current pending variable: " + messageData);
             Message mes = pending.get(messageData);
             if(!delivered.contains(messageData) && canDeliver(messageData)){
@@ -98,13 +98,13 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
                 pending.remove(messageData);
                 //delete also from acks
                 ack.remove(messageData);
-                //System.gc();
+                System.gc();
             }
         }
         //System.out.println("{URB} : >>>>>> 4. 'Delivered' : " + delivered);
     }
 
-    public boolean canDeliver(IntPair p){
+    public boolean canDeliver(MHIDPair p){
         int N = processes.size();
         //System.out.println("{URB} :         CAN-DELIVER 1. -- Message:" + m);
         //System.out.println("{URB} :         CAN-DELIVER 2. -- N:" + N);
