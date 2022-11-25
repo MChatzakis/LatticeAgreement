@@ -17,14 +17,8 @@ public class Constants {
 
     // indexes for config
     public static final int CONFIG_VALUE = 6;
-
-    //packets
-    public static final int MAX_PACKET_SIZE = 65535; //!need to recheck that
-
-    //Retrans
+    public static final int MAX_PACKET_SIZE = 256;
     public static final long RETRANSMISSION_DELAY = 5000L;
-
-    //DEBUG
     public static final boolean UDP_MESSAGING_VERBOSE = false;
     public static final boolean FLL_MESSAGING_VERBOSE = false;
     public static final boolean SBL_MESSAGING_VERBOSE = false;

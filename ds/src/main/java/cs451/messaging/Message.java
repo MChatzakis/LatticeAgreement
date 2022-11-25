@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * This class represents a message of the distributed system
  */
-public class Message implements Serializable, Cloneable {
+public class Message implements Serializable, Cloneable, Comparable<Message> {
     private int id;
     private byte relayFrom;
     private byte originalFrom;
@@ -103,6 +103,10 @@ public class Message implements Serializable, Cloneable {
 
     public void setOriginalFrom(byte originalFrom) {
         this.originalFrom = originalFrom;
+    }
+
+    public int compareTo(Message other) {
+        return Integer.compare(id, other.id);
     }
 
 }
