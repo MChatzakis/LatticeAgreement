@@ -86,7 +86,7 @@ public class StubbornLink extends Link{
         if(Constants.SBL_MESSAGING_VERBOSE){
             System.out.println("[Stubborn Link]: 1. >>>> Retransmission sent set: " + Arrays.toString(sent.toArray()) );
         }
-        System.out.println("[Stubborn Link]: 1. >>>> Retransmission sent set size: " + sent.size() );
+        //System.out.println("[Stubborn Link]: 1. >>>> Retransmission sent set size: " + sent.size() );
 
         Map<Byte, ArrayList<Message>>hostBatch = new HashMap<>();
         for(int i=0; i<hosts.size(); i++){
@@ -131,10 +131,7 @@ public class StubbornLink extends Link{
     private void sendACKBatch(Message message){
         try {
             Message ackMsg = message.generateAckMessage();
-
             byte destinationID = message.getRelayFrom();
-            byte originalID = message.getOriginalFrom();
-
             Host h = CommonUtils.getHost(destinationID, hosts);
 
             if(Constants.SBL_MESSAGING_VERBOSE){
@@ -154,8 +151,6 @@ public class StubbornLink extends Link{
             Message originalMessage = message.generateOriginalMessage();
             Host destHost = CommonUtils.getHost(originalMessage.getTo(), hosts);
             MHPair originalMSpair = new MHPair(originalMessage, destHost.getId());
-
-            MHPair originalMSpair2 = new MHPair(originalMessage, destHost.getId());
 
             if(true){
                 //System.out.print("[Stubborn Link]: Received ACK: " + message);
