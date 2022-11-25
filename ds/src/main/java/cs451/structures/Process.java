@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.util.ArrayList;
 
+import static cs451.Constants.MESSAGES_PER_BATCH;
+
 /**
  * This class represents a process of the distributed system.
  */
@@ -30,6 +32,12 @@ public class Process implements Deliverer{
     private long deliveryCountTimeStart;
     private long DELIVERY_MESSAGE_COUNT = 1000;
 
+    private int messages2broadcast;
+    private long batchMessagesBroadcasted=0;
+    private long deliveredMessagesOfBatch = 0;
+    private long batchesBroadcasted=0;
+    private int [] messageBatchSizes;
+
     private String performanceLog;
 
     public Process(int id, int pid, ArrayList<Host>hosts, Logger logger) throws SocketException {
@@ -38,10 +46,7 @@ public class Process implements Deliverer{
         this.hosts = hosts;
         this.logger = logger;
         this.selfHost = CommonUtils.getHost(id, hosts);
-
         this.broadcast = new FIFOBroadcast(this, hosts, selfHost);
-        //this.link = new PerfectLink(this, selfHost.getPort(), hosts);
-
         this.totalDelivered = 0;
         this.totalSent = 0;
         this.performanceLog = "Not enough messages to count performance.";
@@ -69,11 +74,33 @@ public class Process implements Deliverer{
         if(totalDelivered % 10 == 0){
             long end = System.nanoTime();
             long elapsedTime = end - deliveryCountTimeStart;
-
             double elapsedTimeSeconds = (double) elapsedTime / 1000000000;
-
             this.performanceLog = "Performance: " + totalDelivered + " messages in " + elapsedTimeSeconds + " seconds";
         }
+
+        if(message.getOriginalFrom() == selfHost.getId()){
+            //broadcast next batch
+            ArrayList<Message>batch = new ArrayList<>();
+            for(long i=batchMessagesBroadcasted; i<messages2broadcast; i++){
+                batch.add(new Message((byte) getId(), (byte) -1, (int)i+1));
+                batchMessagesBroadcasted++;
+                if(batch.size() == MESSAGES_PER_BATCH){
+                    //System.out.println("Batch:" + batch);
+                    broadcastBatch(batch);
+                    batchesBroadcasted++;
+                    batch.clear();
+                    break;
+                }
+            }
+
+            if(batch.size() > 0){
+                //System.out.println("Batch:" + batch);
+                broadcastBatch(batch);
+                batchesBroadcasted++;
+            }
+        }
+
+
     }
 
     public void sendBatch(ArrayList<Message>batch, Host toHost) throws IOException {
@@ -93,16 +120,8 @@ public class Process implements Deliverer{
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public ArrayList<Host> getHosts() {
         return hosts;
-    }
-
-    public void setHosts(ArrayList<Host> hosts) {
-        this.hosts = hosts;
     }
 
     public String toString(){
@@ -133,10 +152,6 @@ public class Process implements Deliverer{
         return totalDelivered;
     }
 
-    public void setTotalDelivered(long totalDelivered) {
-        this.totalDelivered = totalDelivered;
-    }
-
     public void printHostSendingInfo(){
         for(Host h : hosts){
             System.out.println("Host " + h.getId() + ": " +h.getDeliveredMessages());
@@ -147,24 +162,12 @@ public class Process implements Deliverer{
         return totalSent;
     }
 
-    public void setTotalSent(long totalSent) {
-        this.totalSent = totalSent;
-    }
-
     public long getTotalBroadcasted() {
         return totalBroadcasted;
     }
 
-    public void setTotalBroadcasted(long totalBroadcasted) {
-        this.totalBroadcasted = totalBroadcasted;
-    }
-
     public String getPerformanceLog() {
         return performanceLog;
-    }
-
-    public void setPerformanceLog(String performanceLog) {
-        this.performanceLog = performanceLog;
     }
 
     public void broadcastBatch(ArrayList<Message> batch){
@@ -177,6 +180,49 @@ public class Process implements Deliverer{
                 System.out.println("[Process]: Broadcast " + message);
             }
         }
+    }
+
+    public void startBroadcasting(int numberOfMessages){
+        this.messages2broadcast = numberOfMessages;
+
+        int totalBatches = numberOfMessages / MESSAGES_PER_BATCH;
+
+        this.messageBatchSizes = new int[totalBatches];
+        for(int i=0; i<totalBatches; i++){
+            int from = i*MESSAGES_PER_BATCH;
+            int to =-1;
+            if(i==totalBatches-1){
+                to = messages2broadcast;
+            }else{
+                to = (i+1)*MESSAGES_PER_BATCH;
+            }
+
+            messageBatchSizes[i] = to-from;
+        }
+
+        System.out.println(messageBatchSizes);
+
+        //1. broadcast first batch.
+        ArrayList<Message>batch = new ArrayList<>();
+        for(long i = batchMessagesBroadcasted; i<messages2broadcast; i++){
+            batch.add(new Message((byte) getId(), (byte) -1, (int)i+1));
+            batchMessagesBroadcasted++;
+            if(batch.size() == MESSAGES_PER_BATCH){
+                //System.out.println("First complete Batch:" + batch);
+                broadcastBatch(batch);
+                batchesBroadcasted++;
+                batch.clear();
+                break;
+            }
+        }
+
+        if(batch.size() > 0){
+            //System.out.println("First incomplete Batch:" + batch);
+            broadcastBatch(batch);
+            batchesBroadcasted++;
+        }
+
+
     }
 
 }

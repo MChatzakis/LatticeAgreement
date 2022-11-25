@@ -99,12 +99,11 @@ public class Main {
     public static void broadcastAllMessages(String configFile) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(new File(configFile)));
         String st;
-        int id=1;
         while ((st = br.readLine()) != null) {
             String [] contents = st.split(" ");
-            int repetitions = Integer.parseInt(contents[0]); //how many messages to broadcast.
             int numberOfMessages = Integer.parseInt(contents[0]);
-            MessageBatch.broadcastBatch(repetitions, PROCESS);
+            PROCESS.startBroadcasting(numberOfMessages);
+            //MessageBatch.broadcastBatch(numberOfMessages, PROCESS);
         }
     }
 
