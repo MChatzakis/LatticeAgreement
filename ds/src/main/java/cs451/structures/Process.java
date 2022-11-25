@@ -35,8 +35,9 @@ public class Process implements Deliverer{
     private int messages2broadcast;
     private long batchMessagesBroadcasted=0;
     private long deliveredMessagesOfBatch = 0;
-    private long batchesBroadcasted=0;
+    private int batchesBroadcasted=0;
     private int [] messageBatchSizes;
+    private int perBatchMessagesBroadcasted = 0;
 
     private String performanceLog;
 
@@ -79,25 +80,28 @@ public class Process implements Deliverer{
         }
 
         if(message.getOriginalFrom() == selfHost.getId()){
-            //broadcast next batch
-            ArrayList<Message>batch = new ArrayList<>();
-            for(long i=batchMessagesBroadcasted; i<messages2broadcast; i++){
-                batch.add(new Message((byte) getId(), (byte) -1, (int)i+1));
-                batchMessagesBroadcasted++;
-                if(batch.size() == MESSAGES_PER_BATCH){
-                    //System.out.println("Batch:" + batch);
+            if(message.getId() >= messageBatchSizes[batchesBroadcasted-1]){
+
+                ArrayList<Message>batch = new ArrayList<>();
+                for(long i=batchMessagesBroadcasted; i<messages2broadcast; i++){
+                    batch.add(new Message((byte) getId(), (byte) -1, (int)i+1));
+                    batchMessagesBroadcasted++;
+                    if(batch.size() == MESSAGES_PER_BATCH){
+                        System.out.println("Batch:" + batch);
+                        broadcastBatch(batch);
+                        batchesBroadcasted++;
+                        batch.clear();
+                        break;
+                    }
+                }
+
+                if(batch.size() > 0){
+                    System.out.println("Batch:" + batch);
                     broadcastBatch(batch);
                     batchesBroadcasted++;
-                    batch.clear();
-                    break;
                 }
             }
 
-            if(batch.size() > 0){
-                //System.out.println("Batch:" + batch);
-                broadcastBatch(batch);
-                batchesBroadcasted++;
-            }
         }
 
 
@@ -197,9 +201,11 @@ public class Process implements Deliverer{
                 to = (i+1)*MESSAGES_PER_BATCH;
             }
 
-            messageBatchSizes[i] = to-from;
-            System.out.println(messageBatchSizes[i]);
+            messageBatchSizes[i] = to;
+            System.out.print(messageBatchSizes[i] + " ");
         }
+
+        System.out.println(messageBatchSizes.length);
 
 
         //1. broadcast first batch.
@@ -208,7 +214,7 @@ public class Process implements Deliverer{
             batch.add(new Message((byte) getId(), (byte) -1, (int)i+1));
             batchMessagesBroadcasted++;
             if(batch.size() == MESSAGES_PER_BATCH){
-                //System.out.println("First complete Batch:" + batch);
+                System.out.println("First complete Batch:" + batch);
                 broadcastBatch(batch);
                 batchesBroadcasted++;
                 batch.clear();
@@ -217,7 +223,7 @@ public class Process implements Deliverer{
         }
 
         if(batch.size() > 0){
-            //System.out.println("First incomplete Batch:" + batch);
+            System.out.println("First incomplete Batch:" + batch);
             broadcastBatch(batch);
             batchesBroadcasted++;
         }
