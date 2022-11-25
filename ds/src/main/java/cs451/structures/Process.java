@@ -72,7 +72,9 @@ public class Process implements Deliverer{
             long end = System.nanoTime();
             long elapsedTime = end - deliveryCountTimeStart;
             double elapsedTimeSeconds = (double) elapsedTime / 1000000000;
-            this.performanceLog = "Performance: " + totalDelivered + " messages in " + elapsedTimeSeconds + " seconds";
+            double target = 1.0; //1second
+            double resultT = totalDelivered * target/elapsedTimeSeconds;
+            this.performanceLog = "Performance: " + totalDelivered + " messages in " + elapsedTimeSeconds + " seconds ("+ Math.round(resultT) +" m/s)";
         }
 
         if(message.getOriginalFrom() == selfHost.getId()){
@@ -82,7 +84,7 @@ public class Process implements Deliverer{
                     batch.add(new Message((byte) getId(), (byte) -1, (int)i+1));
                     batchMessagesBroadcasted++;
                     if(batch.size() == MESSAGES_PER_BATCH){
-                        System.out.println("Batch:" + batch);
+                        //System.out.println("Batch:" + batch);
                         broadcastBatch(batch);
                         batchesBroadcasted++;
                         batch.clear();
@@ -91,7 +93,7 @@ public class Process implements Deliverer{
                 }
 
                 if(batch.size() > 0){
-                    System.out.println("Batch:" + batch);
+                    //System.out.println("Batch:" + batch);
                     broadcastBatch(batch);
                     batchesBroadcasted++;
                 }
@@ -206,7 +208,7 @@ public class Process implements Deliverer{
             batch.add(new Message((byte) getId(), (byte) -1, (int)i+1));
             batchMessagesBroadcasted++;
             if(batch.size() == MESSAGES_PER_BATCH){
-                System.out.println("First complete Batch:" + batch);
+                //System.out.println("First complete Batch:" + batch);
                 broadcastBatch(batch);
                 batchesBroadcasted++;
                 batch.clear();
@@ -215,7 +217,7 @@ public class Process implements Deliverer{
         }
 
         if(batch.size() > 0){
-            System.out.println("First incomplete Batch:" + batch);
+            //System.out.println("First incomplete Batch:" + batch);
             broadcastBatch(batch);
             batchesBroadcasted++;
         }

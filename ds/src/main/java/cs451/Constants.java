@@ -32,6 +32,5 @@ public class Constants {
     public static final boolean PROCESS_MESSAGING_VERBOSE = false;
     public static final boolean PROCESS_BROADCASTING_VERBOSE = false;
     public static final boolean BEB_MESSAGING_VERBOSE = false;
-
     public static final int MESSAGES_PER_BATCH = 8;
 }
