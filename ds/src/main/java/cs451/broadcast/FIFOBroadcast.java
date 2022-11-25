@@ -12,7 +12,6 @@ import java.util.concurrent.ConcurrentSkipListSet;
 public class FIFOBroadcast extends Broadcast implements Deliverer {
     private UniformReliableBroadcast urb;
     private Set<Message> pending;
-
     private Map<Byte, Integer> next;
     private int lsn;
 
@@ -23,7 +22,6 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
         this.lsn = 0;
 
         this.pending = ConcurrentHashMap.newKeySet();
-        //this.pending = new ConcurrentSkipListSet<Message>();
 
         this.next = new ConcurrentHashMap<>();
         for(Host h : processes){

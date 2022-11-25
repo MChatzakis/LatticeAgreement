@@ -156,7 +156,6 @@ public class StubbornLink extends Link{
             MHPair originalMSpair = new MHPair(originalMessage, destHost.getId());
 
             MHPair originalMSpair2 = new MHPair(originalMessage, destHost.getId());
-            //MHIDPair originalMSpair = new MHIDPair(originalMessage.getId(), destHost.getId()); //elpizw?!
 
             if(true){
                 //System.out.print("[Stubborn Link]: Received ACK: " + message);
