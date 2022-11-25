@@ -80,17 +80,29 @@ public class StubbornLink extends Link{
             System.out.println("[Stubborn Link]: 1. >>>> Retransmission sent set: " + Arrays.toString(sent.toArray()) );
         }
 
+        //System.out.println("[Stubborn Link]: >>>> Retransmit sent set size : " + sent.size());
+
+        Map<Byte, ArrayList<Message>>hostBatch = new HashMap<>();
+        for(int i=0; i<hosts.size(); i++){
+            byte hostID = hosts.get(i).getId();
+            hostBatch.put(hostID, new ArrayList<Message>());
+        }
         for(MHPair p : sent){
         //for(MHIDPair p : sent){
             if(Constants.SBL_MESSAGING_VERBOSE){
-                //System.out.println("[Stubborn Link]: 2. >>>> Retransmission " + p.getMessage() + " to host " + p.getHostID());
+                System.out.println("[Stubborn Link]: 2. >>>> Retransmission " + p.getMessage() + " to host " + p.getHostID());
             }
 
-            ArrayList<Message>batch = new ArrayList<>();
-            //Message m = new Message(selfID, p.getHostID(), p.getMessageID());
-            batch.add(p.getMessage());
-            //batch.add(m);
-            fllink.sendBatch(batch, CommonUtils.getHost(p.getHostID(), hosts));
+            //ArrayList<Message>batch = new ArrayList<>();
+            //batch.add(p.getMessage());
+            //fllink.sendBatch(batch, CommonUtils.getHost(p.getHostID(), hosts));
+            hostBatch.get(p.getHostID()).add(p.getMessage());
+        }
+
+        for(int i=0; i<hosts.size(); i++){
+            //hostBatch.put((byte) i, new ArrayList<Message>());
+            byte hostID = hosts.get(i).getId();
+            fllink.sendBatch(hostBatch.get(hostID), CommonUtils.getHost(hostID, hosts));
         }
     }
 
@@ -99,7 +111,9 @@ public class StubbornLink extends Link{
         try {
             Message ackMsg = message.generateAckMessage();
 
-            byte destinationID = message.getOriginalFrom();
+            //byte destinationID = message.getOriginalFrom();
+            byte destinationID = message.getRelayFrom();
+
             Host h = CommonUtils.getHost(destinationID, hosts);
 
             if(Constants.SBL_MESSAGING_VERBOSE){

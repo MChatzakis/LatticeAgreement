@@ -30,13 +30,11 @@ public class Process implements Deliverer{
     private long totalSent;
     private long totalBroadcasted;
     private long deliveryCountTimeStart;
-    private long DELIVERY_MESSAGE_COUNT = 1000;
-
+    //private long DELIVERY_MESSAGE_COUNT = 1000;
     private int messages2broadcast;
     private long batchMessagesBroadcasted=0;
     private int batchesBroadcasted=0;
     private int [] messageBatchSizes;
-
     private String performanceLog;
 
     public Process(int id, int pid, ArrayList<Host>hosts, Logger logger) throws SocketException {
@@ -78,8 +76,7 @@ public class Process implements Deliverer{
         }
 
         if(message.getOriginalFrom() == selfHost.getId()){
-            if(true || message.getId() >= messageBatchSizes[batchesBroadcasted-1]){
-
+            if(message.getId() >= messageBatchSizes[batchesBroadcasted-1]){
                 ArrayList<Message>batch = new ArrayList<>();
                 for(long i=batchMessagesBroadcasted; i<messages2broadcast; i++){
                     batch.add(new Message((byte) getId(), (byte) -1, (int)i+1));
@@ -99,10 +96,7 @@ public class Process implements Deliverer{
                     batchesBroadcasted++;
                 }
            }
-
         }
-
-
     }
 
     public void sendBatch(ArrayList<Message>batch, Host toHost) throws IOException {
@@ -187,7 +181,7 @@ public class Process implements Deliverer{
     public void startBroadcasting(int numberOfMessages){
         this.messages2broadcast = numberOfMessages;
 
-        int totalBatches = numberOfMessages / MESSAGES_PER_BATCH;
+        int totalBatches = (int) Math.ceil(1.0*numberOfMessages / MESSAGES_PER_BATCH);
 
         this.messageBatchSizes = new int[totalBatches];
         for(int i=0; i<totalBatches; i++){
@@ -203,7 +197,7 @@ public class Process implements Deliverer{
             System.out.print(messageBatchSizes[i] + " ");
         }
 
-        System.out.println(messageBatchSizes.length);
+        System.out.println( "\n" + messageBatchSizes.length);
 
 
         //1. broadcast first batch.

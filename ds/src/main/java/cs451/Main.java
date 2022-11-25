@@ -102,8 +102,7 @@ public class Main {
         while ((st = br.readLine()) != null) {
             String [] contents = st.split(" ");
             int numberOfMessages = Integer.parseInt(contents[0]);
-            //PROCESS.startBroadcasting(numberOfMessages);
-            MessageBatch.broadcastBatch(numberOfMessages, PROCESS);
+            PROCESS.startBroadcasting(numberOfMessages);
         }
     }
 

@@ -23,6 +23,7 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
         this.lsn = 0;
 
         this.pending = ConcurrentHashMap.newKeySet();
+        //this.pending = new ArrayList<>();
 
         this.next = new ConcurrentHashMap<>();
         for(Host h : processes){
