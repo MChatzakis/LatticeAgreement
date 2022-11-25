@@ -10,7 +10,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class FIFOBroadcast extends Broadcast implements Deliverer {
     private UniformReliableBroadcast urb;
-    private Set<Message> pending;
+    //private Set<Message> pending;
+    private ArrayList<Message> pending;
+
     private Map<Byte, Integer> next;
     private int lsn;
 
@@ -20,7 +22,7 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
         this.urb = new UniformReliableBroadcast(this, processes, self);
         this.lsn = 0;
 
-        this.pending = ConcurrentHashMap.newKeySet();
+        this.pending = new ArrayList<>();//ConcurrentHashMap.newKeySet();
 
         this.next = new ConcurrentHashMap<>();
         for(Host h : processes){
@@ -32,7 +34,7 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
     public void deliver(Message message) {
         pending.add(message);
 
-        Iterator<Message> pendingIterator = pending.iterator();
+        /*Iterator<Message> pendingIterator = pending.iterator();
         while(pendingIterator.hasNext()){
             Message m = pendingIterator.next();
 
@@ -46,8 +48,24 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
                 deliverer.deliver(m);
 
                 pendingIterator = pending.iterator(); //start over
-                //System.gc();
             }
+        }*/
+
+        for(int i=0; i< pending.size(); i++){
+            Message m = pending.get(i);
+
+            byte originalSenderHostId = m.getOriginalFrom();
+            int snp = m.getId();
+            int nextNum = next.get(originalSenderHostId);
+
+            if(nextNum == snp){
+                next.put(originalSenderHostId, nextNum+1);
+                pending.remove(m);
+                deliverer.deliver(m);
+
+                i = 0; //start over
+            }
+
         }
     }
 

@@ -34,10 +34,8 @@ public class Process implements Deliverer{
 
     private int messages2broadcast;
     private long batchMessagesBroadcasted=0;
-    private long deliveredMessagesOfBatch = 0;
     private int batchesBroadcasted=0;
     private int [] messageBatchSizes;
-    private int perBatchMessagesBroadcasted = 0;
 
     private String performanceLog;
 
@@ -80,7 +78,7 @@ public class Process implements Deliverer{
         }
 
         if(message.getOriginalFrom() == selfHost.getId()){
-            if(message.getId() >= messageBatchSizes[batchesBroadcasted-1]){
+            if(true || message.getId() >= messageBatchSizes[batchesBroadcasted-1]){
 
                 ArrayList<Message>batch = new ArrayList<>();
                 for(long i=batchMessagesBroadcasted; i<messages2broadcast; i++){
@@ -100,7 +98,7 @@ public class Process implements Deliverer{
                     broadcastBatch(batch);
                     batchesBroadcasted++;
                 }
-            }
+           }
 
         }
 

@@ -13,7 +13,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class UniformReliableBroadcast extends Broadcast implements Deliverer {
     private BestEffortBroadcast beb;
     private Map<MHIDPair, Byte> ack;
-    //private Map<MHIDPair, Set<Byte>> ack; //int pair == <messageId, originalSenderId>, Integer == hostID
     private Map<MHIDPair, Message> pending;
     private Set<MHIDPair> delivered;
 
@@ -40,21 +39,15 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
 
     @Override
     public void deliver(Message m) {
-        Host p = CommonUtils.getHost(m.getRelayFrom(), processes);
         MHIDPair messageIDs = new MHIDPair(m.getId(), m.getOriginalFrom());
 
         //System.out.println("{URB} : >>>>>> 1. Got a message and will start 'deliver' routine " + m);
 
         if(ack.containsKey(messageIDs)){
-            //Set set = ack.get(messageIDs);
-            //set.add(p.getId());
             Byte num = ack.get(messageIDs);
             ack.put(messageIDs, (byte) (num+1));
         }
         else{
-            //Set set = new HashSet<Host>();
-            //set.add(p.getId());
-            //ack.put(messageIDs, set);
             ack.put(messageIDs, (byte) 1);
         }
 
@@ -88,10 +81,9 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
                 delivered.add(messageData);
 
                 //can I remove from here? !!!! check again
-                //pending.remove(messageData);
+                pending.remove(messageData);
                 //delete also from acks
-                //ack.remove(messageData);
-                //System.gc();
+                ack.remove(messageData);
             }
         }
         //System.out.println("{URB} : >>>>>> 4. 'Delivered' : " + delivered);

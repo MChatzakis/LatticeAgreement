@@ -17,8 +17,6 @@ public class MessageBatch {
             if(batch.size() == MESSAGES_PER_BATCH){
                 //System.out.println("Batch:" + batch);
                 process.broadcastBatch(batch);
-
-
                 batch.clear();
             }
         }
