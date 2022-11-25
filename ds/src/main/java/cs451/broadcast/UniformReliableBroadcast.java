@@ -81,9 +81,9 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
                 delivered.add(messageData);
 
                 //can I remove from here? !!!! check again
-                pending.remove(messageData);
+                //pending.remove(messageData);
                 //delete also from acks
-                ack.remove(messageData);
+                //ack.remove(messageData);
             }
         }
         //System.out.println("{URB} : >>>>>> 4. 'Delivered' : " + delivered);
