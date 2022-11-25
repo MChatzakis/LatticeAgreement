@@ -198,9 +198,9 @@ public class Process implements Deliverer{
             }
 
             messageBatchSizes[i] = to-from;
+            System.out.println(messageBatchSizes[i]);
         }
 
-        System.out.println(messageBatchSizes);
 
         //1. broadcast first batch.
         ArrayList<Message>batch = new ArrayList<>();
