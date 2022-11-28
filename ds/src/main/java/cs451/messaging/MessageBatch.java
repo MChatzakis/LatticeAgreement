@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import cs451.Host;
 
-
 public class MessageBatch {
 
     private static int MESSAGES_PER_BATCH = 8;
