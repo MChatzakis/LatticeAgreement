@@ -6,7 +6,7 @@ import cs451.structures.Deliverer;
 public class LatticeAgreement implements Deliverer {
     @Override
     public void deliver(Message message) {
-        
+
     }
 
     @Override
