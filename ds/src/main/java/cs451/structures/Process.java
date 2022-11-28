@@ -30,7 +30,6 @@ public class Process implements Deliverer{
     private long totalSent;
     private long totalBroadcasted;
     private long deliveryCountTimeStart;
-    //private long DELIVERY_MESSAGE_COUNT = 1000;
     private int messages2broadcast;
     private long batchMessagesBroadcasted=0;
     private int batchesBroadcasted=0;
