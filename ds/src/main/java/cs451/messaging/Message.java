@@ -1,6 +1,9 @@
 package cs451.messaging;
 
+import cs451.lattice.LatticeType;
+
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * This class represents a message of the distributed system
@@ -11,6 +14,12 @@ public class Message implements Serializable, Cloneable, Comparable<Message> {
     private byte originalFrom;
     private byte to;
     private boolean isACK;
+
+    //!new ones delete if something happens
+    private LatticeType latticeType;
+    private int latticeProposalNumber;
+    private Set<Integer> latticeValue;
+    //new ones end!
 
     public Message(byte from, byte to, int id){
         this.relayFrom = from;
@@ -109,4 +118,27 @@ public class Message implements Serializable, Cloneable, Comparable<Message> {
         return Integer.compare(id, other.id);
     }
 
+    public LatticeType getLatticeType() {
+        return latticeType;
+    }
+
+    public void setLatticeType(LatticeType latticeType) {
+        this.latticeType = latticeType;
+    }
+
+    public int getLatticeProposalNumber() {
+        return latticeProposalNumber;
+    }
+
+    public void setLatticeProposalNumber(int latticeProposalNumber) {
+        this.latticeProposalNumber = latticeProposalNumber;
+    }
+
+    public Set<Integer> getLatticeValue() {
+        return latticeValue;
+    }
+
+    public void setLatticeValue(Set<Integer> latticeValue) {
+        this.latticeValue = latticeValue;
+    }
 }
