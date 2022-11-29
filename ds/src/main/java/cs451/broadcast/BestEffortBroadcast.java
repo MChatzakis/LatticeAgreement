@@ -40,6 +40,10 @@ public class BestEffortBroadcast extends Broadcast{
         }
     }
 
+    public void sendBatch(ArrayList<Message>batch, Host toHost){
+        link.sendBatch(batch, toHost);
+    }
+
     @Override
     public void startReceiving() {
         link.startReceiving();
