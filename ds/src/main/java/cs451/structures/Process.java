@@ -3,6 +3,7 @@ package cs451.structures;
 import cs451.Constants;
 import cs451.Host;
 import cs451.broadcast.*;
+import cs451.lattice.LatticeAgreement;
 import cs451.links.PerfectLink;
 import cs451.messaging.Message;
 import cs451.commonUtils.CommonUtils;
@@ -12,6 +13,7 @@ import cs451.links.Link;
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Set;
 
 import static cs451.Constants.MESSAGES_PER_BATCH;
 
@@ -26,6 +28,7 @@ public class Process implements Deliverer{
     private Logger logger;
     private Link link;
     private Broadcast broadcast;
+    private LatticeAgreement agreement;
     private long totalDelivered;
     private long totalSent;
     private long totalBroadcasted;
@@ -222,6 +225,14 @@ public class Process implements Deliverer{
         }
 
 
+    }
+
+    public void decide(Set<Integer> proposalSet){
+        //todo?
+    }
+
+    public void propose(Set<Integer>proposalSet){
+        agreement.propose(proposalSet);//?mallon?
     }
 
 }

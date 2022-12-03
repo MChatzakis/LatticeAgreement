@@ -5,6 +5,7 @@ import cs451.broadcast.BestEffortBroadcast;
 import cs451.commonUtils.CommonUtils;
 import cs451.messaging.Message;
 import cs451.structures.Deliverer;
+import cs451.structures.Process;
 
 import java.net.SocketException;
 import java.util.ArrayList;
@@ -16,6 +17,8 @@ public class LatticeAgreement implements Deliverer {
     private ArrayList<Host>processes;
     private Host self;
     private double f;
+    private Process parentProcess; //cycle reference but with specific type, as the decision is in exactly the same as delievry
+    private int deliveryMessageID;
     //PROPOSER VARS
     private boolean active;
     private int ackCount;
@@ -25,12 +28,16 @@ public class LatticeAgreement implements Deliverer {
     //ACCEPTOR VARS
     private Set<Integer> acceptedValue;
 
-    public LatticeAgreement(ArrayList<Host> processes, Host self) throws SocketException {
+    public LatticeAgreement(Process parentProcess, ArrayList<Host> processes, Host self) throws SocketException {
         this.beb = new BestEffortBroadcast(this, processes, self);
+
         this.processes = processes;
         this.self = self;
+        this.parentProcess = parentProcess;
 
         this.f = calculateF();
+
+        this.deliveryMessageID = 0;
 
         //proposer
         this.active = false;
@@ -104,8 +111,7 @@ public class LatticeAgreement implements Deliverer {
     }
 
     public void decide(Set<Integer>value){
-        // todo
-        // note
+        parentProcess.decide(value);
     }
 
     private void processACK(Message message){

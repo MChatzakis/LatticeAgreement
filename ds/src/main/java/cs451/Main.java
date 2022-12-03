@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Main {
     static Process PROCESS;
@@ -104,6 +106,34 @@ public class Main {
             int numberOfMessages = Integer.parseInt(contents[0]);
             PROCESS.startBroadcasting(numberOfMessages);
         }
+    }
+
+    public static void triggerLatticeProposals(String configFile) throws IOException{
+        BufferedReader br = new BufferedReader(new FileReader(new File(configFile)));
+        String st;
+        int lineCounter = 0, p = -1, vs, ds;
+        while ((st = br.readLine()) != null) {
+            String [] contents = st.split(" ");
+
+            if(lineCounter == 0){
+                assert contents.length >= 3;
+
+                p  = Integer.parseInt(contents[0]);
+                vs = Integer.parseInt(contents[1]);
+                ds = Integer.parseInt(contents[2]);
+            }else{
+                Set<Integer> proposalSet = new HashSet<>();
+                for(int i=0; i<contents.length; i++){
+                    proposalSet.add(Integer.parseInt(contents[i]));
+                }
+
+                //PROCESS.propose(proposalSet)
+            }
+
+            lineCounter++;
+        }
+
+        assert lineCounter == p+1;
     }
 
 }
