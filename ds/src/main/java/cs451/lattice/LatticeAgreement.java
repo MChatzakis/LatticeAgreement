@@ -9,6 +9,8 @@ import cs451.structures.Process;
 
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -20,35 +22,31 @@ public class LatticeAgreement implements Deliverer {
     private double f;
     private AtomicInteger messageLsn;
     private Process parentProcess;
-    //PROPOSER VARS
     private boolean active;
+    private Map<Integer, Boolean> activeRound;
     private int ackCount;
+    private Map<Integer, Integer>ackCountRound;
     private int nAckCount;
+    private Map<Integer, Integer>nAckCountRound;
+
     private int activeProposalNumber;
     private Set<Integer> proposedValue;
-    //ACCEPTOR VARS
-    private Set<Integer> acceptedValue;
+    private Map<Integer, Set<Integer>>proposedValueRound;
 
     public LatticeAgreement(Process parentProcess, ArrayList<Host> processes, Host self) throws SocketException {
         this.beb = new BestEffortBroadcast(this, processes, self);
-
         this.processes = processes;
         this.self = self;
         this.parentProcess = parentProcess;
-
         this.f = calculateF();
-
         this.messageLsn = new AtomicInteger(0);
-
-        //proposer
         this.active = false;
         this.ackCount = 0;
         this.nAckCount = 0;
         this.activeProposalNumber = 0;
         this.proposedValue = ConcurrentHashMap.newKeySet();
 
-        //acceptor
-        this.acceptedValue = ConcurrentHashMap.newKeySet();
+        //roundshot
     }
 
     @Override
@@ -135,8 +133,8 @@ public class LatticeAgreement implements Deliverer {
 
     private void processPROPOSAL(Message message){
         Set<Integer>mProposedValue = message.getLatticeValue();
-        if(mProposedValue.containsAll(acceptedValue)){
-            acceptedValue = mProposedValue;
+        if(mProposedValue.containsAll(/*acceptedValue*/proposedValue)){
+            proposedValue/*acceptedValue*/ = mProposedValue;
 
             Message lm = new Message(self.getId(), message.getOriginalFrom(), messageLsn.incrementAndGet());
             lm.setLatticeType(LatticeType.ACK);
@@ -146,12 +144,12 @@ public class LatticeAgreement implements Deliverer {
             batch.add(lm);
             beb.sendBatch(batch, CommonUtils.getHost(message.getOriginalFrom(), processes));
         }else{
-            acceptedValue.addAll(mProposedValue);
+            proposedValue/*acceptedValue*/.addAll(mProposedValue);
 
             Message lm = new Message(self.getId(), message.getOriginalFrom(), messageLsn.incrementAndGet());
             lm.setLatticeType(LatticeType.NACK);
             lm.setLatticeProposalNumber(message.getLatticeProposalNumber());
-            lm.setLatticeValue(acceptedValue);
+            lm.setLatticeValue(proposedValue/*acceptedValue*/);
 
             ArrayList<Message>batch = new ArrayList<>();
             batch.add(lm);
