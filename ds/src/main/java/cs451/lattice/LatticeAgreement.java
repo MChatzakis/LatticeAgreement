@@ -52,7 +52,17 @@ public class LatticeAgreement implements Deliverer {
         this.proposedValue = ConcurrentHashMap.newKeySet();
 
         //multi shot
-
+        //this.activeProposalNumber = 0;?????????????
+        this.activeRound = new HashMap<>();
+        this.ackCountRound = new HashMap<>();
+        this.nAckCountRound = new HashMap<>();
+        this.proposedValueRound = new HashMap<>();
+        for(int i=0; i<totalProposals; i++){
+            this.activeRound.put(i, false);
+            this.ackCountRound.put(i, 0);
+            this.nAckCountRound.put(i, 0);
+            this.proposedValueRound.put(i, ConcurrentHashMap.newKeySet());
+        }
 
     }
 
