@@ -5,10 +5,7 @@ import cs451.commonUtils.CommonUtils;
 import cs451.commonUtils.Logger;
 import cs451.structures.Process;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -60,21 +57,9 @@ public class Main {
         long pid = ProcessHandle.current().pid();
         System.out.println("From a new terminal type `kill -SIGINT " + pid + "` or `kill -SIGTERM " + pid + "` to stop processing packets\n");
 
-        System.out.println("Initializing...\n");
-
         CommonUtils.createEmptyFile(parser.output());
 
-        PROCESS = new Process(parser.myId(), (int) pid, new ArrayList<>(parser.hosts()), /*LOGGER*/new Logger(parser.output()));
-        System.out.println(PROCESS);
-
-        System.out.println("Broadcasting and delivering messages...\n");
-
-        PROCESS.startReceiving();
-
-        //sendAllMessages(parser.config());
-        //broadcastAllMessages(parser.config());
-        triggerLatticeProposals(parser.config());
-
+        initializeAndTriggerLattice(parser, (int) pid);
 
         // After a process finishes broadcasting it waits forever for the delivery of messages.
         while (true) {
@@ -110,6 +95,45 @@ public class Main {
         }
     }
 
+
+    public static void initializeAndTriggerLattice(Parser parser, int pid) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(new File(parser.config())));
+        String st;
+        int lineCounter = 0, p = -1, vs, ds;
+        while ((st = br.readLine()) != null) {
+            String [] contents = st.split(" ");
+
+            if(lineCounter == 0){
+                assert contents.length >= 3;
+
+                p  = Integer.parseInt(contents[0]);
+                vs = Integer.parseInt(contents[1]);
+                ds = Integer.parseInt(contents[2]);
+
+                System.out.println("Initializing...\n");
+
+                PROCESS = new Process(parser.myId(), (int) pid, new ArrayList<>(parser.hosts()), new Logger(parser.output()));
+                System.out.println(PROCESS);
+
+                System.out.println("Broadcasting and delivering messages...\n");
+                PROCESS.startReceiving();
+
+            }else{
+                Set<Integer> proposalSet = new HashSet<>();
+                for(int i=0; i<contents.length; i++){
+                    proposalSet.add(Integer.parseInt(contents[i]));
+                }
+
+                PROCESS.propose(proposalSet);
+                return;
+            }
+
+            lineCounter++;
+        }
+
+
+    }
+
     public static void triggerLatticeProposals(String configFile) throws IOException{
         BufferedReader br = new BufferedReader(new FileReader(new File(configFile)));
         String st;
@@ -123,6 +147,9 @@ public class Main {
                 p  = Integer.parseInt(contents[0]);
                 vs = Integer.parseInt(contents[1]);
                 ds = Integer.parseInt(contents[2]);
+
+
+
             }else{
                 Set<Integer> proposalSet = new HashSet<>();
                 for(int i=0; i<contents.length; i++){

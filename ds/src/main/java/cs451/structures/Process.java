@@ -40,7 +40,7 @@ public class Process implements Deliverer{
     private String performanceLog;
 
     //Lattice
-    //private int proposal
+    private int latticeProposals;
 
     public Process(int id, int pid, ArrayList<Host>hosts, Logger logger) throws SocketException {
         this.id = id;
@@ -49,10 +49,27 @@ public class Process implements Deliverer{
         this.logger = logger;
         this.selfHost = CommonUtils.getHost(id, hosts);
         //this.broadcast = new FIFOBroadcast(this, hosts, selfHost);
-        this.agreement = new LatticeAgreement(this, hosts, selfHost);
+        //this.agreement = new LatticeAgreement(this, hosts, selfHost);
         this.totalDelivered = 0;
         this.totalSent = 0;
         this.performanceLog = "Not enough messages to count performance.";
+    }
+
+    public Process(int id, int pid, ArrayList<Host>hosts, Logger logger, int latticeProposals) throws SocketException {
+        this.id = id;
+        this.pid = pid;
+        this.hosts = hosts;
+        this.logger = logger;
+        this.selfHost = CommonUtils.getHost(id, hosts);
+
+        this.agreement = new LatticeAgreement(this, hosts, selfHost, latticeProposals);
+        this.latticeProposals = latticeProposals;
+
+        this.totalDelivered = 0;
+        this.totalSent = 0;
+        this.performanceLog = "Not enough messages to count performance.";
+
+
     }
 
     public void startReceiving(){

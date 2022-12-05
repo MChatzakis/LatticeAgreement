@@ -22,6 +22,8 @@ public class LatticeAgreement implements Deliverer {
     private double f;
     private AtomicInteger messageLsn;
     private Process parentProcess;
+    private int totalProposals;
+
     private boolean active;
     private Map<Integer, Boolean> activeRound;
     private int ackCount;
@@ -33,20 +35,25 @@ public class LatticeAgreement implements Deliverer {
     private Set<Integer> proposedValue;
     private Map<Integer, Set<Integer>>proposedValueRound;
 
-    public LatticeAgreement(Process parentProcess, ArrayList<Host> processes, Host self) throws SocketException {
+    public LatticeAgreement(Process parentProcess, ArrayList<Host> processes, Host self, int totalProposals) throws SocketException {
         this.beb = new BestEffortBroadcast(this, processes, self);
         this.processes = processes;
         this.self = self;
         this.parentProcess = parentProcess;
         this.f = calculateF();
         this.messageLsn = new AtomicInteger(0);
+        this.totalProposals = totalProposals;
+
+        //single shot
         this.active = false;
         this.ackCount = 0;
         this.nAckCount = 0;
         this.activeProposalNumber = 0;
         this.proposedValue = ConcurrentHashMap.newKeySet();
 
-        //roundshot
+        //multi shot
+
+
     }
 
     @Override
