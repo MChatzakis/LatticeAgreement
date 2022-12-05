@@ -11,12 +11,14 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class LatticeAgreement implements Deliverer {
     private BestEffortBroadcast beb;
     private ArrayList<Host>processes;
     private Host self;
     private double f;
+    private AtomicInteger messageLsn;
     private Process parentProcess; //cycle reference but with specific type, as the decision is in exactly the same as delievry
     private int deliveryMessageID;
     //PROPOSER VARS
@@ -38,6 +40,7 @@ public class LatticeAgreement implements Deliverer {
         this.f = calculateF();
 
         this.deliveryMessageID = 0;
+        this.messageLsn = new AtomicInteger(0);
 
         //proposer
         this.active = false;
@@ -69,7 +72,7 @@ public class LatticeAgreement implements Deliverer {
             ackCount = 0;
             nAckCount = 0;
 
-            Message lm = new Message(self.getId(), (byte) -1, -1);
+            Message lm = new Message(self.getId(), (byte) -1, messageLsn.incrementAndGet());
             lm.setLatticeType(LatticeType.PROPOSAL);
             lm.setLatticeValue(proposedValue);
             lm.setLatticeProposalNumber(activeProposalNumber);
@@ -93,13 +96,13 @@ public class LatticeAgreement implements Deliverer {
     public void propose(Set<Integer>proposal){
         proposedValue = proposal;
 
-        boolean status = true; //?? maybe... active?
+        active = true;
 
         activeProposalNumber++;
         ackCount = 0;
         nAckCount = 0;
 
-        Message lm = new Message(self.getId(), (byte) -1,-1); //! see what u gonna do with the id
+        Message lm = new Message(self.getId(), (byte) -1, messageLsn.incrementAndGet());
 
         lm.setLatticeType(LatticeType.PROPOSAL);
         lm.setLatticeValue(proposedValue);

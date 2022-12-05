@@ -7,6 +7,7 @@ import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -105,5 +106,14 @@ public class CommonUtils {
     public static void createEmptyFile(String filename) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
         writer.close();
+    }
+
+
+    public static String getSetAsString(Set<Integer> set){
+        String s = "";
+        for(Integer item : set){
+            s += item + " ";
+        }
+        return s;
     }
 }

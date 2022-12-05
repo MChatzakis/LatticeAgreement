@@ -72,7 +72,9 @@ public class Main {
         PROCESS.startReceiving();
 
         //sendAllMessages(parser.config());
-        broadcastAllMessages(parser.config());
+        //broadcastAllMessages(parser.config());
+        triggerLatticeProposals(parser.config());
+
 
         // After a process finishes broadcasting it waits forever for the delivery of messages.
         while (true) {
@@ -127,7 +129,8 @@ public class Main {
                     proposalSet.add(Integer.parseInt(contents[i]));
                 }
 
-                //PROCESS.propose(proposalSet)
+                PROCESS.propose(proposalSet);
+                return;
             }
 
             lineCounter++;

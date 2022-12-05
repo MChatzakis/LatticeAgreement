@@ -228,11 +228,11 @@ public class Process implements Deliverer{
     }
 
     public void decide(Set<Integer> proposalSet){
-        //todo?
+        logger.addEvent(CommonUtils.getSetAsString(proposalSet));
     }
 
     public void propose(Set<Integer>proposalSet){
-        agreement.propose(proposalSet);//?mallon?
+        agreement.propose(proposalSet);
     }
 
 }
