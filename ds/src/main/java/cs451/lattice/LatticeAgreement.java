@@ -19,8 +19,7 @@ public class LatticeAgreement implements Deliverer {
     private Host self;
     private double f;
     private AtomicInteger messageLsn;
-    private Process parentProcess; //cycle reference but with specific type, as the decision is in exactly the same as delievry
-    private int deliveryMessageID;
+    private Process parentProcess;
     //PROPOSER VARS
     private boolean active;
     private int ackCount;
@@ -39,7 +38,6 @@ public class LatticeAgreement implements Deliverer {
 
         this.f = calculateF();
 
-        this.deliveryMessageID = 0;
         this.messageLsn = new AtomicInteger(0);
 
         //proposer
@@ -70,6 +68,11 @@ public class LatticeAgreement implements Deliverer {
                 break;
         }
 
+        if(ackCount >= f+1 && active){
+            decide(proposedValue);
+            active = false;
+        }
+
         if(nAckCount > 0 && (ackCount+nAckCount>=f+1) && active){
             activeProposalNumber++;
             ackCount = 0;
@@ -83,11 +86,6 @@ public class LatticeAgreement implements Deliverer {
             ArrayList<Message>batch = new ArrayList<>();
             batch.add(lm);
             beb.broadcastBatch(batch);
-        }
-
-        if(ackCount >= f+1 && active){
-            decide(proposedValue);
-            active = false;
         }
     }
 

@@ -39,6 +39,9 @@ public class Process implements Deliverer{
     private int [] messageBatchSizes;
     private String performanceLog;
 
+    //Lattice
+    //private int proposal
+
     public Process(int id, int pid, ArrayList<Host>hosts, Logger logger) throws SocketException {
         this.id = id;
         this.pid = pid;
@@ -236,7 +239,6 @@ public class Process implements Deliverer{
     }
 
     public void propose(Set<Integer>proposalSet){
-        //System.out.println("Process " + selfHost.getId() + " proposed the set " + CommonUtils.getSetAsString(proposalSet));
         agreement.propose(proposalSet);
     }
 

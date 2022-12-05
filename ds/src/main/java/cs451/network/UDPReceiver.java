@@ -27,7 +27,6 @@ public class UDPReceiver extends UDPInstance implements Runnable{
 
     @Override
     public void run() {
-        //System.out.println(">>UDP Receiver routine started..");
         receiveBatch();
     }
 
@@ -55,7 +54,6 @@ public class UDPReceiver extends UDPInstance implements Runnable{
             }
         }
     }
-
 
     public void sendBatch(ArrayList<Message>batch, String toIP, int toPort){
         try {
