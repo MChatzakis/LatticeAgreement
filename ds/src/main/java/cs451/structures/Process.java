@@ -45,7 +45,8 @@ public class Process implements Deliverer{
         this.hosts = hosts;
         this.logger = logger;
         this.selfHost = CommonUtils.getHost(id, hosts);
-        this.broadcast = new FIFOBroadcast(this, hosts, selfHost);
+        //this.broadcast = new FIFOBroadcast(this, hosts, selfHost);
+        this.agreement = new LatticeAgreement(this, hosts, selfHost);
         this.totalDelivered = 0;
         this.totalSent = 0;
         this.performanceLog = "Not enough messages to count performance.";
@@ -54,8 +55,9 @@ public class Process implements Deliverer{
     public void startReceiving(){
         deliveryCountTimeStart = System.nanoTime();
 
-        broadcast.startReceiving();
+        //broadcast.startReceiving();
         //link.startReceiving();
+        agreement.startReceiving();
     }
 
     @Override
@@ -229,9 +231,12 @@ public class Process implements Deliverer{
 
     public void decide(Set<Integer> proposalSet){
         logger.addEvent(CommonUtils.getSetAsString(proposalSet));
+        System.out.println("Process " + selfHost.getId() + " decided the set " + CommonUtils.getSetAsString(proposalSet));
+
     }
 
     public void propose(Set<Integer>proposalSet){
+        //System.out.println("Process " + selfHost.getId() + " proposed the set " + CommonUtils.getSetAsString(proposalSet));
         agreement.propose(proposalSet);
     }
 

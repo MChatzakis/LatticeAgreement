@@ -28,30 +28,7 @@ public class UDPReceiver extends UDPInstance implements Runnable{
     @Override
     public void run() {
         //System.out.println(">>UDP Receiver routine started..");
-        //receive();
         receiveBatch();
-    }
-
-    public void receive(){
-        byte[] receive = new byte[MAX_PACKET_SIZE];
-        DatagramPacket packet2get;
-        while(true) {
-            packet2get = new DatagramPacket(receive, receive.length);
-            try {
-                socket.receive(packet2get);
-
-                byte [] decompressedBytes = CommonUtils.decompressByteArray(receive);
-                Message msgReceived = (Message) CommonUtils.getObjectFromBytes(decompressedBytes);
-
-                if(Constants.UDP_MESSAGING_VERBOSE){
-                    System.out.println("[UDPReceiver]: Delivery " + msgReceived);
-                }
-
-                deliverer.deliver(msgReceived);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     public void receiveBatch(){
@@ -79,22 +56,6 @@ public class UDPReceiver extends UDPInstance implements Runnable{
         }
     }
 
-    public void send(Message message, String toIP, int toPort) {
-        try {
-            byte [] data2sent = CommonUtils.getBytesOfObject(message);
-            byte [] compressedData2sent = CommonUtils.compressByteArray(data2sent);
-
-            DatagramPacket packet2send = new DatagramPacket(compressedData2sent, compressedData2sent.length, InetAddress.getByName(toIP), toPort);
-
-            if(Constants.UDP_MESSAGING_VERBOSE){
-                System.out.println("[UDPSender]: Sent " + message);
-            }
-
-            socket.send(packet2send);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void sendBatch(ArrayList<Message>batch, String toIP, int toPort){
         try {

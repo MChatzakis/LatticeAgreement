@@ -55,6 +55,9 @@ public class LatticeAgreement implements Deliverer {
 
     @Override
     public void deliver(Message message) {
+
+        System.out.println("Agreement got message:"+message);
+
         switch (message.getLatticeType()){
             case ACK:
                 processACK(message);
@@ -108,6 +111,8 @@ public class LatticeAgreement implements Deliverer {
         lm.setLatticeValue(proposedValue);
         lm.setLatticeProposalNumber(activeProposalNumber);
 
+        System.out.println("Agreement broadcasting message:"+lm);
+
         ArrayList<Message>batch = new ArrayList<>();
         batch.add(lm);
         beb.broadcastBatch(batch);
@@ -135,7 +140,7 @@ public class LatticeAgreement implements Deliverer {
         if(mProposedValue.containsAll(acceptedValue)){
             acceptedValue = mProposedValue;
 
-            Message lm = new Message(self.getId(), message.getOriginalFrom(), -1);
+            Message lm = new Message(self.getId(), message.getOriginalFrom(), messageLsn.incrementAndGet());
             lm.setLatticeType(LatticeType.ACK);
             lm.setLatticeProposalNumber(message.getLatticeProposalNumber());
 
@@ -145,7 +150,7 @@ public class LatticeAgreement implements Deliverer {
         }else{
             acceptedValue.addAll(mProposedValue);
 
-            Message lm = new Message(self.getId(), message.getOriginalFrom(), -1);
+            Message lm = new Message(self.getId(), message.getOriginalFrom(), messageLsn.incrementAndGet());
             lm.setLatticeType(LatticeType.NACK);
             lm.setLatticeProposalNumber(message.getLatticeProposalNumber());
             lm.setLatticeValue(acceptedValue);
@@ -160,4 +165,7 @@ public class LatticeAgreement implements Deliverer {
         return (processes.size() - 1.0)/2;
     }
 
+    public void startReceiving(){
+        beb.startReceiving();
+    }
 }

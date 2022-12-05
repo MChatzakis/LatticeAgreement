@@ -103,7 +103,9 @@ public class Message implements Serializable, Cloneable, Comparable<Message> {
     }
 
     public String toString(){
-        return "(id="+id+",or="+originalFrom+",relayFrom="+ relayFrom +",to="+to+")";
+        return "Classic[id="+id+",or="+originalFrom+",relayFrom="+ relayFrom +",to="+to+"]" + "\n" +
+                "Lattice[type="+ latticeType+ ",value="+latticeValue +",prop="+latticeProposalNumber +"]"
+                ;
     }
 
     public byte getOriginalFrom() {

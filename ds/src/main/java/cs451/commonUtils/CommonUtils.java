@@ -70,7 +70,7 @@ public class CommonUtils {
      * @return
      * @throws IOException
      */
-    public static byte[] compressByteArray(byte[] bytes) throws IOException {
+    public static synchronized byte[] compressByteArray(byte[] bytes) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(byteArrayOutputStream);
 
@@ -89,7 +89,7 @@ public class CommonUtils {
      * @return
      * @throws IOException
      */
-    public static byte[] decompressByteArray(byte[] bytes) throws IOException {
+    public static synchronized byte[] decompressByteArray(byte[] bytes) throws IOException {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
         InflaterInputStream inflaterInputStream = new InflaterInputStream(byteArrayInputStream);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
