@@ -90,7 +90,7 @@ public class LatticeAgreement implements Deliverer {
         //boolean active = activeRound.get(round);
         //Set<Integer> proposedValue = proposedValueRound.get(round);
         if(/*ackCount*/ackCountRound.get(round) >= f+1 && /*active*/activeRound.get(round)){
-            decide(/*proposedValue*/proposedValueRound.get(round));
+            decide(/*proposedValue*/proposedValueRound.get(round), round);
             /*active = false;*/
             activeRound.put(round, false);
         }
@@ -152,8 +152,8 @@ public class LatticeAgreement implements Deliverer {
         beb.broadcastBatch(batch);
     }
 
-    public void decide(Set<Integer>value){
-        parentProcess.decide(value);
+    public void decide(Set<Integer>value, int round){
+        parentProcess.decide(value, round);
     }
 
     private void processACK(Message message){

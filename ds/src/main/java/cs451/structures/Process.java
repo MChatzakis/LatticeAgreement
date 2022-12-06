@@ -12,8 +12,7 @@ import cs451.links.Link;
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.Set;
+import java.util.*;
 
 import static cs451.Constants.MESSAGES_PER_BATCH;
 
@@ -38,10 +37,12 @@ public class Process implements Deliverer{
     private int batchesBroadcasted=0;
     private int [] messageBatchSizes;
     private String performanceLog;
+    private Map<Integer, String> latticeProposalsBuffer;
 
     //Lattice
     private int latticeProposals;
     private int latticeRound;
+    private int completedLatticeRoundId;
 
     /*public Process(int id, int pid, ArrayList<Host>hosts, Logger logger) throws SocketException {
         this.id = id;
@@ -66,6 +67,8 @@ public class Process implements Deliverer{
         this.agreement = new LatticeAgreement(this, hosts, selfHost, latticeProposals);
         this.latticeProposals = latticeProposals;
         this.latticeRound = 0;
+        this.latticeProposalsBuffer = new HashMap<>();
+        this.completedLatticeRoundId = 0;
 
         this.totalDelivered = 0;
         this.totalSent = 0;
@@ -251,9 +254,27 @@ public class Process implements Deliverer{
 
     }
 
-    public void decide(Set<Integer> proposalSet){
-        logger.addEvent(CommonUtils.getSetAsString(proposalSet));
+    public synchronized/*?*/ void decide(Set<Integer> proposalSet, int round){
+        latticeProposalsBuffer.put(round, CommonUtils.getSetAsString(proposalSet));
         System.out.println("Process " + selfHost.getId() + " decided the set " + CommonUtils.getSetAsString(proposalSet));
+
+        List<Integer> keyList = new ArrayList<Integer>(latticeProposalsBuffer.keySet());
+        for(int i = 0; i < keyList.size(); i++) {
+            int roundID = keyList.get(i);
+            String value = latticeProposalsBuffer.get(roundID);
+
+            if(roundID == completedLatticeRoundId){
+                logger.addEvent(value);
+
+                completedLatticeRoundId++;
+
+                latticeProposalsBuffer.remove(roundID);
+
+                i=0;
+                keyList = new ArrayList<>(latticeProposalsBuffer.keySet());
+            }
+
+        }
 
     }
 
