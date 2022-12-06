@@ -24,15 +24,16 @@ public class LatticeAgreement implements Deliverer {
     private Process parentProcess;
     private int totalProposals;
 
-    private boolean active;
+    //private boolean active;
     private Map<Integer, Boolean> activeRound;
-    private int ackCount;
+    //private int ackCount;
     private Map<Integer, Integer>ackCountRound;
-    private int nAckCount;
+    //private int nAckCount;
     private Map<Integer, Integer>nAckCountRound;
 
-    private int activeProposalNumber;
-    private Set<Integer> proposedValue;
+    //private int activeProposalNumber;
+    private Map<Integer, Integer>activeProposalNumberRound;
+    //private Set<Integer> proposedValue;
     private Map<Integer, Set<Integer>>proposedValueRound;
 
     public LatticeAgreement(Process parentProcess, ArrayList<Host> processes, Host self, int totalProposals) throws SocketException {
@@ -45,14 +46,14 @@ public class LatticeAgreement implements Deliverer {
         this.totalProposals = totalProposals;
 
         //single shot
-        this.active = false;
+        /*this.active = false;
         this.ackCount = 0;
         this.nAckCount = 0;
         this.activeProposalNumber = 0;
-        this.proposedValue = ConcurrentHashMap.newKeySet();
+        this.proposedValue = ConcurrentHashMap.newKeySet();*/
 
         //multi shot
-        //this.activeProposalNumber = 0;?????????????
+        this.activeProposalNumberRound = new HashMap<>();//?????????????
         this.activeRound = new HashMap<>();
         this.ackCountRound = new HashMap<>();
         this.nAckCountRound = new HashMap<>();
@@ -61,6 +62,7 @@ public class LatticeAgreement implements Deliverer {
             this.activeRound.put(i, false);
             this.ackCountRound.put(i, 0);
             this.nAckCountRound.put(i, 0);
+            this.activeProposalNumberRound.put(i,0);
             this.proposedValueRound.put(i, ConcurrentHashMap.newKeySet());
         }
 
@@ -83,20 +85,30 @@ public class LatticeAgreement implements Deliverer {
                 break;
         }
 
-        if(ackCount >= f+1 && active){
-            decide(proposedValue);
-            active = false;
+        int round = message.getLatticeRound(); //change!
+        //int ackCount = ackCountRound.get(round);
+        //boolean active = activeRound.get(round);
+        //Set<Integer> proposedValue = proposedValueRound.get(round);
+        if(/*ackCount*/ackCountRound.get(round) >= f+1 && /*active*/activeRound.get(round)){
+            decide(/*proposedValue*/proposedValueRound.get(round));
+            /*active = false;*/
+            activeRound.put(round, false);
         }
 
-        if(nAckCount > 0 && (ackCount+nAckCount>=f+1) && active){
-            activeProposalNumber++;
+        if(/*nAckCount*/nAckCountRound.get(round) > 0 && (nAckCountRound.get(round)+ackCountRound.get(round)/*ackCount+nAckCount*/>=f+1) && /*active*/activeRound.get(round)){
+            /*activeProposalNumber++;
             ackCount = 0;
-            nAckCount = 0;
+            nAckCount = 0;*/
+            nAckCountRound.put(round, 0);
+            ackCountRound.put(round,0);
+            activeProposalNumberRound.put(round, activeProposalNumberRound.get(round) + 1);
+
 
             Message lm = new Message(self.getId(), (byte) -1, messageLsn.incrementAndGet());
             lm.setLatticeType(LatticeType.PROPOSAL);
-            lm.setLatticeValue(proposedValue);
-            lm.setLatticeProposalNumber(activeProposalNumber);
+            lm.setLatticeValue(/*proposedValue*/proposedValueRound.get(round));
+            lm.setLatticeProposalNumber(/*activeProposalNumber*/activeProposalNumberRound.get(round));
+            lm.setLatticeRound(round);
 
             ArrayList<Message>batch = new ArrayList<>();
             batch.add(lm);
@@ -109,20 +121,29 @@ public class LatticeAgreement implements Deliverer {
         beb.freeResources();
     }
 
-    public void propose(Set<Integer>proposal){
-        proposedValue = proposal;
+    public void propose(Set<Integer>proposal, int round){
+        //proposedValue = proposal;
+        proposedValueRound.put(round, proposal);
 
-        active = true;
+        //active = true;
+        activeRound.put(round, true);
 
-        activeProposalNumber++;
-        ackCount = 0;
-        nAckCount = 0;
+        //activeProposalNumber++;
+        activeProposalNumberRound.put(round, activeProposalNumberRound.get(round) + 1);
+
+        //ackCount = 0;
+        ackCountRound.put(round, 0);
+
+
+        //nAckCount = 0;
+        nAckCountRound.put(round, 0);
 
         Message lm = new Message(self.getId(), (byte) -1, messageLsn.incrementAndGet());
 
         lm.setLatticeType(LatticeType.PROPOSAL);
-        lm.setLatticeValue(proposedValue);
-        lm.setLatticeProposalNumber(activeProposalNumber);
+        lm.setLatticeValue(/*proposedValue*/proposedValueRound.get(round));
+        lm.setLatticeProposalNumber(/*activeProposalNumber*/activeProposalNumberRound.get(round));
+        lm.setLatticeRound(round);
 
         System.out.println("Agreement broadcasting message:"+lm);
 
@@ -136,37 +157,51 @@ public class LatticeAgreement implements Deliverer {
     }
 
     private void processACK(Message message){
-        if(message.getLatticeProposalNumber() == activeProposalNumber){
-            ackCount++;
+        int round = message.getLatticeRound();
+        if(message.getLatticeProposalNumber() == /*activeProposalNumber*/activeProposalNumberRound.get(round)){
+            //ackCount++;
+            ackCountRound.put(round, ackCountRound.get(round) + 1);
         }
     }
 
     private void processNACK(Message message){
-        if(message.getLatticeProposalNumber() == activeProposalNumber){
-            proposedValue.addAll(message.getLatticeValue());
-            nAckCount++;
+        int round = message.getLatticeRound();
+        if(message.getLatticeProposalNumber() == /*activeProposalNumber*/activeProposalNumberRound.get(round)){
+            /*proposedValue.addAll(message.getLatticeValue());
+            nAckCount++;*/
+            Set<Integer>ts = proposedValueRound.get(round);
+            ts.addAll(message.getLatticeValue());
+            proposedValueRound.put(round, ts);
+            nAckCountRound.put(round, nAckCountRound.get(round) + 1);
         }
     }
 
     private void processPROPOSAL(Message message){
+        int round = message.getLatticeRound();
         Set<Integer>mProposedValue = message.getLatticeValue();
-        if(mProposedValue.containsAll(/*acceptedValue*/proposedValue)){
-            proposedValue/*acceptedValue*/ = mProposedValue;
+        if(mProposedValue.containsAll(/*proposedValue*/proposedValueRound.get(round))){
+             ///*proposedValue*/ = mProposedValue;
+            proposedValueRound.put(round, mProposedValue);
 
             Message lm = new Message(self.getId(), message.getOriginalFrom(), messageLsn.incrementAndGet());
             lm.setLatticeType(LatticeType.ACK);
             lm.setLatticeProposalNumber(message.getLatticeProposalNumber());
+            lm.setLatticeRound(round);
 
             ArrayList<Message>batch = new ArrayList<>();
             batch.add(lm);
             beb.sendBatch(batch, CommonUtils.getHost(message.getOriginalFrom(), processes));
         }else{
-            proposedValue/*acceptedValue*/.addAll(mProposedValue);
+            ///*proposedValue*/.addAll(mProposedValue);
+            Set<Integer>ts = proposedValueRound.get(round);
+            ts.addAll(mProposedValue);
+            proposedValueRound.put(round, ts);
 
             Message lm = new Message(self.getId(), message.getOriginalFrom(), messageLsn.incrementAndGet());
             lm.setLatticeType(LatticeType.NACK);
             lm.setLatticeProposalNumber(message.getLatticeProposalNumber());
-            lm.setLatticeValue(proposedValue/*acceptedValue*/);
+            lm.setLatticeValue(/*proposedValue*/proposedValueRound.get(round));
+            lm.setLatticeRound(round);
 
             ArrayList<Message>batch = new ArrayList<>();
             batch.add(lm);

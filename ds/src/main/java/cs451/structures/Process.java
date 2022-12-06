@@ -41,6 +41,7 @@ public class Process implements Deliverer{
 
     //Lattice
     private int latticeProposals;
+    private int latticeRound;
 
     /*public Process(int id, int pid, ArrayList<Host>hosts, Logger logger) throws SocketException {
         this.id = id;
@@ -64,6 +65,7 @@ public class Process implements Deliverer{
 
         this.agreement = new LatticeAgreement(this, hosts, selfHost, latticeProposals);
         this.latticeProposals = latticeProposals;
+        this.latticeRound = 0;
 
         this.totalDelivered = 0;
         this.totalSent = 0;
@@ -256,7 +258,8 @@ public class Process implements Deliverer{
     }
 
     public void propose(Set<Integer>proposalSet){
-        agreement.propose(proposalSet);
+        agreement.propose(proposalSet, latticeRound);
+        latticeRound++;
     }
 
 }

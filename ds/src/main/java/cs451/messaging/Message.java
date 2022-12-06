@@ -19,6 +19,10 @@ public class Message implements Serializable, Cloneable, Comparable<Message> {
     private LatticeType latticeType;
     private int latticeProposalNumber;
     private Set<Integer> latticeValue;
+
+
+
+    private int latticeRound;
     //new ones end!
 
     public Message(byte from, byte to, int id){
@@ -142,5 +146,13 @@ public class Message implements Serializable, Cloneable, Comparable<Message> {
 
     public void setLatticeValue(Set<Integer> latticeValue) {
         this.latticeValue = latticeValue;
+    }
+
+    public int getLatticeRound() {
+        return latticeRound;
+    }
+
+    public void setLatticeRound(int latticeRound) {
+        this.latticeRound = latticeRound;
     }
 }
