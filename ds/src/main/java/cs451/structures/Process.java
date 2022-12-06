@@ -42,7 +42,7 @@ public class Process implements Deliverer{
     //Lattice
     private int latticeProposals;
 
-    public Process(int id, int pid, ArrayList<Host>hosts, Logger logger) throws SocketException {
+    /*public Process(int id, int pid, ArrayList<Host>hosts, Logger logger) throws SocketException {
         this.id = id;
         this.pid = pid;
         this.hosts = hosts;
@@ -53,7 +53,7 @@ public class Process implements Deliverer{
         this.totalDelivered = 0;
         this.totalSent = 0;
         this.performanceLog = "Not enough messages to count performance.";
-    }
+    }*/
 
     public Process(int id, int pid, ArrayList<Host>hosts, Logger logger, int latticeProposals) throws SocketException {
         this.id = id;

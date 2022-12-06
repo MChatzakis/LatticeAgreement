@@ -16,6 +16,11 @@ public class Main {
     private static void handleSignal() {
         System.out.println("Immediately stopping network packet processing.");
 
+        if(PROCESS == null){
+            System.out.println("Could not write output because the program terminated very early and PROCESS could not be allocated.");
+            return;
+        }
+
         //write/flush output file if necessary
         System.out.println("Writing output.");
         try {
@@ -112,7 +117,7 @@ public class Main {
 
                 System.out.println("Initializing...\n");
 
-                PROCESS = new Process(parser.myId(), (int) pid, new ArrayList<>(parser.hosts()), new Logger(parser.output()));
+                PROCESS = new Process(parser.myId(), (int) pid, new ArrayList<>(parser.hosts()), new Logger(parser.output()), p);
                 System.out.println(PROCESS);
 
                 System.out.println("Broadcasting and delivering messages...\n");
