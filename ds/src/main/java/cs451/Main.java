@@ -130,7 +130,6 @@ public class Main {
                 }
 
                 PROCESS.propose(proposalSet);
-                return;
             }
 
             lineCounter++;

@@ -23,7 +23,6 @@ public class LatticeAgreement implements Deliverer {
     private AtomicInteger messageLsn;
     private Process parentProcess;
     private int totalProposals;
-
     //private boolean active;
     private Map<Integer, Boolean> activeRound;
     //private int ackCount;
