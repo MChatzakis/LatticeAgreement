@@ -262,8 +262,6 @@ public class Process implements Deliverer{
         List<Integer> keyList = new ArrayList<>(latticeProposalsBuffer.keySet());
         int i;
         for(i = 0; i < keyList.size(); i++) {
-            //System.out.println("^i=="+ i);
-            //System.out.println("^List=="+keyList);
             int roundID = keyList.get(i);
             String value = latticeProposalsBuffer.get(roundID);
             //System.out.println("^Current iteration value == " + roundID + ". CompletedRoundID: " + completedLatticeRoundId);
