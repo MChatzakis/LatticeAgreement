@@ -256,25 +256,32 @@ public class Process implements Deliverer{
 
     public synchronized/*?*/ void decide(Set<Integer> proposalSet, int round){
         latticeProposalsBuffer.put(round, CommonUtils.getSetAsString(proposalSet));
-        System.out.println("Process " + selfHost.getId() + " decided the set " + CommonUtils.getSetAsString(proposalSet));
+        //System.out.println("Process " + selfHost.getId() + " decided the set " + CommonUtils.getSetAsString(proposalSet));
+        System.out.println("Got decision for round " + round);
 
-        List<Integer> keyList = new ArrayList<Integer>(latticeProposalsBuffer.keySet());
-        for(int i = 0; i < keyList.size(); i++) {
+        List<Integer> keyList = new ArrayList<>(latticeProposalsBuffer.keySet());
+        int i;
+        for(i = 0; i < keyList.size(); i++) {
+            //System.out.println("^i=="+ i);
+            //System.out.println("^List=="+keyList);
             int roundID = keyList.get(i);
             String value = latticeProposalsBuffer.get(roundID);
-
+            //System.out.println("^Current iteration value == " + roundID + ". CompletedRoundID: " + completedLatticeRoundId);
             if(roundID == completedLatticeRoundId){
                 logger.addEvent(value);
 
                 completedLatticeRoundId++;
-
                 latticeProposalsBuffer.remove(roundID);
 
-                i=0;
+                i=-1;
                 keyList = new ArrayList<>(latticeProposalsBuffer.keySet());
+                //System.out.println("^Logged round: " + roundID + ". CompletedRoundID:" + completedLatticeRoundId + ". New remaining rounds:" + keyList);
+                System.out.println();
             }
 
         }
+
+        //logger.addEvent(CommonUtils.getSetAsString(proposalSet));
 
     }
 

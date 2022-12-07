@@ -70,7 +70,7 @@ public class LatticeAgreement implements Deliverer {
     @Override
     public void deliver(Message message) {
 
-        System.out.println("Agreement got message:"+message);
+        //System.out.println("Agreement got message:"+message);
 
         switch (message.getLatticeType()){
             case ACK:
@@ -144,7 +144,7 @@ public class LatticeAgreement implements Deliverer {
         lm.setLatticeProposalNumber(/*activeProposalNumber*/activeProposalNumberRound.get(round));
         lm.setLatticeRound(round);
 
-        System.out.println("Agreement broadcasting message:"+lm);
+        //System.out.println("Agreement broadcasting message:"+lm);
 
         ArrayList<Message>batch = new ArrayList<>();
         batch.add(lm);
