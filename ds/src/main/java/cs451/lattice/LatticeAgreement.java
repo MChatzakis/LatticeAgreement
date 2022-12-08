@@ -91,9 +91,9 @@ public class LatticeAgreement implements Deliverer {
             lm.setLatticeProposalNumber(activeProposalNumberRound.get(round));
             lm.setLatticeRound(round);
 
-            ArrayList<Message>batch = new ArrayList<>();
-            batch.add(lm);
-            beb.broadcastBatch(batch);
+            //ArrayList<Message>batch = new ArrayList<>();
+            //batch.add(lm);
+            beb.broadcastBatch(CommonUtils.wrapMessage2Batch(lm));
         }
     }
 
@@ -122,9 +122,9 @@ public class LatticeAgreement implements Deliverer {
 
         //System.out.println("Agreement broadcasting message:"+lm);
 
-        ArrayList<Message>batch = new ArrayList<>();
-        batch.add(lm);
-        beb.broadcastBatch(batch);
+        //ArrayList<Message>batch = new ArrayList<>();
+        //batch.add(lm);
+        beb.broadcastBatch(CommonUtils.wrapMessage2Batch(lm));
     }
 
     public void decide(Set<Integer>value, int round){
@@ -159,9 +159,9 @@ public class LatticeAgreement implements Deliverer {
             lm.setLatticeProposalNumber(message.getLatticeProposalNumber());
             lm.setLatticeRound(round);
 
-            ArrayList<Message>batch = new ArrayList<>();
-            batch.add(lm);
-            beb.sendBatch(batch, CommonUtils.getHost(message.getOriginalFrom(), processes));
+            //ArrayList<Message>batch = new ArrayList<>();
+            //batch.add(lm);
+            beb.sendBatch(CommonUtils.wrapMessage2Batch(lm), CommonUtils.getHost(message.getOriginalFrom(), processes));
         }else{
             Set<Integer>ts = acceptedValueRound.get(round);
             ts.addAll(mProposedValue);
@@ -173,9 +173,9 @@ public class LatticeAgreement implements Deliverer {
             lm.setLatticeValue(acceptedValueRound.get(round));
             lm.setLatticeRound(round);
 
-            ArrayList<Message>batch = new ArrayList<>();
-            batch.add(lm);
-            beb.sendBatch(batch, CommonUtils.getHost(message.getOriginalFrom(), processes));
+            //ArrayList<Message>batch = new ArrayList<>();
+            //batch.add(lm);
+            beb.sendBatch(CommonUtils.wrapMessage2Batch(lm), CommonUtils.getHost(message.getOriginalFrom(), processes));
         }
     }
 

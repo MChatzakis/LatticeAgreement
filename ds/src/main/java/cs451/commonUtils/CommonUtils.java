@@ -116,7 +116,7 @@ public class CommonUtils {
 
     public static ArrayList<Message> wrapMessage2Batch(Message m){
         ArrayList<Message>batch = new ArrayList<>();
-        //todo
+        batch.add(m);
         return batch;
     }
 
