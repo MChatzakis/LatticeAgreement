@@ -4,10 +4,7 @@ import cs451.Host;
 import cs451.messaging.Message;
 
 import java.io.*;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -116,6 +113,24 @@ public class CommonUtils {
         }
         return s;
     }
+
+    public static ArrayList<Message> wrapMessage2Batch(Message m){
+        ArrayList<Message>batch = new ArrayList<>();
+        //todo
+        return batch;
+    }
+
+    public static String serializeMessage2String(Message m){
+        //todo
+        return "";
+    }
+
+    public static Message serializeString2Message(String ms){
+        //todo
+        return null;
+    }
+
+
 
 
 }
