@@ -35,6 +35,8 @@ public class LatticeAgreement implements Deliverer {
     //private Set<Integer> proposedValue;
     private Map<Integer, Set<Integer>>proposedValueRound;
 
+    private Map<Integer, Set<Integer>>acceptedValueRound;
+
     public LatticeAgreement(Process parentProcess, ArrayList<Host> processes, Host self, int totalProposals) throws SocketException {
         this.beb = new BestEffortBroadcast(this, processes, self);
         this.processes = processes;
@@ -57,6 +59,7 @@ public class LatticeAgreement implements Deliverer {
         this.ackCountRound = new HashMap<>();
         this.nAckCountRound = new HashMap<>();
         this.proposedValueRound = new HashMap<>();
+        this.acceptedValueRound = new HashMap<>();
         for(int i=0; i<totalProposals; i++){
             this.activeRound.put(i, false);
             this.ackCountRound.put(i, 0);
