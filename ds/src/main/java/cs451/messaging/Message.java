@@ -108,7 +108,7 @@ public class Message implements Serializable, Cloneable, Comparable<Message> {
 
         //lattice
         LatticeType latticeType = null;
-        switch (contents[4]){
+        switch (contents[5]){
             case "P":
                 latticeType = LatticeType.PROPOSAL;
                 break;
@@ -121,12 +121,12 @@ public class Message implements Serializable, Cloneable, Comparable<Message> {
         }
         m.setLatticeType(latticeType);
 
-        int latticeProposalNumber = Integer.parseInt(contents[5]);
+        int latticeProposalNumber = Integer.parseInt(contents[6]);
         m.setLatticeProposalNumber(latticeProposalNumber);
 
         //values at contents[6]
         Set<Integer>values = null;
-        String [] valueContents = contents[6].split(SET_DELIM);
+        String [] valueContents = contents[7].split(SET_DELIM);
         if(valueContents.length > 0){
             values = new ConcurrentHashMap().keySet(); //check again!
             for(String str : valueContents){
@@ -136,7 +136,7 @@ public class Message implements Serializable, Cloneable, Comparable<Message> {
         }
         m.setLatticeValue(values);
 
-        int latticeRound = Integer.parseInt(contents[7]);
+        int latticeRound = Integer.parseInt(contents[8]);
         m.setLatticeRound(latticeRound);
 
         return m;
