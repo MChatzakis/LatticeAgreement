@@ -10,6 +10,7 @@ import cs451.commonUtils.CommonUtils;
 import cs451.commonUtils.Logger;
 import cs451.links.Link;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.*;
@@ -19,11 +20,11 @@ import static cs451.Constants.MESSAGES_PER_BATCH;
 /**
  * This class represents a process of the distributed system.
  */
-public class Process implements Deliverer{
+public class Process implements Deliverer {
     private int id;
     private int pid;
     private Host selfHost;
-    private ArrayList<Host>hosts;
+    private ArrayList<Host> hosts;
     private Logger logger;
     private Link link;
     private Broadcast broadcast;
@@ -33,9 +34,9 @@ public class Process implements Deliverer{
     private long totalBroadcasted;
     private long deliveryCountTimeStart;
     private int messages2broadcast;
-    private long batchMessagesBroadcasted=0;
-    private int batchesBroadcasted=0;
-    private int [] messageBatchSizes;
+    private long batchMessagesBroadcasted = 0;
+    private int batchesBroadcasted = 0;
+    private int[] messageBatchSizes;
     private String performanceLog;
     private Map<Integer, String> latticeProposalsBuffer;
 
@@ -43,21 +44,10 @@ public class Process implements Deliverer{
     private int latticeProposals;
     private int latticeRound;
     private int completedLatticeRoundId;
+    private BufferedReader latticeBr;
+    private int completedProposals;
 
-    /*public Process(int id, int pid, ArrayList<Host>hosts, Logger logger) throws SocketException {
-        this.id = id;
-        this.pid = pid;
-        this.hosts = hosts;
-        this.logger = logger;
-        this.selfHost = CommonUtils.getHost(id, hosts);
-        //this.broadcast = new FIFOBroadcast(this, hosts, selfHost);
-        //this.agreement = new LatticeAgreement(this, hosts, selfHost);
-        this.totalDelivered = 0;
-        this.totalSent = 0;
-        this.performanceLog = "Not enough messages to count performance.";
-    }*/
-
-    public Process(int id, int pid, ArrayList<Host>hosts, Logger logger, int latticeProposals) throws SocketException {
+    public Process(int id, int pid, ArrayList<Host> hosts, Logger logger, int latticeProposals, BufferedReader latticeBr) throws SocketException {
         this.id = id;
         this.pid = pid;
         this.hosts = hosts;
@@ -69,6 +59,8 @@ public class Process implements Deliverer{
         this.latticeRound = 0;
         this.latticeProposalsBuffer = new HashMap<>();
         this.completedLatticeRoundId = 0;
+        this.latticeBr = latticeBr;
+        this.completedProposals = 0;
 
         this.totalDelivered = 0;
         this.totalSent = 0;
@@ -77,7 +69,7 @@ public class Process implements Deliverer{
 
     }
 
-    public void startReceiving(){
+    public void startReceiving() {
         deliveryCountTimeStart = System.nanoTime();
 
         //broadcast.startReceiving();
@@ -86,8 +78,8 @@ public class Process implements Deliverer{
     }
 
     @Override
-    public void deliver(Message message){
-        if(Constants.PROCESS_MESSAGING_VERBOSE || Constants.PROCESS_BROADCASTING_VERBOSE){
+    public void deliver(Message message) {
+        if (Constants.PROCESS_MESSAGING_VERBOSE || Constants.PROCESS_BROADCASTING_VERBOSE) {
             System.out.println("[Process]: Delivery " + message);
         }
         logger.addEvent("d " + message.getRelayFrom() + " " + message.getId());
@@ -97,22 +89,22 @@ public class Process implements Deliverer{
         Host senderHost = CommonUtils.getHost(message.getOriginalFrom(), hosts);
         senderHost.increaseDeliveredMessages();
 
-        if(totalDelivered % 10 == 0){
+        if (totalDelivered % 10 == 0) {
             long end = System.nanoTime();
             long elapsedTime = end - deliveryCountTimeStart;
             double elapsedTimeSeconds = (double) elapsedTime / 1000000000;
             double target = 1.0; //1second
-            double resultT = totalDelivered * target/elapsedTimeSeconds;
-            this.performanceLog = "Performance: " + totalDelivered + " messages in " + elapsedTimeSeconds + " seconds ("+ Math.round(resultT) +" m/s)";
+            double resultT = totalDelivered * target / elapsedTimeSeconds;
+            this.performanceLog = "Performance: " + totalDelivered + " messages in " + elapsedTimeSeconds + " seconds (" + Math.round(resultT) + " m/s)";
         }
 
-        if(message.getOriginalFrom() == selfHost.getId()){
-            if(message.getId() >= messageBatchSizes[batchesBroadcasted-1]){
-                ArrayList<Message>batch = new ArrayList<>();
-                for(long i=batchMessagesBroadcasted; i<messages2broadcast; i++){
-                    batch.add(new Message((byte) getId(), (byte) -1, (int)i+1));
+        if (message.getOriginalFrom() == selfHost.getId()) {
+            if (message.getId() >= messageBatchSizes[batchesBroadcasted - 1]) {
+                ArrayList<Message> batch = new ArrayList<>();
+                for (long i = batchMessagesBroadcasted; i < messages2broadcast; i++) {
+                    batch.add(new Message((byte) getId(), (byte) -1, (int) i + 1));
                     batchMessagesBroadcasted++;
-                    if(batch.size() == MESSAGES_PER_BATCH){
+                    if (batch.size() == MESSAGES_PER_BATCH) {
                         //System.out.println("Batch:" + batch);
                         broadcastBatch(batch);
                         batchesBroadcasted++;
@@ -121,24 +113,24 @@ public class Process implements Deliverer{
                     }
                 }
 
-                if(batch.size() > 0){
+                if (batch.size() > 0) {
                     //System.out.println("Batch:" + batch);
                     broadcastBatch(batch);
                     batchesBroadcasted++;
                 }
-           }
+            }
         }
     }
 
-    public void sendBatch(ArrayList<Message>batch, Host toHost) throws IOException {
+    public void sendBatch(ArrayList<Message> batch, Host toHost) throws IOException {
         link.sendBatch(batch, toHost);
 
-        for(Message message : batch) {
+        for (Message message : batch) {
             logger.addEvent("b " + message.getId());
             totalSent++;
         }
 
-        if(Constants.PROCESS_MESSAGING_VERBOSE) {
+        if (Constants.PROCESS_MESSAGING_VERBOSE) {
             System.out.println("[Process]: Sent " + batch);
         }
     }
@@ -151,7 +143,7 @@ public class Process implements Deliverer{
         return hosts;
     }
 
-    public String toString(){
+    public String toString() {
         String s;
 
         s = "-----\nProcess Info:\n";
@@ -159,14 +151,14 @@ public class Process implements Deliverer{
         s += "pid:" + pid + "\n";
         s += "Self-Host:" + selfHost.toString() + "\n";
         s += "List of Known Hosts:" + hosts.size() + "\n";
-        for(Host h : hosts){
-            s+= ">>>> " + h.toString() + "\n";
+        for (Host h : hosts) {
+            s += ">>>> " + h.toString() + "\n";
         }
-        s+= "-----\n";
+        s += "-----\n";
         return s;
     }
 
-    public void freeResources(){
+    public void freeResources() {
         //perfectLink.freeResources();
         broadcast.freeResources();
     }
@@ -179,9 +171,9 @@ public class Process implements Deliverer{
         return totalDelivered;
     }
 
-    public void printHostSendingInfo(){
-        for(Host h : hosts){
-            System.out.println("Host " + h.getId() + ": " +h.getDeliveredMessages());
+    public void printHostSendingInfo() {
+        for (Host h : hosts) {
+            System.out.println("Host " + h.getId() + ": " + h.getDeliveredMessages());
         }
     }
 
@@ -197,31 +189,31 @@ public class Process implements Deliverer{
         return performanceLog;
     }
 
-    public void broadcastBatch(ArrayList<Message> batch){
+    public void broadcastBatch(ArrayList<Message> batch) {
         broadcast.broadcastBatch(batch);
-        for(Message message : batch) {
+        for (Message message : batch) {
             logger.addEvent("b " + message.getId());
             totalBroadcasted++;
 
-            if(Constants.PROCESS_BROADCASTING_VERBOSE) {
+            if (Constants.PROCESS_BROADCASTING_VERBOSE) {
                 System.out.println("[Process]: Broadcast " + message);
             }
         }
     }
 
-    public void startBroadcasting(int numberOfMessages){
+    public void startBroadcasting(int numberOfMessages) {
         this.messages2broadcast = numberOfMessages;
 
-        int totalBatches = (int) Math.ceil(1.0*numberOfMessages / MESSAGES_PER_BATCH);
+        int totalBatches = (int) Math.ceil(1.0 * numberOfMessages / MESSAGES_PER_BATCH);
 
         this.messageBatchSizes = new int[totalBatches];
-        for(int i=0; i<totalBatches; i++){
-            int from = i*MESSAGES_PER_BATCH;
-            int to =-1;
-            if(i==totalBatches-1){
+        for (int i = 0; i < totalBatches; i++) {
+            int from = i * MESSAGES_PER_BATCH;
+            int to = -1;
+            if (i == totalBatches - 1) {
                 to = messages2broadcast;
-            }else{
-                to = (i+1)*MESSAGES_PER_BATCH;
+            } else {
+                to = (i + 1) * MESSAGES_PER_BATCH;
             }
 
             messageBatchSizes[i] = to;
@@ -232,11 +224,11 @@ public class Process implements Deliverer{
 
 
         //1. broadcast first batch.
-        ArrayList<Message>batch = new ArrayList<>();
-        for(long i = batchMessagesBroadcasted; i<messages2broadcast; i++){
-            batch.add(new Message((byte) getId(), (byte) -1, (int)i+1));
+        ArrayList<Message> batch = new ArrayList<>();
+        for (long i = batchMessagesBroadcasted; i < messages2broadcast; i++) {
+            batch.add(new Message((byte) getId(), (byte) -1, (int) i + 1));
             batchMessagesBroadcasted++;
-            if(batch.size() == MESSAGES_PER_BATCH){
+            if (batch.size() == MESSAGES_PER_BATCH) {
                 //System.out.println("First complete Batch:" + batch);
                 broadcastBatch(batch);
                 batchesBroadcasted++;
@@ -245,7 +237,7 @@ public class Process implements Deliverer{
             }
         }
 
-        if(batch.size() > 0){
+        if (batch.size() > 0) {
             //System.out.println("First incomplete Batch:" + batch);
             broadcastBatch(batch);
             batchesBroadcasted++;
@@ -254,29 +246,46 @@ public class Process implements Deliverer{
 
     }
 
-    public synchronized/*?*/ void decide(Set<Integer> proposalSet, int round){
+    public synchronized/*?*/ void decide(Set<Integer> proposalSet, int round) {
         latticeProposalsBuffer.put(round, CommonUtils.getSetAsString(proposalSet));
         //System.out.println("Process " + selfHost.getId() + " decided the set " + CommonUtils.getSetAsString(proposalSet));
-        System.out.println("Got decision for round " + round);
+        //System.out.println("Got decision for round " + round);
 
         List<Integer> keyList = new ArrayList<>(latticeProposalsBuffer.keySet());
         int i;
-        for(i = 0; i < keyList.size(); i++) {
+        for (i = 0; i < keyList.size(); i++) {
             int roundID = keyList.get(i);
             String value = latticeProposalsBuffer.get(roundID);
             //System.out.println("^Current iteration value == " + roundID + ". CompletedRoundID: " + completedLatticeRoundId);
-            if(roundID == completedLatticeRoundId){
+            if (roundID == completedLatticeRoundId) {
                 logger.addEvent(value);
+                completedProposals++;
 
                 completedLatticeRoundId++;
                 latticeProposalsBuffer.remove(roundID);
 
-                i=-1;
+                i = -1;
                 keyList = new ArrayList<>(latticeProposalsBuffer.keySet());
                 //System.out.println("^Logged round: " + roundID + ". CompletedRoundID:" + completedLatticeRoundId + ". New remaining rounds:" + keyList);
                 System.out.println();
             }
+        }
 
+        String st;
+        try {
+            if ((st = latticeBr.readLine()) != null) {
+                String[] contents = st.split(" ");
+                Set<Integer> newProposalSet = new HashSet<>();
+                for (int ii = 0; ii < contents.length; ii++) {
+                    newProposalSet.add(Integer.parseInt(contents[ii]));
+                }
+                agreement.propose(newProposalSet, latticeRound);
+                latticeRound++;
+
+                //System.out.println("Intermediate proposal step.");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
         //logger.addEvent(CommonUtils.getSetAsString(proposalSet));
@@ -286,6 +295,19 @@ public class Process implements Deliverer{
     public void propose(Set<Integer>proposalSet){
         agreement.propose(proposalSet, latticeRound);
         latticeRound++;
+    }
+
+    public void triggerInitialLattice() throws IOException {
+        String st;
+        if ((st = latticeBr.readLine()) != null) {
+            String [] contents = st.split(" ");
+            Set<Integer> proposalSet = new HashSet<>();
+            for(int i=0; i<contents.length; i++){
+                proposalSet.add(Integer.parseInt(contents[i]));
+            }
+            agreement.propose(proposalSet, latticeRound);
+            latticeRound++;
+        }
     }
 
 }

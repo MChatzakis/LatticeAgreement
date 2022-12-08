@@ -64,9 +64,9 @@ public class Main {
 
         CommonUtils.createEmptyFile(parser.output());
 
-        initializeAndTriggerLattice(parser, (int) pid);
+        //initializeAndTriggerLattice(parser, (int) pid);
+        initializeAndTriggerInitialLattice(parser, (int) pid);
 
-        // After a process finishes broadcasting it waits forever for the delivery of messages.
         while (true) {
             Thread.sleep(60 * 60 * 1000);
         }
@@ -117,7 +117,7 @@ public class Main {
 
                 System.out.println("Initializing...\n");
 
-                PROCESS = new Process(parser.myId(), (int) pid, new ArrayList<>(parser.hosts()), new Logger(parser.output()), p);
+                PROCESS = new Process(parser.myId(), (int) pid, new ArrayList<>(parser.hosts()), new Logger(parser.output()), p, br);
                 System.out.println(PROCESS);
 
                 System.out.println("Broadcasting and delivering messages...\n");
@@ -128,46 +128,33 @@ public class Main {
                 for(int i=0; i<contents.length; i++){
                     proposalSet.add(Integer.parseInt(contents[i]));
                 }
-
                 PROCESS.propose(proposalSet);
             }
 
             lineCounter++;
         }
-
 
     }
 
-    public static void triggerLatticeProposals(String configFile) throws IOException{
-        BufferedReader br = new BufferedReader(new FileReader(new File(configFile)));
+    public static void initializeAndTriggerInitialLattice(Parser parser, int pid) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(new File(parser.config())));
         String st;
-        int lineCounter = 0, p = -1, vs, ds;
-        while ((st = br.readLine()) != null) {
+        if ((st = br.readLine()) != null) {
             String [] contents = st.split(" ");
 
-            if(lineCounter == 0){
-                assert contents.length >= 3;
+            assert contents.length >= 3;
 
-                p  = Integer.parseInt(contents[0]);
-                vs = Integer.parseInt(contents[1]);
-                ds = Integer.parseInt(contents[2]);
+            int p  = Integer.parseInt(contents[0]);
 
+            System.out.println("Initializing...\n");
 
+            PROCESS = new Process(parser.myId(), (int) pid, new ArrayList<>(parser.hosts()), new Logger(parser.output()), p, br);
+            System.out.println(PROCESS);
 
-            }else{
-                Set<Integer> proposalSet = new HashSet<>();
-                for(int i=0; i<contents.length; i++){
-                    proposalSet.add(Integer.parseInt(contents[i]));
-                }
-
-                PROCESS.propose(proposalSet);
-                return;
-            }
-
-            lineCounter++;
+            System.out.println("Broadcasting and delivering messages...\n");
+            PROCESS.startReceiving();
+            PROCESS.triggerInitialLattice();
         }
-
-        assert lineCounter == p+1;
     }
 
 }

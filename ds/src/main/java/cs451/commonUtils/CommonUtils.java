@@ -120,17 +120,4 @@ public class CommonUtils {
         return batch;
     }
 
-    public static String serializeMessage2String(Message m){
-        //todo
-        return "";
-    }
-
-    public static Message serializeString2Message(String ms){
-        //todo
-        return null;
-    }
-
-
-
-
 }

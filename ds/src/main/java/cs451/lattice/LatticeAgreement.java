@@ -91,8 +91,6 @@ public class LatticeAgreement implements Deliverer {
             lm.setLatticeProposalNumber(activeProposalNumberRound.get(round));
             lm.setLatticeRound(round);
 
-            //ArrayList<Message>batch = new ArrayList<>();
-            //batch.add(lm);
             beb.broadcastBatch(CommonUtils.wrapMessage2Batch(lm));
         }
     }
@@ -121,9 +119,6 @@ public class LatticeAgreement implements Deliverer {
         lm.setLatticeRound(round);
 
         //System.out.println("Agreement broadcasting message:"+lm);
-
-        //ArrayList<Message>batch = new ArrayList<>();
-        //batch.add(lm);
         beb.broadcastBatch(CommonUtils.wrapMessage2Batch(lm));
     }
 
@@ -159,8 +154,6 @@ public class LatticeAgreement implements Deliverer {
             lm.setLatticeProposalNumber(message.getLatticeProposalNumber());
             lm.setLatticeRound(round);
 
-            //ArrayList<Message>batch = new ArrayList<>();
-            //batch.add(lm);
             beb.sendBatch(CommonUtils.wrapMessage2Batch(lm), CommonUtils.getHost(message.getOriginalFrom(), processes));
         }else{
             Set<Integer>ts = acceptedValueRound.get(round);
@@ -173,8 +166,6 @@ public class LatticeAgreement implements Deliverer {
             lm.setLatticeValue(acceptedValueRound.get(round));
             lm.setLatticeRound(round);
 
-            //ArrayList<Message>batch = new ArrayList<>();
-            //batch.add(lm);
             beb.sendBatch(CommonUtils.wrapMessage2Batch(lm), CommonUtils.getHost(message.getOriginalFrom(), processes));
         }
     }
