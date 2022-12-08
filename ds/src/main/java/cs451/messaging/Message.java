@@ -64,9 +64,12 @@ public class Message implements Serializable, Cloneable, Comparable<Message> {
             case NACK:
                 serial += "N" + FIELDS_DELIM;
                 break;
+            default:
+                serial += "E" + FIELDS_DELIM;
+                break;
         }
         serial += latticeProposalNumber + ",";
-        if(latticeValue != null || latticeValue.size() > 0){
+        if(latticeValue != null || latticeValue.size() == 0){
             serial += FIELDS_DELIM;
         }else{
             for(Integer val : latticeValue){
@@ -75,7 +78,7 @@ public class Message implements Serializable, Cloneable, Comparable<Message> {
             serial += FIELDS_DELIM;
         }
 
-        serial += latticeRound + ",";
+        serial += latticeRound /*+ FIELDS_DELIM*/;
 
         return serial;
     }
