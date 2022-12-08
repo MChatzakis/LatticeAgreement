@@ -120,4 +120,8 @@ public class CommonUtils {
         return batch;
     }
 
+    public static int boolHashCode(boolean value) {
+        return value ? 1231 : 1237;
+    }
+
 }

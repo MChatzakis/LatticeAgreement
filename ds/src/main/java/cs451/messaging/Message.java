@@ -1,29 +1,29 @@
 package cs451.messaging;
 
+import cs451.commonUtils.CommonUtils;
 import cs451.lattice.LatticeType;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This class represents a message of the distributed system
  */
 public class Message implements Serializable, Cloneable, Comparable<Message> {
+    public static final String FIELDS_DELIM=",";
+    public static final String SET_DELIM="|";
+    public static final String MSG_DELIM=" ";
     private int id;
     private byte relayFrom;
     private byte originalFrom;
     private byte to;
     private boolean isACK;
-
-    //!new ones delete if something happens
     private LatticeType latticeType;
     private int latticeProposalNumber;
     private Set<Integer> latticeValue;
-
-
-
     private int latticeRound;
-    //new ones end!
 
     public Message(byte from, byte to, int id){
         this.relayFrom = from;
@@ -32,6 +32,136 @@ public class Message implements Serializable, Cloneable, Comparable<Message> {
         this.id = id;
 
         this.isACK = false;
+    }
+
+    public Message(){
+
+    }
+
+    public String serializeString(){
+        String serial = "";
+
+        //classic
+        serial += id + FIELDS_DELIM;
+        serial += relayFrom + FIELDS_DELIM;
+        serial += originalFrom + FIELDS_DELIM;
+        serial += to + FIELDS_DELIM;
+        if(isACK){
+            serial += "1" + FIELDS_DELIM;
+        }
+        else{
+            serial += "0" + FIELDS_DELIM;
+        }
+
+        //lattice
+        switch(latticeType){
+            case PROPOSAL:
+                serial += "P" + FIELDS_DELIM;
+                break;
+            case ACK:
+                serial += "A" + FIELDS_DELIM;
+                break;
+            case NACK:
+                serial += "N" + FIELDS_DELIM;
+                break;
+        }
+        serial += latticeProposalNumber + ",";
+        if(latticeValue != null || latticeValue.size() > 0){
+            serial += FIELDS_DELIM;
+        }else{
+            for(Integer val : latticeValue){
+                serial += val + SET_DELIM;
+            }
+            serial += FIELDS_DELIM;
+        }
+
+        serial += latticeRound + ",";
+
+        return serial;
+    }
+
+    public static Message deserializeString(String ms){
+        Message m = new Message();
+
+        String [] contents = ms.split(FIELDS_DELIM);
+
+        assert contents.length == 9;
+
+        //classic
+        int id = Integer.parseInt(contents[0]);
+        m.setId(id);
+
+        byte relayFrom = Byte.parseByte(contents[1]);
+        m.setRelayFrom(relayFrom);
+
+        byte originalFrom = Byte.parseByte(contents[2]);
+        m.setOriginalFrom(originalFrom);
+
+        byte to = Byte.parseByte(contents[3]);
+        m.setTo(to);
+
+        boolean isACK = false;
+        if(contents[4].equals("1")){
+            isACK = true;
+        }
+        m.setACK(isACK);
+
+        //lattice
+        LatticeType latticeType = null;
+        switch (contents[4]){
+            case "P":
+                latticeType = LatticeType.PROPOSAL;
+                break;
+            case "A":
+                latticeType = LatticeType.ACK;
+                break;
+            case "N":
+                latticeType = LatticeType.NACK;
+                break;
+        }
+        m.setLatticeType(latticeType);
+
+        int latticeProposalNumber = Integer.parseInt(contents[5]);
+        m.setLatticeProposalNumber(latticeProposalNumber);
+
+        //values at contents[6]
+        Set<Integer>values = null;
+        String [] valueContents = contents[6].split(SET_DELIM);
+        if(valueContents.length > 0){
+            values = new ConcurrentHashMap().keySet(); //check again!
+            for(String str : valueContents){
+                Integer v = Integer.parseInt(str);
+                values.add(v);
+            }
+        }
+        m.setLatticeValue(values);
+
+        int latticeRound = Integer.parseInt(contents[7]);
+        m.setLatticeRound(latticeRound);
+
+        return m;
+    }
+
+    public static String serializeBatch(ArrayList<Message> batch){
+        String serial = "";
+
+        for(Message m : batch){
+            serial += m.serializeString() + MSG_DELIM;
+        }
+
+        return serial;
+    }
+
+    public static ArrayList<Message> deserializeStringBatch(String ms){
+        ArrayList<Message>batch = new ArrayList<>();
+
+        String [] contents = ms.split(MSG_DELIM);
+        for(String s : contents){
+            Message m = Message.deserializeString(s);
+            batch.add(m);
+        }
+
+        return batch;
     }
 
     public byte getRelayFrom() {
@@ -86,7 +216,7 @@ public class Message implements Serializable, Cloneable, Comparable<Message> {
     }
     @Override
     public int hashCode(){
-        return this.id * this.relayFrom * this.originalFrom * new Boolean(this.isACK).hashCode();
+        return this.id * this.relayFrom * this.originalFrom * /*new Boolean(this.isACK).hashCode()*/CommonUtils.boolHashCode(this.isACK);
     }
 
     @Override

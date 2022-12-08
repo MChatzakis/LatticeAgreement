@@ -246,7 +246,7 @@ public class Process implements Deliverer {
 
     }
 
-    public synchronized/*?*/ void decide(Set<Integer> proposalSet, int round) {
+    public synchronized void decide(Set<Integer> proposalSet, int round) {
         latticeProposalsBuffer.put(round, CommonUtils.getSetAsString(proposalSet));
         //System.out.println("Process " + selfHost.getId() + " decided the set " + CommonUtils.getSetAsString(proposalSet));
         //System.out.println("Got decision for round " + round);
