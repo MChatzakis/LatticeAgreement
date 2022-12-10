@@ -13,16 +13,16 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Message implements Serializable, Cloneable, Comparable<Message> {
     public static final String FIELDS_DELIM=",";
-    public static final String SET_DELIM="|";
+    public static final String SET_DELIM="%";
     public static final String MSG_DELIM=" ";
     private int id;
     private byte relayFrom;
     private byte originalFrom;
     private byte to;
     private boolean isACK;
-    private LatticeType latticeType;
+    private LatticeType latticeType = null;
     private int latticeProposalNumber;
-    private Set<Integer> latticeValue;
+    private Set<Integer> latticeValue = null;
     private int latticeRound;
 
     public Message(byte from, byte to, int id){
@@ -54,24 +54,30 @@ public class Message implements Serializable, Cloneable, Comparable<Message> {
         }
 
         //lattice
-        switch(latticeType){
-            case PROPOSAL:
-                serial += "P" + FIELDS_DELIM;
-                break;
-            case ACK:
-                serial += "A" + FIELDS_DELIM;
-                break;
-            case NACK:
-                serial += "N" + FIELDS_DELIM;
-                break;
-            default:
-                serial += "E" + FIELDS_DELIM;
-                break;
+        if(latticeType != null){
+            switch(latticeType){
+                case PROPOSAL:
+                    serial += "P" + FIELDS_DELIM;
+                    break;
+                case ACK:
+                    serial += "A" + FIELDS_DELIM;
+                    break;
+                case NACK:
+                    serial += "N" + FIELDS_DELIM;
+                    break;
+                default:
+                    serial += "E" + FIELDS_DELIM;
+                    break;
+            }
+        }else{
+            serial += "E" + FIELDS_DELIM;
         }
+
         serial += latticeProposalNumber + ",";
-        if(latticeValue != null || latticeValue.size() == 0){
+        if(latticeValue == null || latticeValue.size() == 0){
             serial += FIELDS_DELIM;
         }else{
+            
             for(Integer val : latticeValue){
                 serial += val + SET_DELIM;
             }
@@ -130,9 +136,10 @@ public class Message implements Serializable, Cloneable, Comparable<Message> {
         //values at contents[6]
         Set<Integer>values = null;
         String [] valueContents = contents[7].split(SET_DELIM);
-        if(valueContents.length > 0){
-            values = new ConcurrentHashMap().keySet(); //check again!
+        if(valueContents.length > 0 && !valueContents[0].equals("")){
+            values = ConcurrentHashMap.newKeySet(); //check again!
             for(String str : valueContents){
+                //System.out.println((">>" + str));
                 Integer v = Integer.parseInt(str);
                 values.add(v);
             }
@@ -161,6 +168,7 @@ public class Message implements Serializable, Cloneable, Comparable<Message> {
         String [] contents = ms.split(MSG_DELIM);
         for(String s : contents){
             Message m = Message.deserializeString(s);
+            System.out.println("DesM " + m);
             batch.add(m);
         }
 
@@ -240,8 +248,8 @@ public class Message implements Serializable, Cloneable, Comparable<Message> {
     }
 
     public String toString(){
-        return "Classic[id="+id+",or="+originalFrom+",relayFrom="+ relayFrom +",to="+to+"]" + " -- " +
-                "Lattice[type="+ latticeType+ ",value="+latticeValue +",prop="+latticeProposalNumber +"]"
+        return "Classic[id="+id+",or="+originalFrom+",relayFrom="+ relayFrom +",to="+to+ ",ack=" + isACK + "]" + " --- " +
+                "Lattice[type="+ latticeType+ ",value="+latticeValue +",prop="+latticeProposalNumber + ",round=" + latticeRound+ "]"
                 ;
     }
 

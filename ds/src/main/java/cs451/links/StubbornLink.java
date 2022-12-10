@@ -77,8 +77,6 @@ public class StubbornLink extends Link{
                 deliverer.deliver(message);
                 sendACKBatch(message);
             }
-
-
         }
     }
 
