@@ -168,7 +168,7 @@ public class Message implements Serializable, Cloneable, Comparable<Message> {
         String [] contents = ms.split(MSG_DELIM);
         for(String s : contents){
             Message m = Message.deserializeString(s);
-            System.out.println("DesM " + m);
+            //System.out.println("DesM " + m);
             batch.add(m);
         }
 
