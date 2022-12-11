@@ -108,7 +108,6 @@ public class LatticeAgreement implements Deliverer {
         activeProposalNumberRound.put(round, activeProposalNumberRound.get(round) + 1);
 
         ackCountRound.put(round, 0);
-
         nAckCountRound.put(round, 0);
 
         Message lm = new Message(self.getId(), (byte) -1, messageLsn.incrementAndGet());
@@ -157,7 +156,6 @@ public class LatticeAgreement implements Deliverer {
             lm.setLatticeRound(round);
 
             //System.out.println("XX: In lattice:" + lm);
-
             beb.sendBatch(CommonUtils.wrapMessage2Batch(lm), CommonUtils.getHost(message.getOriginalFrom(), processes));
         }else{
             Set<Integer>ts = acceptedValueRound.get(round);

@@ -22,7 +22,7 @@ import static cs451.Constants.MESSAGES_PER_BATCH;
  */
 public class Process implements Deliverer {
     private int id;
-    private int pid;
+    //private int pid;
     private Host selfHost;
     private ArrayList<Host> hosts;
     private Logger logger;
@@ -45,11 +45,14 @@ public class Process implements Deliverer {
     private int latticeRound;
     private int completedLatticeRoundId;
     private BufferedReader latticeBr;
+
+
+
     private int completedProposals;
 
-    public Process(int id, int pid, ArrayList<Host> hosts, Logger logger, int latticeProposals, BufferedReader latticeBr) throws SocketException {
+    public Process(int id, /*int pid,*/ ArrayList<Host> hosts, Logger logger, int latticeProposals, BufferedReader latticeBr) throws SocketException {
         this.id = id;
-        this.pid = pid;
+        //this.pid = pid;
         this.hosts = hosts;
         this.logger = logger;
         this.selfHost = CommonUtils.getHost(id, hosts);
@@ -65,8 +68,6 @@ public class Process implements Deliverer {
         this.totalDelivered = 0;
         this.totalSent = 0;
         this.performanceLog = "Not enough messages to count performance.";
-
-
     }
 
     public void startReceiving() {
@@ -148,7 +149,7 @@ public class Process implements Deliverer {
 
         s = "-----\nProcess Info:\n";
         s += "id:" + id + "\n";
-        s += "pid:" + pid + "\n";
+        /*s += "pid:" + pid + "\n";*/
         s += "Self-Host:" + selfHost.toString() + "\n";
         s += "List of Known Hosts:" + hosts.size() + "\n";
         for (Host h : hosts) {
@@ -248,15 +249,12 @@ public class Process implements Deliverer {
 
     public synchronized void decide(Set<Integer> proposalSet, int round) {
         latticeProposalsBuffer.put(round, CommonUtils.getSetAsString(proposalSet));
-        //System.out.println("Process " + selfHost.getId() + " decided the set " + CommonUtils.getSetAsString(proposalSet));
-        //System.out.println("Got decision for round " + round);
 
         List<Integer> keyList = new ArrayList<>(latticeProposalsBuffer.keySet());
         int i;
         for (i = 0; i < keyList.size(); i++) {
             int roundID = keyList.get(i);
             String value = latticeProposalsBuffer.get(roundID);
-            //System.out.println("^Current iteration value == " + roundID + ". CompletedRoundID: " + completedLatticeRoundId);
             if (roundID == completedLatticeRoundId) {
                 logger.addEvent(value);
                 completedProposals++;
@@ -266,8 +264,6 @@ public class Process implements Deliverer {
 
                 i = -1;
                 keyList = new ArrayList<>(latticeProposalsBuffer.keySet());
-                //System.out.println("^Logged round: " + roundID + ". CompletedRoundID:" + completedLatticeRoundId + ". New remaining rounds:" + keyList);
-                System.out.println();
             }
         }
 
@@ -281,14 +277,19 @@ public class Process implements Deliverer {
                 }
                 agreement.propose(newProposalSet, latticeRound);
                 latticeRound++;
-
-                //System.out.println("Intermediate proposal step.");
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        //logger.addEvent(CommonUtils.getSetAsString(proposalSet));
+        if (completedProposals % 10 == 0) {
+            long end = System.nanoTime();
+            long elapsedTime = end - deliveryCountTimeStart;
+            double elapsedTimeSeconds = (double) elapsedTime / 1000000000;
+            double target = 1.0; //1second
+            double resultT = completedProposals * target / elapsedTimeSeconds;
+            this.performanceLog = "Performance: " + completedProposals + " proposals in " + elapsedTimeSeconds + " seconds (" + Math.round(resultT) + " p/s)";
+        }
 
     }
 
@@ -308,6 +309,14 @@ public class Process implements Deliverer {
             agreement.propose(proposalSet, latticeRound);
             latticeRound++;
         }
+    }
+
+    public int getCompletedProposals() {
+        return completedProposals;
+    }
+
+    public void setCompletedProposals(int completedProposals) {
+        this.completedProposals = completedProposals;
     }
 
 }

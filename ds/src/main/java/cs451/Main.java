@@ -6,6 +6,7 @@ import cs451.commonUtils.Logger;
 import cs451.structures.Process;
 
 import java.io.*;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,12 +33,12 @@ public class Main {
         System.out.println("\n=== Statistics ===");
 
         //Enable the following to activate debug statistics messages.
-        PROCESS.printHostSendingInfo();
+        //PROCESS.printHostSendingInfo();
+        //System.out.println("Delivered messages: " + PROCESS.getTotalDelivered());
+        //System.out.println("Broadcasted messages: " + PROCESS.getTotalBroadcasted());
+        //System.out.println("Sent messages: " + PROCESS.getTotalSent());
 
-        System.out.println("Delivered messages: " + PROCESS.getTotalDelivered());
-        System.out.println("Broadcasted messages: " + PROCESS.getTotalBroadcasted());
-        System.out.println("Sent messages: " + PROCESS.getTotalSent());
-
+        System.out.println("Completed proposals: " + PROCESS.getCompletedProposals());
         System.out.println(PROCESS.getPerformanceLog());
         CommonUtils.calculateMemoryUsed();
 
@@ -65,7 +66,7 @@ public class Main {
         CommonUtils.createEmptyFile(parser.output());
 
         //initializeAndTriggerLattice(parser, (int) pid);
-        initializeAndTriggerInitialLattice(parser, (int) pid);
+        initializeAndTriggerInitialLattice(parser);
 
         while (true) {
             Thread.sleep(60 * 60 * 1000);
@@ -100,7 +101,6 @@ public class Main {
         }
     }
 
-
     public static void initializeAndTriggerLattice(Parser parser, int pid) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(new File(parser.config())));
         String st;
@@ -117,7 +117,7 @@ public class Main {
 
                 System.out.println("Initializing...\n");
 
-                PROCESS = new Process(parser.myId(), (int) pid, new ArrayList<>(parser.hosts()), new Logger(parser.output()), p, br);
+                PROCESS = new Process(parser.myId(), /*(int) pid,*/ new ArrayList<>(parser.hosts()), new Logger(parser.output()), p, br);
                 System.out.println(PROCESS);
 
                 System.out.println("Broadcasting and delivering messages...\n");
@@ -136,7 +136,7 @@ public class Main {
 
     }
 
-    public static void initializeAndTriggerInitialLattice(Parser parser, int pid) throws IOException {
+    public static void initializeAndTriggerInitialLattice(Parser parser/*, int pid*/) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(new File(parser.config())));
         String st;
         if ((st = br.readLine()) != null) {
@@ -148,7 +148,7 @@ public class Main {
 
             System.out.println("Initializing...\n");
 
-            PROCESS = new Process(parser.myId(), (int) pid, new ArrayList<>(parser.hosts()), new Logger(parser.output()), p, br);
+            PROCESS = new Process(parser.myId(), /*(int) pid,*/ new ArrayList<>(parser.hosts()), new Logger(parser.output()), p, br);
             System.out.println(PROCESS);
 
             System.out.println("Broadcasting and delivering messages...\n");
@@ -157,4 +157,7 @@ public class Main {
         }
     }
 
+    //./stress.py agreement -r run.sh -l ../testing/outputs/ -p 5 -n 10 -v 3 -d 5
+    //../tools/validate_fifo.py --proc_num 5 output ../testing/outputs/
+    //../tools/stress.py -r run.sh -t fifo -l ../testing/outputs/ -p 5 -m 5000
 }
