@@ -39,15 +39,11 @@ public class Process implements Deliverer {
     private int[] messageBatchSizes;
     private String performanceLog;
     private Map<Integer, String> latticeProposalsBuffer;
-
     //Lattice
     private int latticeProposals;
     private int latticeRound;
     private int completedLatticeRoundId;
     private BufferedReader latticeBr;
-
-
-
     private int completedProposals;
 
     public Process(int id, /*int pid,*/ ArrayList<Host> hosts, Logger logger, int latticeProposals, BufferedReader latticeBr) throws SocketException {
@@ -318,5 +314,4 @@ public class Process implements Deliverer {
     public void setCompletedProposals(int completedProposals) {
         this.completedProposals = completedProposals;
     }
-
 }

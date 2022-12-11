@@ -80,7 +80,7 @@ public class LatticeAgreement implements Deliverer {
             activeRound.put(round, false);
         }
 
-        if(nAckCountRound.get(round) > 0 && (nAckCountRound.get(round)+ackCountRound.get(round)>=f+1) &&activeRound.get(round)){
+        if(nAckCountRound.get(round) > 0 && (nAckCountRound.get(round)+ackCountRound.get(round)>=f+1) && activeRound.get(round)){
             nAckCountRound.put(round, 0);
             ackCountRound.put(round,0);
             activeProposalNumberRound.put(round, activeProposalNumberRound.get(round) + 1);
@@ -118,13 +118,20 @@ public class LatticeAgreement implements Deliverer {
         lm.setLatticeRound(round);
 
         //System.out.println("WW: In lattice:" + lm);
-
         //System.out.println("Agreement broadcasting message:"+lm);
         beb.broadcastBatch(CommonUtils.wrapMessage2Batch(lm));
     }
 
     public void decide(Set<Integer>value, int round){
         parentProcess.decide(value, round);
+
+        //clean all.
+        /*activeRound.remove(round);
+        ackCountRound.remove(round);
+        nAckCountRound.remove(round);
+        activeProposalNumberRound.remove(round);
+        proposedValueRound.remove(round);
+        acceptedValueRound.remove(round);*/
     }
 
     private void processACK(Message message){
