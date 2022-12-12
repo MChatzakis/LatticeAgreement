@@ -80,11 +80,13 @@ public class Message implements Serializable, Cloneable, Comparable<Message> {
         if(latticeValue == null || latticeValue.size() == 0){
             serial += FIELDS_DELIM;
         }else{
-            
-            for(Integer val : latticeValue){
-                serial += val + SET_DELIM;
-            }
-            serial += FIELDS_DELIM;
+            //synchronized (latticeValue){
+                for(Integer val : latticeValue){
+                    serial += val + SET_DELIM;
+                }
+                serial += FIELDS_DELIM;
+            //}
+
         }
 
         serial += latticeRound /*+ FIELDS_DELIM*/;

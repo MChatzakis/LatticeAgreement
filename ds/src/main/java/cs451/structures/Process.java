@@ -14,6 +14,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import static cs451.Constants.MESSAGES_PER_BATCH;
 
@@ -271,7 +273,7 @@ public class Process implements Deliverer {
         try {
             if ((st = latticeBr.readLine()) != null) {
                 String[] contents = st.split(" ");
-                Set<Integer> newProposalSet = new HashSet<>();
+                Set<Integer> newProposalSet = ConcurrentHashMap.newKeySet();//new HashSet<>();
                 for (int ii = 0; ii < contents.length; ii++) {
                     newProposalSet.add(Integer.parseInt(contents[ii]));
                 }
@@ -293,7 +295,7 @@ public class Process implements Deliverer {
 
     }
 
-    public void propose(Set<Integer>proposalSet){
+    public void propose(Set<Integer>proposalSet){ //must be concurrent
         agreement.propose(proposalSet, latticeRound);
         latticeRound++;
     }
@@ -302,7 +304,7 @@ public class Process implements Deliverer {
         String st;
         if ((st = latticeBr.readLine()) != null) {
             String [] contents = st.split(" ");
-            Set<Integer> proposalSet = new HashSet<>();
+            Set<Integer> proposalSet = ConcurrentHashMap.newKeySet();
             for(int i=0; i<contents.length; i++){
                 proposalSet.add(Integer.parseInt(contents[i]));
             }
