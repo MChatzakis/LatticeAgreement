@@ -246,6 +246,8 @@ public class Process implements Deliverer {
     public synchronized void decide(Set<Integer> proposalSet, int round) {
         latticeProposalsBuffer.put(round, CommonUtils.getSetAsString(proposalSet));
 
+        //System.out.println("Decided unregistered set " +  proposalSet + " for round " + round);
+
         List<Integer> keyList = new ArrayList<>(latticeProposalsBuffer.keySet());
         int i;
         for (i = 0; i < keyList.size(); i++) {
@@ -253,6 +255,8 @@ public class Process implements Deliverer {
             String value = latticeProposalsBuffer.get(roundID);
             if (roundID == completedLatticeRoundId) {
                 logger.addEvent(value);
+                //System.out.println("Registered set " +  value + " for round " + roundID);
+
                 completedProposals++;
 
                 completedLatticeRoundId++;

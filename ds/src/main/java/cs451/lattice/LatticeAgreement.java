@@ -9,8 +9,6 @@ import cs451.structures.Process;
 
 import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -23,12 +21,15 @@ public class LatticeAgreement implements Deliverer {
     private AtomicInteger messageLsn;
     private Process parentProcess;
     private int totalProposals;
-    private Map<Integer, Boolean> activeRound;
-    private Map<Integer, Integer>ackCountRound;
-    private Map<Integer, Integer>nAckCountRound;
-    private Map<Integer, Integer>activeProposalNumberRound;
-    private Map<Integer, Set<Integer>>proposedValueRound;
-    private Map<Integer, Set<Integer>>acceptedValueRound;
+    private ConcurrentHashMap<Integer, Boolean> activeRound;
+    private ConcurrentHashMap<Integer, Integer>ackCountRound;
+    private ConcurrentHashMap<Integer, Integer>nAckCountRound;
+    private ConcurrentHashMap<Integer, Integer>activeProposalNumberRound;
+    private ConcurrentHashMap<Integer, Set<Integer>>proposedValueRound;
+    private ConcurrentHashMap<Integer, Set<Integer>>acceptedValueRound;
+
+    //optimization
+    private ConcurrentHashMap<Integer, Byte> processesCompletedRound;
 
     public LatticeAgreement(Process parentProcess, ArrayList<Host> processes, Host self, int totalProposals) throws SocketException {
         this.beb = new BestEffortBroadcast(this, processes, self);
@@ -40,12 +41,16 @@ public class LatticeAgreement implements Deliverer {
         this.totalProposals = totalProposals;
 
         //multi shot
-        this.activeProposalNumberRound = new HashMap<>();
-        this.activeRound = new HashMap<>();
-        this.ackCountRound = new HashMap<>();
-        this.nAckCountRound = new HashMap<>();
-        this.proposedValueRound = new HashMap<>();
-        this.acceptedValueRound = new HashMap<>();
+        this.activeProposalNumberRound = new ConcurrentHashMap<>();
+        this.activeRound = new ConcurrentHashMap<>();
+        this.ackCountRound = new ConcurrentHashMap<>();
+        this.nAckCountRound = new ConcurrentHashMap<>();
+        this.proposedValueRound = new ConcurrentHashMap<>();
+        this.acceptedValueRound = new ConcurrentHashMap<>();
+
+        //optimization
+        this.processesCompletedRound = new ConcurrentHashMap<>();
+
         for(int i=0; i<totalProposals; i++){
             this.activeRound.put(i, false);
             this.ackCountRound.put(i, 0);
@@ -53,6 +58,9 @@ public class LatticeAgreement implements Deliverer {
             this.activeProposalNumberRound.put(i,0);
             this.proposedValueRound.put(i, ConcurrentHashMap.newKeySet());
             this.acceptedValueRound.put(i, ConcurrentHashMap.newKeySet());
+
+            //optimization
+            this.processesCompletedRound.put(i, (byte) 0);
         }
 
     }
@@ -60,7 +68,13 @@ public class LatticeAgreement implements Deliverer {
     @Override
     public void deliver(Message message) {
 
+        int round = message.getLatticeRound();
         //System.out.println("Agreement got message:"+message);
+
+        if(!activeRound.containsKey(round)){
+            //System.out.println("Discarding delivered message " + );
+            return;
+        }
 
         switch (message.getLatticeType()){
             case ACK:
@@ -72,17 +86,26 @@ public class LatticeAgreement implements Deliverer {
             case PROPOSAL:
                 processPROPOSAL(message);
                 break;
+            case DECISION:
+                processDECISION(message);
+                return; //should not proceed after that.
         }
 
-        int round = message.getLatticeRound();
         if(ackCountRound.get(round) >= f+1 && activeRound.get(round)){
             decide(proposedValueRound.get(round), round);
             activeRound.put(round, false);
+
+            // tell the other processes that you completed your round.
+            Message lm = new Message(self.getId(), (byte) (-1), messageLsn.incrementAndGet());
+            lm.setLatticeType(LatticeType.DECISION);
+            lm.setLatticeRound(round);
+            lm.setLatticeProposalNumber(-1);
+            beb.broadcastBatch(CommonUtils.wrapMessage2Batch(lm));
         }
 
         if(nAckCountRound.get(round) > 0 && (nAckCountRound.get(round)+ackCountRound.get(round)>=f+1) && activeRound.get(round)){
             nAckCountRound.put(round, 0);
-            ackCountRound.put(round,0);
+            ackCountRound.put(round, 0);
             activeProposalNumberRound.put(round, activeProposalNumberRound.get(round) + 1);
 
             Message lm = new Message(self.getId(), (byte) -1, messageLsn.incrementAndGet());
@@ -91,6 +114,7 @@ public class LatticeAgreement implements Deliverer {
             lm.setLatticeProposalNumber(activeProposalNumberRound.get(round));
             lm.setLatticeRound(round);
 
+            //System.out.println("Updated proposal broadcast message " + lm + " for round " + round);
             beb.broadcastBatch(CommonUtils.wrapMessage2Batch(lm));
         }
     }
@@ -118,20 +142,26 @@ public class LatticeAgreement implements Deliverer {
         lm.setLatticeRound(round);
 
         //System.out.println("WW: In lattice:" + lm);
-        //System.out.println("Agreement broadcasting message:"+lm);
+        //System.out.println("Broadcasting proposal message " + lm + " for round " + round);
         beb.broadcastBatch(CommonUtils.wrapMessage2Batch(lm));
     }
 
     public void decide(Set<Integer>value, int round){
         parentProcess.decide(value, round);
+    }
 
-        //clean all.
-        /*activeRound.remove(round);
-        ackCountRound.remove(round);
-        nAckCountRound.remove(round);
-        activeProposalNumberRound.remove(round);
-        proposedValueRound.remove(round);
-        acceptedValueRound.remove(round);*/
+    private void processDECISION(Message message){
+        int round = message.getLatticeRound();
+        int maxCorrectProcesses = processes.size(); // 2*f + 1
+
+        byte val = (byte) (processesCompletedRound.get(round) + 1);
+        processesCompletedRound.put(round, val);
+
+        if(val == maxCorrectProcesses){
+            clearRoundData(round);
+            //System.out.println("All processed decided for round " + round + ". Deleting old stuff.");
+        }
+
     }
 
     private void processACK(Message message){
@@ -188,4 +218,14 @@ public class LatticeAgreement implements Deliverer {
     public void startReceiving(){
         beb.startReceiving();
     }
+
+    private void clearRoundData(int round){
+        activeRound.remove(round);
+        ackCountRound.remove(round);
+        nAckCountRound.remove(round);
+        activeProposalNumberRound.remove(round);
+        proposedValueRound.remove(round);
+        acceptedValueRound.remove(round);
+    }
+
 }

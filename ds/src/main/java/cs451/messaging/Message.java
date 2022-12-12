@@ -65,6 +65,9 @@ public class Message implements Serializable, Cloneable, Comparable<Message> {
                 case NACK:
                     serial += "N" + FIELDS_DELIM;
                     break;
+                case DECISION:
+                    serial += "D" + FIELDS_DELIM;
+                    break;
                 default:
                     serial += "E" + FIELDS_DELIM;
                     break;
@@ -126,6 +129,9 @@ public class Message implements Serializable, Cloneable, Comparable<Message> {
                 break;
             case "N":
                 latticeType = LatticeType.NACK;
+                break;
+            case "D":
+                latticeType = LatticeType.DECISION;
                 break;
         }
         m.setLatticeType(latticeType);
