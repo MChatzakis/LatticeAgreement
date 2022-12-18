@@ -22,9 +22,9 @@ public class StubbornLink extends Link{
     private Timer retransmissionTimer;
     private Set<MHPair> sent;
     private ArrayList<Host> hosts;
-    private byte selfID;
+    private short selfID;
 
-    public StubbornLink(Deliverer deliverer, int port, ArrayList<Host> hosts, byte selfID) throws SocketException {
+    public StubbornLink(Deliverer deliverer, int port, ArrayList<Host> hosts, short selfID) throws SocketException {
         this.deliverer = deliverer;
         this.hosts = hosts;
         this.retransmissionTimer = new Timer("RetransmissionTimer");
@@ -86,9 +86,9 @@ public class StubbornLink extends Link{
         }
         //System.out.println("[Stubborn Link]: 1. >>>> Retransmission sent set size: " + sent.size() );
 
-        Map<Byte, ArrayList<Message>>hostBatch = new HashMap<>();
+        Map<Short, ArrayList<Message>>hostBatch = new HashMap<>();
         for(int i=0; i<hosts.size(); i++){
-            byte hostID = hosts.get(i).getId();
+            short hostID = hosts.get(i).getId();
             hostBatch.put(hostID, new ArrayList<Message>());
         }
         for(MHPair p : sent){
@@ -99,7 +99,7 @@ public class StubbornLink extends Link{
         }
 
         for(int i=0; i<hosts.size(); i++){
-            byte hostID = hosts.get(i).getId();
+            short hostID = hosts.get(i).getId();
             if(hostBatch.get(hostID).size()>0){
                 if(hostBatch.get(hostID).size()<=MESSAGES_PER_BATCH){
                     fllink.sendBatch(hostBatch.get(hostID), CommonUtils.getHost(hostID, hosts));
@@ -129,7 +129,7 @@ public class StubbornLink extends Link{
     private void sendACKBatch(Message message){
         try {
             Message ackMsg = message.generateAckMessage();
-            byte destinationID = message.getRelayFrom();
+            short destinationID = message.getRelayFrom();
             Host h = CommonUtils.getHost(destinationID, hosts);
 
             if(Constants.SBL_MESSAGING_VERBOSE){

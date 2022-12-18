@@ -101,7 +101,7 @@ public class Main {
         }
     }
 
-    public static void initializeAndTriggerLattice(Parser parser, int pid) throws IOException {
+    /*public static void initializeAndTriggerLattice(Parser parser, int pid) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(new File(parser.config())));
         String st;
         int lineCounter = 0, p = -1, vs, ds;
@@ -117,7 +117,7 @@ public class Main {
 
                 System.out.println("Initializing...\n");
 
-                PROCESS = new Process(parser.myId(), /*(int) pid,*/ new ArrayList<>(parser.hosts()), new Logger(parser.output()), p, br);
+                PROCESS = new Process(parser.myId(), (int) pid, new ArrayList<>(parser.hosts()), new Logger(parser.output()), p, br);
                 System.out.println(PROCESS);
 
                 System.out.println("Broadcasting and delivering messages...\n");
@@ -134,7 +134,7 @@ public class Main {
             lineCounter++;
         }
 
-    }
+    }*/
 
     public static void initializeAndTriggerInitialLattice(Parser parser/*, int pid*/) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(new File(parser.config())));
@@ -148,7 +148,7 @@ public class Main {
 
             System.out.println("Initializing...\n");
 
-            PROCESS = new Process(parser.myId(), /*(int) pid,*/ new ArrayList<>(parser.hosts()), new Logger(parser.output()), p, br);
+            PROCESS = new Process((short) parser.myId(), /*(int) pid,*/ new ArrayList<>(parser.hosts()), new Logger(parser.output()), p, br);
             System.out.println(PROCESS);
 
             System.out.println("Broadcasting and delivering messages...\n");

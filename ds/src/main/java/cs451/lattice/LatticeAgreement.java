@@ -29,7 +29,7 @@ public class LatticeAgreement implements Deliverer {
     private ConcurrentHashMap<Integer, Set<Integer>>acceptedValueRound;
 
     //optimization
-    private ConcurrentHashMap<Integer, Byte> processesCompletedRound;
+    private ConcurrentHashMap<Integer, Short> processesCompletedRound;
 
     public LatticeAgreement(Process parentProcess, ArrayList<Host> processes, Host self, int totalProposals) throws SocketException {
         this.beb = new BestEffortBroadcast(this, processes, self);
@@ -60,7 +60,7 @@ public class LatticeAgreement implements Deliverer {
             this.acceptedValueRound.put(i, ConcurrentHashMap.newKeySet());
 
             //optimization
-            this.processesCompletedRound.put(i, (byte) 0);
+            this.processesCompletedRound.put(i, (short) 0);
         }
 
     }
@@ -96,7 +96,7 @@ public class LatticeAgreement implements Deliverer {
             activeRound.put(round, false);
 
             // tell the other processes that you completed your round.
-            Message lm = new Message(self.getId(), (byte) (-1), messageLsn.incrementAndGet());
+            Message lm = new Message(self.getId(), (short) (-1), messageLsn.incrementAndGet());
             lm.setLatticeType(LatticeType.DECISION);
             lm.setLatticeRound(round);
             lm.setLatticeProposalNumber(-1);
@@ -108,7 +108,7 @@ public class LatticeAgreement implements Deliverer {
             ackCountRound.put(round, 0);
             activeProposalNumberRound.put(round, activeProposalNumberRound.get(round) + 1);
 
-            Message lm = new Message(self.getId(), (byte) -1, messageLsn.incrementAndGet());
+            Message lm = new Message(self.getId(), (short) -1, messageLsn.incrementAndGet());
             lm.setLatticeType(LatticeType.PROPOSAL);
             lm.setLatticeValue(proposedValueRound.get(round));
             lm.setLatticeProposalNumber(activeProposalNumberRound.get(round));
@@ -134,7 +134,7 @@ public class LatticeAgreement implements Deliverer {
         ackCountRound.put(round, 0);
         nAckCountRound.put(round, 0);
 
-        Message lm = new Message(self.getId(), (byte) -1, messageLsn.incrementAndGet());
+        Message lm = new Message(self.getId(), (short) -1, messageLsn.incrementAndGet());
 
         lm.setLatticeType(LatticeType.PROPOSAL);
         lm.setLatticeValue(proposedValueRound.get(round));
@@ -154,7 +154,7 @@ public class LatticeAgreement implements Deliverer {
         int round = message.getLatticeRound();
         int maxCorrectProcesses = processes.size(); // 2*f + 1
 
-        byte val = (byte) (processesCompletedRound.get(round) + 1);
+        short val = (short) (processesCompletedRound.get(round) + 1);
         processesCompletedRound.put(round, val);
 
         if(val == maxCorrectProcesses){

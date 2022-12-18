@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 public class FIFOBroadcast extends Broadcast implements Deliverer {
     private UniformReliableBroadcast urb;
     private Set<Message> pending;
-    private Map<Byte, Integer> next;
+    private Map<Short, Integer> next;
     private int lsn;
 
     public FIFOBroadcast(Deliverer deliverer, List<Host> processes, Host self) throws SocketException {
@@ -37,7 +37,7 @@ public class FIFOBroadcast extends Broadcast implements Deliverer {
         while(pendingIterator.hasNext()){
             Message m = pendingIterator.next();
 
-            byte originalSenderHostId = m.getOriginalFrom();
+            short originalSenderHostId = m.getOriginalFrom();
             int snp = m.getId();
             int nextNum = next.get(originalSenderHostId);
 

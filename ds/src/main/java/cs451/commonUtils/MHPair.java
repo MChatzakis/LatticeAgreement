@@ -8,13 +8,13 @@ import cs451.messaging.Message;
  */
 public class MHPair {
     private Message message;
-    private byte hostID;
+    private short hostID;
 
-    public byte getHostID() {
+    public short getHostID() {
         return hostID;
     }
 
-    public void setHostID(byte hostID) {
+    public void setHostID(short hostID) {
         this.hostID = hostID;
     }
 
@@ -27,7 +27,7 @@ public class MHPair {
     }
 
 
-    public MHPair(Message message, Byte hostID) {
+    public MHPair(Message message, short hostID) {
         this.message = message;
         this.hostID = hostID;
     }

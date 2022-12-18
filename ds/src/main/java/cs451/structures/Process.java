@@ -48,7 +48,7 @@ public class Process implements Deliverer {
     private BufferedReader latticeBr;
     private int completedProposals;
 
-    public Process(int id, /*int pid,*/ ArrayList<Host> hosts, Logger logger, int latticeProposals, BufferedReader latticeBr) throws SocketException {
+    public Process(short id, /*int pid,*/ ArrayList<Host> hosts, Logger logger, int latticeProposals, BufferedReader latticeBr) throws SocketException {
         this.id = id;
         //this.pid = pid;
         this.hosts = hosts;
@@ -101,7 +101,7 @@ public class Process implements Deliverer {
             if (message.getId() >= messageBatchSizes[batchesBroadcasted - 1]) {
                 ArrayList<Message> batch = new ArrayList<>();
                 for (long i = batchMessagesBroadcasted; i < messages2broadcast; i++) {
-                    batch.add(new Message((byte) getId(), (byte) -1, (int) i + 1));
+                    batch.add(new Message((short) getId(), (short) -1, (int) i + 1));
                     batchMessagesBroadcasted++;
                     if (batch.size() == MESSAGES_PER_BATCH) {
                         //System.out.println("Batch:" + batch);
@@ -225,7 +225,7 @@ public class Process implements Deliverer {
         //1. broadcast first batch.
         ArrayList<Message> batch = new ArrayList<>();
         for (long i = batchMessagesBroadcasted; i < messages2broadcast; i++) {
-            batch.add(new Message((byte) getId(), (byte) -1, (int) i + 1));
+            batch.add(new Message((short) getId(), (short) -1, (int) i + 1));
             batchMessagesBroadcasted++;
             if (batch.size() == MESSAGES_PER_BATCH) {
                 //System.out.println("First complete Batch:" + batch);

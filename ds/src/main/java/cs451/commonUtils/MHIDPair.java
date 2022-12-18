@@ -4,11 +4,11 @@ package cs451.commonUtils;
 public class MHIDPair {
     private int messageID;
 
-    public byte getHostID() {
+    public short getHostID() {
         return hostID;
     }
 
-    private byte hostID;
+    private short hostID;
 
     public int getMessageID() {
         return messageID;
@@ -18,7 +18,7 @@ public class MHIDPair {
         this.messageID = messageID;
     }
 
-    public MHIDPair(int messageID, byte hostID){
+    public MHIDPair(int messageID, short hostID){
         this.messageID = messageID;
         this.hostID = hostID;
     }

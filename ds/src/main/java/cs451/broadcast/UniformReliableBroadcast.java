@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class UniformReliableBroadcast extends Broadcast implements Deliverer {
     private BestEffortBroadcast beb;
-    private Map<MHIDPair, Byte> ack;
+    private Map<MHIDPair, Short> ack;
     private Map<MHIDPair, Message> pending;
     private Set<MHIDPair> delivered;
 
@@ -44,11 +44,11 @@ public class UniformReliableBroadcast extends Broadcast implements Deliverer {
         //System.out.println("{URB} : >>>>>> 1. Got a message and will start 'deliver' routine " + m);
 
         if(ack.containsKey(messageIDs)){
-            Byte num = ack.get(messageIDs);
-            ack.put(messageIDs, (byte) (num+1));
+            short num = ack.get(messageIDs);
+            ack.put(messageIDs, (short) (num+1));
         }
         else{
-            ack.put(messageIDs, (byte) 1);
+            ack.put(messageIDs, (short) 1);
         }
 
         //System.out.println("{URB} : >>>>>> 2. Processed the ack structure. Current ack: " + ack);

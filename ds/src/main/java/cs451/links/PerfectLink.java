@@ -20,7 +20,7 @@ public class PerfectLink extends Link{
 
     private StubbornLink slink;
 
-    public PerfectLink(Deliverer deliverer, int port, ArrayList<Host> hosts, byte selfID) throws SocketException {
+    public PerfectLink(Deliverer deliverer, int port, ArrayList<Host> hosts, short selfID) throws SocketException {
         this.deliverer = deliverer;
         this.slink = new StubbornLink(this, port, hosts, selfID);
         this.deliveredMessages = ConcurrentHashMap.newKeySet();

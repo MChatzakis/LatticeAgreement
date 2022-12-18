@@ -16,16 +16,16 @@ public class Message implements Serializable, Cloneable, Comparable<Message> {
     public static final String SET_DELIM="%";
     public static final String MSG_DELIM=" ";
     private int id;
-    private byte relayFrom;
-    private byte originalFrom;
-    private byte to;
+    private short relayFrom;
+    private short originalFrom;
+    private short to;
     private boolean isACK;
     private LatticeType latticeType = null;
     private int latticeProposalNumber;
     private Set<Integer> latticeValue = null;
     private int latticeRound;
 
-    public Message(byte from, byte to, int id){
+    public Message(short from, short to, int id){
         this.relayFrom = from;
         this.originalFrom = from;
         this.to = to;
@@ -105,13 +105,13 @@ public class Message implements Serializable, Cloneable, Comparable<Message> {
         int id = Integer.parseInt(contents[0]);
         m.setId(id);
 
-        byte relayFrom = Byte.parseByte(contents[1]);
+        short relayFrom = Short.parseShort(contents[1]);
         m.setRelayFrom(relayFrom);
 
-        byte originalFrom = Byte.parseByte(contents[2]);
+        short originalFrom = Short.parseShort(contents[2]);
         m.setOriginalFrom(originalFrom);
 
-        byte to = Byte.parseByte(contents[3]);
+        short to = Short.parseShort(contents[3]);
         m.setTo(to);
 
         boolean isACK = false;
@@ -183,19 +183,19 @@ public class Message implements Serializable, Cloneable, Comparable<Message> {
         return batch;
     }
 
-    public byte getRelayFrom() {
+    public short getRelayFrom() {
         return relayFrom;
     }
 
-    public void setRelayFrom(byte relayFrom) {
+    public void setRelayFrom(short relayFrom) {
         this.relayFrom = relayFrom;
     }
 
-    public byte getTo() {
+    public short getTo() {
         return to;
     }
 
-    public void setTo(byte to) {
+    public void setTo(short to) {
         this.to = to;
     }
 
@@ -261,11 +261,11 @@ public class Message implements Serializable, Cloneable, Comparable<Message> {
                 ;
     }
 
-    public byte getOriginalFrom() {
+    public short getOriginalFrom() {
         return originalFrom;
     }
 
-    public void setOriginalFrom(byte originalFrom) {
+    public void setOriginalFrom(short originalFrom) {
         this.originalFrom = originalFrom;
     }
 
