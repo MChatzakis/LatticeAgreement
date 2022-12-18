@@ -32,12 +32,6 @@ public class Main {
 
         System.out.println("\n=== Statistics ===");
 
-        //Enable the following to activate debug statistics messages.
-        //PROCESS.printHostSendingInfo();
-        //System.out.println("Delivered messages: " + PROCESS.getTotalDelivered());
-        //System.out.println("Broadcasted messages: " + PROCESS.getTotalBroadcasted());
-        //System.out.println("Sent messages: " + PROCESS.getTotalSent());
-
         System.out.println("Completed proposals: " + PROCESS.getCompletedProposals());
         System.out.println(PROCESS.getPerformanceLog());
         CommonUtils.calculateMemoryUsed();

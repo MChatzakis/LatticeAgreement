@@ -141,8 +141,6 @@ public class LatticeAgreement implements Deliverer {
         lm.setLatticeProposalNumber(activeProposalNumberRound.get(round));
         lm.setLatticeRound(round);
 
-        //System.out.println("WW: In lattice:" + lm);
-        //System.out.println("Broadcasting proposal message " + lm + " for round " + round);
         beb.broadcastBatch(CommonUtils.wrapMessage2Batch(lm));
     }
 
