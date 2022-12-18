@@ -1,6 +1,6 @@
 testing/outputs/
 template_java/.idea/
-
+.vscode/
 *.DS_Store
 
 # Compiled class file
