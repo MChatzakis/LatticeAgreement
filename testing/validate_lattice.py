@@ -1,6 +1,6 @@
 import os.path
 
-num_procs = 110
+num_procs = 30
 
 decisions = [[] for i in range(num_procs)]
 configs = [[] for i in range(num_procs)]
@@ -42,13 +42,13 @@ for i in range(num_procs):
             for line in f.readlines():
                 decisions[i].append(set([int(x) for x in line.strip().split(" ")]))
 
-            if terminated == False:
+    if terminated == False:
                 print("Process", i + 1, "had", len(decisions[i]), "decisions (running)")
-            else :
-                if empty_stdout == True:
-                    print("Process", i + 1, "had", len(decisions[i]), "decisions (empty stdout)")
-                else :
-                    print("Process", i + 1, "had", len(decisions[i]), "decisions (terminated)")
+    else :
+        if empty_stdout == True:
+            print("Process", i + 1, "had", len(decisions[i]), "decisions (empty stdout)")
+        else :
+            print("Process", i + 1, "had", len(decisions[i]), "decisions (terminated)")        
 
 
 
@@ -69,7 +69,7 @@ for decision_idx in range(mindecided):
                 print("d1: ", decisions[d1][decision_idx])
                 print("d2: ", decisions[d2][decision_idx])
                 exit()
-print("property 1 ok")
+print("Property 1: SATISFIED")
 
 
 for proc_id in range(num_procs):
@@ -80,4 +80,4 @@ for proc_id in range(num_procs):
             print("decision:", decisions[proc_id][i])
             print("proposal:", configs[proc_id][i])
             exit()
-print("property 2 ok")
+print("Property 2: SATISFIED")
