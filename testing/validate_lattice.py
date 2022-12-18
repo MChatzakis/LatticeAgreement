@@ -1,6 +1,6 @@
 import os.path
 
-num_procs = 30
+num_procs = 40
 
 decisions = [[] for i in range(num_procs)]
 configs = [[] for i in range(num_procs)]

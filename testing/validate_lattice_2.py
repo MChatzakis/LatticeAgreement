@@ -2,10 +2,10 @@ from collections import defaultdict
 from functools import reduce
 from itertools import product
 
-n_processes = 30
-n_decisions = 500
+n_processes = 40
+n_decisions = 100
 
-bad_processes = [8,11]
+bad_processes = [14,19,24,39,40]
 processes = [p for p in range(1, n_processes + 1) if p not in bad_processes]
 pairs_of_processes = product(processes, processes)
 decision_seqs = list(range(0, n_decisions))
