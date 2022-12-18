@@ -2,29 +2,27 @@ from collections import defaultdict
 from functools import reduce
 from itertools import product
 
-n_processes = 40
-n_decisions = 200
+n_processes = 30
+n_decisions = 500
 
-bad_processes = [12, 17, 20, 31]
+bad_processes = [8,11]
 processes = [p for p in range(1, n_processes + 1) if p not in bad_processes]
 pairs_of_processes = product(processes, processes)
 decision_seqs = list(range(0, n_decisions))
 
 proposals = defaultdict(lambda: defaultdict(set))
 decisions = defaultdict(lambda: defaultdict(set))
-# proposals[decision_i][proc_j] = {bli bli bpa}
 
 # Collect results
 for i in processes:
     with open(f"./outputs/proc{i:02d}.config") as f:
-        # ignore first line
         f.readline()
 
         for j in range(0, n_decisions):
             line = f.readline()[:-1]
             proposals[j][i] = {int(x) for x in line.split(" ") if x}
 
-    with open(f"proc{i:02d}.output") as f:
+    with open(f"./outputs/proc{i:02d}.output") as f:
         for j in range(0, n_decisions):
             line = f.readline()[:-1]
             decisions[j][i] = {int(x) for x in line.split(" ") if x}
